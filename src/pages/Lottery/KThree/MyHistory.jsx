@@ -112,8 +112,8 @@ const MyHistory = ({ myHistoryData, handlehistorybox }) => {
                                             className={`font-bold text-center ${item?.win_amount === 0 && item?.status === 0 ? "text-gray" : (item?.win_amount === 0 ? "text-customred" : "text-green")}`}
                                         >
                                             {item?.win_amount === 0 && item?.status === 0 ? "--" : (item?.win_amount === 0
-                                                ? `- ₹${item?.amount}.00`
-                                                : `+ ₹${item?.win_amount}`)}
+                                                ? `- ${item?.amount}.00`
+                                                : `+ ${item?.win_amount}`)}
                                         </div>
                                     </div>
                                 </div>
@@ -237,8 +237,8 @@ const MyHistory = ({ myHistoryData, handlehistorybox }) => {
                                     <div className="bg-redLight text-white w-full mt-1 py-2 flex items-center justify-between px-2  rounded-md">
                                         <p>Win/Loss</p>
                                         {item?.status !== 0 ? <p>{item?.win_amount == 0 ? (<>
-                                            <span className="text-red">₹0.00</span>
-                                        </>) : <span className="text-green">₹{item?.win_amount}</span>}</p> : <p>--</p>}
+                                            <span className="text-red">0.00</span>
+                                        </>) : <span className="text-green">{item?.win_amount}</span>}</p> : <p>--</p>}
                                     </div>
                                     <div className="bg-redLight text-white w-full mt-1 py-2 flex items-center justify-between px-2  rounded-md">
                                         <p>Order time</p>

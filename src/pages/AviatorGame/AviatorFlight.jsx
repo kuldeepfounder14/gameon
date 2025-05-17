@@ -32,8 +32,8 @@ function AviatorFlight({ changeBg, setChangeBg, isSoundOn, setIsSoundOn, isPathR
             setHotAirData(q);
         };
 
-        socket.on("nitish_aviator", handleSocket);
-        return () => socket.off("nitish_aviator", handleSocket);
+        socket.on("admingameon_aviator", handleSocket);
+        return () => socket.off("admingameon_aviator", handleSocket);
     }, []);
     // console.log("hotAirData",hotAirData)
 

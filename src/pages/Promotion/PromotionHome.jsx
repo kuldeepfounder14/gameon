@@ -50,7 +50,7 @@ function PromotionHome() {
         setLoading(true)
         try {
             const res = await axios.get(`${apis?.promotionData}${userId}`)
-             console.log("resooooo",res)
+            //  console.log("resooooo",res)
             if (res?.status === 200) {
                 setLoading(false)
                 setPromotionData(res?.data)
@@ -71,7 +71,7 @@ function PromotionHome() {
     // console.log("object",myDetails?.data?.referral_code_url)
     const handleCopyInvitationLink = () => {
         if (myDetails?.data?.u_id) {
-            const baseUrl = "https://globalbet24.club/";
+            const baseUrl = "https://admin.gameon.deals/";
             const invitationCode = myDetails?.data?.referral_code;
             const referralLink = `${baseUrl}register?referral=${invitationCode}`;
     

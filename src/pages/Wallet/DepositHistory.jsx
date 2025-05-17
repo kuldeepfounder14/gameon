@@ -93,11 +93,11 @@ function DepositHistory() {
                 }
             }
     
-            console.log("API URL:", apiUrl);  // Log the final URL being called
+            // console.log("API URL:", apiUrl);  // Log the final URL being called
     
             res = await axios.get(apiUrl);
     
-            console.log("API Response:", res);
+            // console.log("API Response:", res);
     
             if (res?.data?.status === 200) {
                 setLoading(false);
@@ -108,7 +108,7 @@ function DepositHistory() {
             }
         } catch (err) {
             setLoading(false);
-            console.error("API Error:", err);
+            // console.error("API Error:", err);
     
             if (err?.response?.data?.status === 500) {
                 console.log("Server error:", err);
@@ -171,7 +171,7 @@ function DepositHistory() {
             {loading && <Loader setLoading={setLoading} loading={loading} />}
                 <div className="hide-scrollbar overflow-x-auto py-3 mx-3">
                     <div className="flex gap-2 text-xsm font-bold">
-                        <div
+                        {/* <div
                             className={`w-32 py-3 flex-shrink-0 flex items-center justify-between shadow-lg rounded-lg ${activeModal === -1 ?
                                  "bg-gradient-to-l from-customlightbtn to-customdarkBluebtn text-white" : "bg-redLight text-lightGray"
                                 }  px-7 cursor-pointer`}
@@ -179,8 +179,8 @@ function DepositHistory() {
                         >
                             <RxDashboard className={``} size={20} />
                             <p className="font-bold text-nowrap">All</p>
-                        </div>
-                        {payMethod && payMethod?.map((item, i) => (
+                        </div> */}
+                        {/* {payMethod && payMethod?.map((item, i) => (
                             <div key={i}
                                 className={`w-32 py-3 flex-shrink-0 flex items-center justify-between shadow-lg rounded-lg ${activeModal == item?.type ?
                                      "bg-gradient-to-l from-customlightbtn to-customdarkBluebtn text-white" : "bg-redLight text-lightGray"
@@ -190,11 +190,11 @@ function DepositHistory() {
                                 <img className='w-${item?.type===2?10:5} h-5' src={item?.image} alt="UPI Payment" />
                                 <p className=" font-bold text-nowrap">{item?.name}</p>
                             </div>
-                        ))}
+                        ))} */}
                     </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-3 mt-3 mx-3">
+                <div className="grid grid-cols-2 gap-3 mx-3">
                     <button
                         onClick={() => handleModalFirst(!modalFirst)}
                         className="bg-redLight text-white rounded-md text-xs font-bold py-4 px-2 flex justify-between items-center shadow-md"
@@ -242,12 +242,12 @@ function DepositHistory() {
                                     <div className="bg-border1 mt-3 w-full h-[1px]"></div>
                                     <div className="flex mt-3 text-white justify-between items-center">
                                         <p className="text-xsm font-bold">Balance</p>
-                                        <p className="text-xsm font-semibold text-customlightbtn">₹{item?.cash}.00</p>
+                                        <p className="text-xsm font-semibold text-customlightbtn">{item?.cash}.00</p>
                                     </div>
-                                    <div className="flex mt-4 text-white opacity-55 justify-between items-center">
+                                    {/* <div className="flex mt-4 text-white opacity-55 justify-between items-center">
                                         <p className="text-xsm font-bold">Type</p>
                                         <p className="text-xsm text-white font-semibold">{item?.type == 0 ? "usdt" : item?.type == 1 ? "Indian pay" : item?.type === 2 ? "Camlinio" : ""}</p>
-                                    </div>
+                                    </div> */}
                                     <div className="flex mt-4 text-white opacity-55 justify-between items-center">
                                         <p className="text-xsm font-bold">Time</p>
                                         <p className="text-xsm text-white  font-semibold">

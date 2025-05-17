@@ -12,7 +12,6 @@ function PlinkoHeader({ profileRefresher }) {
     const { myDetails, loading, error, fetchProfileDetails } = useProfile(userId);
     useEffect(() => {
         if (profileRefresher?.first|| profileRefresher?.second) {
-            // alert("dfd")
             fetchProfileDetails()
         }
     }, [profileRefresher])
@@ -33,7 +32,8 @@ function PlinkoHeader({ profileRefresher }) {
                     </div>
                 </div>
                 <div className='flex items-start justify-start'>
-                    <div>{myDetails ? myDetails?.data?.wallet : 0.00} INR</div>
+                    <div>{myDetails ? myDetails?.data?.wallet : 0.00} </div>
+                    {/* <div>{myDetails ? myDetails?.data?.winning_wallet : 0.00} </div> */}
                     <div className='h-7 w-7 bg-gradient-to-l bg-[#007C80] rounded-[100%] flex items-center justify-between pr-4 border-black border-[0.5px] ml-1'>
                         <Link to="#" >
                             <GiHamburgerMenu className="font-extrabold text-[24px] text-white flex items-center justify-center pl-1" />

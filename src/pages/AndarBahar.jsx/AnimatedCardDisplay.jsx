@@ -5,62 +5,78 @@ import { assets } from './assets';
 function AnimatedCardDisplay({ betResultDataAnnouncement }) {
     const [andarCards, setAndarCards] = useState([]);
     const [baharCards, setBaharCards] = useState([]);
-    const [currentIndex, setCurrentIndex] = useState(0);
-    const [animatedIndex, setAnimatedIndex] = useState(null);
+    const [cards, setCards] = useState([]);
 
+    const [animatedIndex, setAnimatedIndex] = useState(null);
+    // let cards
+    // if (betResultDataAnnouncement) {
+    //     cards = JSON.parse(betResultDataAnnouncement?.json);
+    // }
     useEffect(() => {
         if (betResultDataAnnouncement?.json?.length > 0) {
-            const cards = JSON.parse(betResultDataAnnouncement.json);
+            const parsedCards = Array.isArray(betResultDataAnnouncement?.json)
+                ? betResultDataAnnouncement.json
+                : JSON.parse(betResultDataAnnouncement?.json || '[]');
 
-            // Reset states when betResultDataAnnouncement changes
+            setCards(parsedCards); // Cache cards in state
+
+            console.log("betResultDataAnnouncement", parsedCards);
             setAndarCards([]);
             setBaharCards([]);
-            setCurrentIndex(0);
             setAnimatedIndex(null);
 
-            let localIndex = 0; // Use a local variable to manage the index
+            let localIndex = 0;
             const interval = setInterval(() => {
-                if (localIndex < cards.length) {
-                    setAnimatedIndex(localIndex); // Set the current animated index
+                if (localIndex < parsedCards.length - 1) {
+                    const card = parsedCards[localIndex];
+                    setAnimatedIndex(localIndex);
                     if (localIndex % 2 === 0) {
-                        setAndarCards((prev) => [...prev, cards[localIndex]]);
+                        setAndarCards(prev => [...prev, card]);
                     } else {
-                        setBaharCards((prev) => [...prev, cards[localIndex]]);
+                        setBaharCards(prev => [...prev, card]);
                     }
-                    localIndex += 1; // Increment the local index
+                    localIndex++;
+                } else if (localIndex === parsedCards.length - 1) {
+                    const lastCard = parsedCards[localIndex];
+                    setAnimatedIndex(localIndex);
+                    if (betResultDataAnnouncement?.number === 1) {
+                        setAndarCards(prev => [...prev, lastCard]);
+                    } else {
+                        setBaharCards(prev => [...prev, lastCard]);
+                    }
+                    localIndex++;
                 } else {
-                    clearInterval(interval); // Stop the interval when all cards are animated
-                    setAnimatedIndex(null); // Clear the animated index
+                    clearInterval(interval);
+                    setAnimatedIndex(null);
                 }
-            }, 200); // Animation timing
+            }, 200);
 
-            return () => clearInterval(interval); // Cleanup interval on unmount or prop change
+            return () => clearInterval(interval);
         }
-    }, [betResultDataAnnouncement?.json]); // Dependency only on betResultDataAnnouncement.json
+    }, [betResultDataAnnouncement?.json, betResultDataAnnouncement?.number]);
+
 
     if (!betResultDataAnnouncement?.json) {
         return null; // Render nothing if JSON data is not available
     }
 
-    const cards = JSON.parse(betResultDataAnnouncement.json);
-    const lastCard = cards[cards.length - 1];
+    const lastCard = cards[cards?.length - 1];
 
     // console.log("betResultDataAnnouncement", betResultDataAnnouncement);
-    // console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaa", andarCards);
-    // console.log("bbbbbbbbbbbbbbbbbbbbbbbbbbb", baharCards);
+    console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaa", andarCards);
+    console.log("bbbbbbbbbbbbbbbbbbbbbbbbbbb", baharCards);
+    console.log("lastCardlastCardlastCard", lastCard);
 
     return (
         <div className="w-full flex flex-col absolute top-[10vh] px-2">
-            {/* Andar Section */}
             <div className="w-full flex items-center gap-2">
                 <img className="w-20 h-8" src={assets?.andar} alt="andar" />
                 {andarCards.map((item, index) => (
                     <img
                         key={index}
-                        className={`w-6.5 h-8 ${index !== 0 ? "-ml-3" : ""} ${
-                            item === lastCard ? "border-2 border-gold w-7 h-9" : "w-6.5 h-8"
-                        } ${animatedIndex === index ? "animate-slide-in" : ""}`}
-                        src={assets.cards[item - 1]}
+                        className={`w-6.5 h-8 ${index !== 0 ? "-ml-3" : ""} ${item == lastCard ? "border-2 border-gold w-7 h-9" : "w-6.5 h-8"
+                            } ${animatedIndex == index + (betResultDataAnnouncement?.number === 1 ? 0 : 1) ? "animate-slide-in" : ""}`}
+                        src={assets.cards[Number(item) - 1]}
                         alt=""
                     />
                 ))}
@@ -72,10 +88,9 @@ function AnimatedCardDisplay({ betResultDataAnnouncement }) {
                 {baharCards.map((item, index) => (
                     <img
                         key={index}
-                        className={` ${index !== 0 ? "-ml-3" : ""} ${
-                            item === lastCard ? "border-2 border-gold w-7 h-9" : "w-6.5 h-8"
-                        } ${animatedIndex === index ? "animate-slide-in" : ""}`}
-                        src={assets.cards[item - 1]}
+                        className={` ${index !== 0 ? "-ml-3" : ""} ${item == lastCard ? "border-2 border-gold w-7 h-9" : "w-6.5 h-8"
+                            } ${animatedIndex == index + (betResultDataAnnouncement?.number === 2 ? 0 : 1) ? "animate-slide-in" : ""}`}
+                        src={assets.cards[Number(item) - 1]}
                         alt=""
                     />
                 ))}

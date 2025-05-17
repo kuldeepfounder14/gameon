@@ -198,26 +198,26 @@ function Home() {
         return () => clearInterval(intervalId);
     }, [currentIndex, notes]);
     const winningData = [
-        { id: 1, avatar: person1, gameImage: gamecategorycasino, name: "Mem***CQF", amount: "₹600.00" },
-        { id: 2, avatar: person2, gameImage: lotterycategorywingo, name: "Mem***CDM", amount: "₹95.00" },
-        { id: 3, avatar: person3, gameImage: lotterycategorytrx, name: "Mem***JVW", amount: "₹540.00" },
-        { id: 4, avatar: person4, gameImage: gamecategorycasino, name: "Mem***QGS", amount: "₹170.00" },
-        { id: 5, avatar: person5, gameImage: gamecategorycasino, name: "Mem***UUQ", amount: "₹600.00" },
-        { id: 6, avatar: person6, gameImage: gamecategorycasino, name: "Mem***GTR", amount: "₹85.00" },
-        { id: 7, avatar: person7, gameImage: lotterycategorywingo, name: "Mem***WTY", amount: "₹430.00" },
-        { id: 8, avatar: person8, gameImage: gamecategorycasino, name: "Mem***HSD", amount: "₹190.00" },
-        { id: 9, avatar: person9, gameImage: lotterycategorytrx, name: "Mem***JKL", amount: "₹310.00" },
-        { id: 10, avatar: person10, gameImage: gamecategorycasino, name: "Mem***PQR", amount: "₹725.00" },
-        { id: 11, avatar: person11, gameImage: gamecategorycasino, name: "Mem***XYZ", amount: "₹245.00" },
-        { id: 12, avatar: person12, gameImage: lotterycategorywingo, name: "Mem***AAA", amount: "₹560.00" },
-        { id: 13, avatar: person13, gameImage: lotterycategorytrx, name: "Mem***BBB", amount: "₹670.00" },
-        { id: 14, avatar: person14, gameImage: gamecategorycasino, name: "Mem***CCC", amount: "₹380.00" },
-        { id: 15, avatar: person15, gameImage: lotterycategorywingo, name: "Mem***DDD", amount: "₹290.00" },
-        { id: 16, avatar: person16, gameImage: lotterycategorytrx, name: "Mem***EEE", amount: "₹820.00" },
-        { id: 17, avatar: person17, gameImage: lotterycategorytrx, name: "Mem***FFF", amount: "₹430.00" },
-        { id: 18, avatar: person18, gameImage: lotterycategorytrx, name: "Mem***GGG", amount: "₹600.00" },
-        { id: 19, avatar: person19, gameImage: gamecategorycasino, name: "Mem***HHH", amount: "₹950.00" },
-        { id: 20, avatar: person20, gameImage: gamecategorycasino, name: "Mem***III", amount: "₹110.00" },
+        { id: 1, avatar: person1, gameImage: gamecategorycasino, name: "Mem***CQF", amount: "600.00" },
+        { id: 2, avatar: person2, gameImage: lotterycategorywingo, name: "Mem***CDM", amount: "95.00" },
+        { id: 3, avatar: person3, gameImage: lotterycategorytrx, name: "Mem***JVW", amount: "540.00" },
+        { id: 4, avatar: person4, gameImage: gamecategorycasino, name: "Mem***QGS", amount: "170.00" },
+        { id: 5, avatar: person5, gameImage: gamecategorycasino, name: "Mem***UUQ", amount: "600.00" },
+        { id: 6, avatar: person6, gameImage: gamecategorycasino, name: "Mem***GTR", amount: "85.00" },
+        { id: 7, avatar: person7, gameImage: lotterycategorywingo, name: "Mem***WTY", amount: "430.00" },
+        { id: 8, avatar: person8, gameImage: gamecategorycasino, name: "Mem***HSD", amount: "190.00" },
+        { id: 9, avatar: person9, gameImage: lotterycategorytrx, name: "Mem***JKL", amount: "310.00" },
+        { id: 10, avatar: person10, gameImage: gamecategorycasino, name: "Mem***PQR", amount: "725.00" },
+        { id: 11, avatar: person11, gameImage: gamecategorycasino, name: "Mem***XYZ", amount: "245.00" },
+        { id: 12, avatar: person12, gameImage: lotterycategorywingo, name: "Mem***AAA", amount: "560.00" },
+        { id: 13, avatar: person13, gameImage: lotterycategorytrx, name: "Mem***BBB", amount: "670.00" },
+        { id: 14, avatar: person14, gameImage: gamecategorycasino, name: "Mem***CCC", amount: "380.00" },
+        { id: 15, avatar: person15, gameImage: lotterycategorywingo, name: "Mem***DDD", amount: "290.00" },
+        { id: 16, avatar: person16, gameImage: lotterycategorytrx, name: "Mem***EEE", amount: "820.00" },
+        { id: 17, avatar: person17, gameImage: lotterycategorytrx, name: "Mem***FFF", amount: "430.00" },
+        { id: 18, avatar: person18, gameImage: lotterycategorytrx, name: "Mem***GGG", amount: "600.00" },
+        { id: 19, avatar: person19, gameImage: gamecategorycasino, name: "Mem***HHH", amount: "950.00" },
+        { id: 20, avatar: person20, gameImage: gamecategorycasino, name: "Mem***III", amount: "110.00" },
     ];
     useEffect(() => {
         const intervalId = setInterval(() => {
@@ -472,7 +472,7 @@ function Home() {
                                 </div>
                                 <img className="w-16" src={no2badge} alt="ds" />
                                 <p className="text-xsm text-white font-bold z-10 mt-3">Mem***566</p>
-                                <p className="text-xsm mt-1 xs:mt-2 font-bold z-10 rounded-full w-full py-1 text-center text-white bg-gradient-to-l from-[#4673cf] to-[#374a93]">₹588,900.00</p>
+                                <p className="text-xsm mt-1 xs:mt-2 font-bold z-10 rounded-full w-full py-1 text-center text-white bg-gradient-to-l from-[#4673cf] to-[#374a93]">588,900.00</p>
                             </div>
                             <div className="-mb-[5.6rem] xs:-mb-[6rem] xsm:-mb-[6rem] flex flex-col justify-center items-center w-[40%]">
                                 <div className=" object-fill -mb-2 flex items-center justify-center bg-cover w-16 h-16"
@@ -490,7 +490,7 @@ function Home() {
                                 </div>
                                 <img className="z-30 w-16" src={no1badge} alt="ds" />
                                 <p className="text-xsm text-white z-30 font-bold mt-3">Mem***387</p>
-                                <p className="text-xsm mt-2 font-bold z-30 rounded-full px-3 py-1 text-center text-white bg-gradient-to-l from-[#4673cf] to-[#374a93]">₹2,853,503.00</p>
+                                <p className="text-xsm mt-2 font-bold z-30 rounded-full px-3 py-1 text-center text-white bg-gradient-to-l from-[#4673cf] to-[#374a93]">2,853,503.00</p>
                             </div>
                             <div className="-mb-[7rem] xs:-mb-[7.2rem] xsm:-mb-[7rem] flex flex-col justify-center items-center w-[30%]">
                                 <div className="object-fill -mb-2 flex items-center justify-center bg-cover w-16 h-16"
@@ -508,7 +508,7 @@ function Home() {
                                 </div>
                                 <img className="w-16" src={no3badge} alt="ds" />
                                 <p className="text-xsm text-white z-30 font-bold mt-3">Mem***453</p>
-                                <p className="text-xsm mt-2 font-bold z-30 rounded-full w-full py-1 text-center text-white bg-gradient-to-l from-[#4673cf] to-[#374a93] ">₹240,438.00</p>
+                                <p className="text-xsm mt-2 font-bold z-30 rounded-full w-full py-1 text-center text-white bg-gradient-to-l from-[#4673cf] to-[#374a93] ">240,438.00</p>
                             </div>
                         </div>
                         <img className="object-fill mt-3" src={DailyProfitRankStage} alt="sd" />
@@ -524,7 +524,7 @@ function Home() {
                                     <p className="text-xsm font-semibold">Mem***879</p>
                                 </div>
                             </div>
-                            <p className="text-xsm mt-2 font-bold rounded-full px-7 py-1 text-center text-white bg-gradient-to-l from-[#4673cf] to-[#374a93]">₹85,467.00</p>
+                            <p className="text-xsm mt-2 font-bold rounded-full px-7 py-1 text-center text-white bg-gradient-to-l from-[#4673cf] to-[#374a93]">85,467.00</p>
                         </div>
                         <div className="w-full flex items-center mt-2 justify-between text-black rounded-md bg-customdarkBlue shadow-lg p-2">
                             <div className="flex items-center text-white gap-4">
@@ -538,7 +538,7 @@ function Home() {
                                     <p className="text-xsm font-semibold">Mem***113</p>
                                 </div>
                             </div>
-                            <p className="text-xsm mt-2 font-bold rounded-full px-7 py-1 text-center text-white bg-gradient-to-l from-[#4673cf] to-[#374a93]">₹80,928.00</p>
+                            <p className="text-xsm mt-2 font-bold rounded-full px-7 py-1 text-center text-white bg-gradient-to-l from-[#4673cf] to-[#374a93]">80,928.00</p>
                         </div>
 
                     </div>

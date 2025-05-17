@@ -54,13 +54,11 @@ function PlinkoHome() {
             // console.log("index1", i)
         } else if (index > 0 && index <= 13) {
             i = index
-            // i = index
-            // console.log("index2", i)
         } else if (index === 0) {
             i = 1
         } else {
             i = 13
-            // console.log("index3", i)
+           
         }
         const payload1 = {
             userid: userId,
@@ -72,9 +70,6 @@ function PlinkoHome() {
             const res1 = await axios.post(`${apis?.plinko_multiplier}`, payload1)
             // console.log("response betMulitiplierHandler", res1)
             if (res1?.data?.status === 200 || res1?.data?.status === "200") {
-                // toast.success(res1?.data?.message, {
-                //     className: 'custom-toast custom-toast-success',
-                // });
                 setProfileRefresher({ first: false, second: true })
                 setAnnoucment(true)
                 setTimeout(() => {
@@ -82,7 +77,6 @@ function PlinkoHome() {
                 }, 500);
             }
         } catch (err) {
-            // console.log("errrrro mulitiii", err)
             if (err?.response?.data?.status === 500) {
                 console.log("err", err)
             } else {
@@ -95,13 +89,9 @@ function PlinkoHome() {
         }
     }
 
-    // bet and drop ball handler 
     const betAndDropBallHandler = async (id) => {
         setballDropped(false)
-        // console.log("ididid", id)
         setBetAndDrop({ betStatus: false, id: null });
-        // setBetStatus(true);
-        // setBetId(id);
         const payload = {
             userid: userId,
             game_id: "11",
@@ -113,12 +103,10 @@ function PlinkoHome() {
             const res1 = await axios.post(`${apis?.plinko_bet}`, payload);
 
             if (res1?.data?.status === 200 || res1?.data?.status === "200") {
-                // toast.success(res1?.data?.message, {
-                //     className: 'custom-toast custom-toast-success',
-                // })
+
                 setProfileRefresher({ first: true, second: false })
                 setTimeout(() => {
-                    setBetAndDrop({ betStatus: true, id }); // Set new bet after reset
+                    setBetAndDrop({ betStatus: true, id }); 
                     setProfileRefresher({ first: true, second: false })
                 }, 500);
             }
@@ -133,16 +121,12 @@ function PlinkoHome() {
             }
         }
     }
-    // console.log("betAndDrop", lastResults)
-
     const getNmberListHnadler = async () => {
         try {
             const res1 = await axios.get(`${apis?.plinko_index_list}1`)
             const res2 = await axios.get(`${apis?.plinko_index_list}2`)
             const res3 = await axios.get(`${apis?.plinko_index_list}3`)
-            // console.log("response",res1)
-            // console.log("response",res2)
-            // console.log("response",res3)
+          
             if (res1?.data?.status === 200 && res2?.data?.status === 200 && res3?.data?.status === 200) {
                 setGetNumbersList({ data1: res1?.data?.data, data2: res2.data?.data, data3: res3?.data?.data })
             }
@@ -155,16 +139,12 @@ function PlinkoHome() {
         }
     }
     const getLastFiveResults = async () => {
-        // console.log("55555555")
         try {
             const res1 = await axios.get(`${apis?.plinko_result}${userId}`)
-
-            // console.log("response",res1)
             if (res1?.data?.status === 200 || res1?.data?.status === "200") {
                 setLastResults(res1?.data?.data)
             }
         } catch (err) {
-
             if (err?.response?.data?.status === 500) {
                 console.log("err", err)
             } else {
@@ -173,7 +153,6 @@ function PlinkoHome() {
             }
         }
     }
-    // console.log("getNumbersListgetNumbersListgetNumbersList", lastResults)
     useEffect(() => {
         getNmberListHnadler()
         getLastFiveResults()
@@ -185,16 +164,12 @@ function PlinkoHome() {
     }, [profileRefresher?.second])
     useEffect(() => {
         if (ballDropped && betId !== null) {
-            // console.log("Ball dropped, calling betMulitiplierHandler...");
             betMulitiplierHandler(betId).then(() => {
-                setTimeout(() => setballDropped(false), 500); // Reset after a delay
+                setTimeout(() => setballDropped(false), 500); 
             });
         }
     }, [ballDropped, betId]);
 
-    // const colors = ["text-[#F85050]", "text-blue-500", "text-green", "text-yellow", "text-purple-500", "text-pink-500"];
-
-    // console.log("openHeightListModal", openHeightListModal)
     useEffect(() => {
         if (announcement) {
             setTimeout(() => {
@@ -213,8 +188,6 @@ function PlinkoHome() {
             </div>}
             <div className='p-1 sm:p-2' >
                 <PlinkoHeader profileRefresher={profileRefresher} setProfileRefresher={setProfileRefresher} />
-                {/* <button onClick={() => betMulitiplierHandler(betAndDrop?.id)}>Bet</button> */}
-
                 <div className="h-8 w-full rounded-2xl bg-[#0D5574] flex items-center pl-2 mt-1 sm:mt-2 ">
                     <div className=' overflow-x-auto hide-scrollbar flex items-center'>
                         {lastResults?.slice(0, 20).map((item, i) => (
@@ -223,7 +196,6 @@ function PlinkoHome() {
                             </div>
                         ))}
                     </div>
-                    {/* <div className="flex-shrink-0"> */}
                     <div className="h-8 w-16 gap-2 bg-[#007C80] rounded-2xl flex items-center justify-between px-1 border-black border-[0.5px] ml-1">
                         <button onClick={() => getLastFiveResults()
                         }>
@@ -232,15 +204,11 @@ function PlinkoHome() {
                         {openHeightListModal ? <button onClick={() => setOpenHeightListModal(false)} className='text-[#F85050]'><IoCaretDownSharp size={20} /> </button> :
                             <button onClick={() => setOpenHeightListModal(true)} className='text-white'><IoCaretUpSharp size={20} /> </button>}
                     </div>
-                    {/* </div> */}
                 </div>
 
             </div>
             <div className='z-10' >
                 {isMobile ? <PlinkoGridMobile betId={betId} setBetId={setBetId} ballDropped={ballDropped} setballDropped={setballDropped} getNumbersList={getNumbersList} betAndDropStatus={betAndDrop?.betStatus} betAndDropId={betAndDrop?.id} setBetAndDrop={setBetAndDrop} /> : <PlinkoGrid betId={betId} setBetId={setBetId} ballDropped={ballDropped} setballDropped={setballDropped} getNumbersList={getNumbersList} betAndDropId={betAndDrop?.id} betAndDropStatus={betAndDrop?.betStatus} setBetAndDrop={setBetAndDrop} />}
-
-                {/* <PlinkoGridTest/> */}
-                {/* <Kdtest/> */}
             </div>
 
             {/* bet button */}
@@ -289,9 +257,7 @@ function PlinkoHome() {
                                 <div key={i} className={`px-2 min-w-[40px] text-center bg-${item?.type === 1 ? "green" : item?.type === 2 ? "yellow" : item?.type === 3 ? "[#F85050]" : "black"} text-white rounded-full mx-1`}>
                                     {item?.multipler}
                                 </div>
-                                // <div key={i} className="px-2 min-w-[40px] text-center bg-yellow text-white rounded-full mx-1">
-                                //     {item?.multipler}
-                                // </div>
+                               
                             ))}
                         </div>
                     </div>
@@ -306,9 +272,6 @@ function PlinkoHome() {
                                 <div key={i} className={`px-2 min-w-[40px] text-center bg-${item?.type === 1 ? "green" : item?.type === 2 ? "yellow" : item?.type === 3 ? "[#F85050]" : "black"} text-white rounded-full mx-1`}>
                                     {item?.multipler}
                                 </div>
-                                // <div key={i} className="px-2 min-w-[40px] text-center bg-yellow text-white rounded-full mx-1">
-                                //     {item?.multipler}
-                                // </div>
                             ))}
                         </div>
                     </div>

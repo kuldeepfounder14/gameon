@@ -32,7 +32,6 @@ import { RiFireFill } from 'react-icons/ri';
 import Header from '../../components/Header';
 import { useSocket } from "../../shared/socket/SocketContext"
 import WingoRules from './WingoRules';
-import Connection from '../../features/ethereum/Connection';
 const profileApi = apis.profile
 const wingo_bet_api = apis.wingo_bet
 const wingo_my_history = apis.wingo_my_history
@@ -45,15 +44,6 @@ const notes = [
   "Notice:To visit our official website, be sure to use the link below,https://usawin.com / Please re",
 ];
 const WinGo = () => {
-  const {
-    currentAccount,
-    connectWallet,
-    balance,
-    tokenSymbol,
-    betAmount,
-    setBetAmount,
-    placeBet,
-  } = Connection();
   const [myDetails, setMyDetails] = useState(null)
   const [betGameId, setBetGameId] = useState(null);
   const [selectedIMgIndex, setSelectedImgIndex] = useState("30s");
@@ -86,7 +76,7 @@ const WinGo = () => {
   const { timers, setEventName } = useSocket();
 
   useEffect(() => {
-    setEventName("gbclub");
+    setEventName("admingameon");
   }, [setEventName]);
   useEffect(() => {
     const selectedTime =
@@ -108,10 +98,6 @@ const WinGo = () => {
     }
   }, [timeLeft]);
 
-  // ethereum connection
-  useEffect(() => {
-    connectWallet()
-  }, [])
   const audioRef = useRef(null);
   const [isAudioOn, setIsAudioOn] = useState(true)
   const userId = localStorage.getItem("userId");
@@ -230,7 +216,6 @@ const WinGo = () => {
     if (fifthDivRef.current) {
       setFifthDivWidth(fifthDivRef.current.offsetWidth);
     }
-
   }, []);
 
   const profileDetails = async () => {
@@ -271,7 +256,7 @@ const WinGo = () => {
           console.log("resp 3030", resp)
           if (resp?.data?.status === 200) {
             console.log("res 1", resp)
-            toast.success(`You ${resp?.data?.data?.result} ${resp?.data?.data?.win} for 30s`)
+            // toast.success(`You ${resp?.data?.data?.result} ${resp?.data?.data?.win} for 30s`)
             const data = resp?.data?.data;
             setModalData(data);
             setIsModalVisible(true);
@@ -477,7 +462,7 @@ const WinGo = () => {
             >
 
               <div className='flex justify-center gap-8 items-center'>
-                <p className='font-semibold text-xl'><b className='text-xl'>₹</b> &nbsp;{balance} {tokenSymbol}</p>
+                <p className='font-semibold text-xl'><b className='text-xl'></b> &nbsp;{myDetails?.wallet?.toFixed(2)}</p>
                 <button onClick={profileDetails}>
                   <HiArrowPathRoundedSquare size={20} className='text-gray ' />
                 </button>
@@ -687,11 +672,10 @@ const WinGo = () => {
         {/* bet modal */}
         {betModal && !false && (
           <div className="relative z-50">
-            <LotteryBetModal placeBetEthereum={placeBet} ethereumBalance={balance} gameHistoryData={gameHistoryData} setIsBetDone={setIsBetDone} profileDetails={profileDetails} myHistory={myHistory} bet_api={wingo_bet_api} gameDetails={gameDetails} onClose={() => setBetModal(false)} />
+            <LotteryBetModal gameHistoryData={gameHistoryData} setIsBetDone={setIsBetDone} profileDetails={profileDetails} myHistory={myHistory} bet_api={wingo_bet_api} gameDetails={gameDetails} onClose={() => setBetModal(false)} />
           </div>
         )}
         <WingoRules playRule={playRule} gameDetails={gameDetails} setPlayRule={setPlayRule} />
-
       </div>
     </>
   );

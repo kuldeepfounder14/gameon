@@ -8,7 +8,7 @@ import { toast } from 'react-toastify';
 import { socket } from './AviatorSocket';
 import { use } from 'react';
 import "./index.css"
-import { baseUrlUsaWin } from '../../utils/apis';
+import { configModalUsaWin } from '../../utils/apis';
 
 function BetButtonTwo({ setBtn, setBetApiHitted }) {
     const userId = localStorage.getItem("userId")
@@ -28,8 +28,8 @@ function BetButtonTwo({ setBtn, setBetApiHitted }) {
             setHotAirData(q);
         };
 
-        socket.on("nitish_aviator", handleSocket);
-        return () => socket.off("nitish_aviator", handleSocket);
+        socket.on("admingameon_aviator", handleSocket);
+        return () => socket.off("admingameon_aviator", handleSocket);
     }, []);
     // console.log("hotAirDatahotAirDatahotAirDatahotAirData",hotAirData)
     const handleIncrement = () => setBetAmount((prev) => Number(prev) + 1);
@@ -49,7 +49,7 @@ function BetButtonTwo({ setBtn, setBetApiHitted }) {
         }
         console.log("pYLOAD", payload)
         try {
-            const res = await axios.post(`${baseUrlUsaWin}api/aviator_bet`, payload)
+            const res = await axios.post(`${configModalUsaWin}aviator_bet`, payload)
             // toast.success(res?.data?.message)
             // console.log("betbetebetebete", res)
             if (res?.data?.status === 200) {
@@ -86,7 +86,7 @@ function BetButtonTwo({ setBtn, setBetApiHitted }) {
         }
         // console.log("pYLOAD", payload)
         try {
-            const res = await axios.get(`${baseUrlUsaWin}api/aviator_bet_cancel?userid=${userId}&number=2&gamesno=${sr}`)
+            const res = await axios.get(`${configModalUsaWin}aviator_bet_cancel?userid=${userId}&number=2&gamesno=${sr}`)
             // toast.success(res?.data?.message)
             console.log("cvancelcancelcanel", res)
             if (res?.data?.status === 200) {
@@ -126,7 +126,7 @@ function BetButtonTwo({ setBtn, setBetApiHitted }) {
         const saltEncoded = btoa(JSON.stringify(salt));
         // console.log("saltEncodedsaltEncoded", saltEncoded)
         try {
-            const res = await axios.post(`${baseUrlUsaWin}api/aviator_cashout?salt=${encodeURIComponent(saltEncoded)}`);
+            const res = await axios.post(`${configModalUsaWin}aviator_cashout?salt=${encodeURIComponent(saltEncoded)}`);
             // console.log("cashout", res);
             if (res?.data?.status === 200) {
                 localStorage.setItem("aviatorBet2", "0")
@@ -287,7 +287,7 @@ function BetButtonTwo({ setBtn, setBetApiHitted }) {
                            font-manrope font-extrabold'>BET</p>
                             <p className='[text-shadow:_0_4px_8px_rgb(99_102_241_/_0.8)] 
                            text-white text-xl md:text-2xl leading-snug 
-                           font-manrope font-extrabold'>{betAmount}.00 INR</p>
+                           font-manrope font-extrabold'>{betAmount}.00 </p>
                         </button>
                         {isAuto && <div className="text-xsm xsm:sm flex items-center justify-center gap-1 xsm:gap-2">
                             <div className="text-gray flex items-center justify-start text-nowrap" >Auto Cash Out&nbsp;

@@ -121,7 +121,7 @@ function InvitationBonus() {
                                 </p>
                             </div>
 
-                            <p className="flex items-center text-[#ff8310] text-xsm font-bold">₹{item?.claim_amount}</p>
+                            <p className="flex items-center text-[#ff8310] text-xsm font-bold">{item?.claim_amount}</p>
 
                         </div>
                         <div className='border-border1 border-[0.1px]'></div>
@@ -131,7 +131,7 @@ function InvitationBonus() {
                         </div>
                         <div className='bg-[#374992] text-xsm text-white flex items-center justify-between px-2 mx-2 mt-2 py-1 rounded-md'>
                             <p>Recharge per people</p>
-                            <p className='text-white'>₹{item?.amount}</p>
+                            <p className='text-white'>{item?.amount}</p>
                         </div>
                         <div className='grid grid-cols-2 mt-10 px-2'>
                             <div className='col-span-1 flex flex-col items-center '>

@@ -34,8 +34,8 @@ function AviatorHeader({ betApiHitted, changeBg, setChangeBg, isSoundOn, setIsSo
       setHotAirData(q);
     };
 
-    socket.on("nitish_aviator", handleSocket);
-    return () => socket.off("nitish_aviator", handleSocket);
+    socket.on("admingameon_aviator", handleSocket);
+    return () => socket.off("admingameon_aviator", handleSocket);
   }, []);
   const [isOpen, setIsOpen] = useState(false);
   // const [isSoundOn, setIsSoundOn] = useState(true);
@@ -129,7 +129,7 @@ function AviatorHeader({ betApiHitted, changeBg, setChangeBg, isSoundOn, setIsSo
           <div className="flex bg-yellow rounded-full px-2 py-1 text-white">
             How to play?
           </div>
-          <div className="text-green font-bold">{myDetails?.data?.wallet} </div>INR
+          <div className="text-green font-bold">{myDetails?.data?.wallet} </div>
           {/* Button to toggle modal */}
           <div onClick={toggleModal} className="cursor-pointer">
             <FiAlignJustify size={20} />
@@ -163,7 +163,7 @@ function AviatorHeader({ betApiHitted, changeBg, setChangeBg, isSoundOn, setIsSo
                   <p><IoWallet className="text-gray" size={20} /> </p>
                   <p>Wallet </p>
                 </div>
-                <div>{myDetails?.data?.wallet} INR</div>
+                <div>{myDetails?.data?.wallet} </div>
               </div>
               <div className="flex items-center border-blackAviator4 border-b-[1px] p-3 justify-between">
                 <button onClick={() => setChangeBg({modal:!changeBg?.modal,selectBg:false,image:im})} className="flex items-center gap-3">
@@ -191,7 +191,7 @@ function AviatorHeader({ betApiHitted, changeBg, setChangeBg, isSoundOn, setIsSo
               {/* <div className="h-5 bg-blackAviator4 rounded-b-lg">
 
               </div> */}
-              {/* <p className="text-xs text-gray-500">Wallet: {myDetails?.data?.wallet} INR</p> */}
+              {/* <p className="text-xs text-gray-500">Wallet: {myDetails?.data?.wallet} </p> */}
               <button
                 onClick={toggleModal}
                 className="mt-2 w-full font-bold text-center bg-red-500 text-white py-1 rounded-md text-xs"

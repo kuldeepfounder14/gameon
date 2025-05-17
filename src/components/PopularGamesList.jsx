@@ -15,9 +15,7 @@
 // import deco_four from "../assets/images/deco_four.png";
 import { fetchAllGames, fetchGameURL } from "../reusable_component/gameApi";
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { IoIosArrowForward } from "react-icons/io";
-import viewall from "../assets/usaAsset/homeScreen/viewall.png"
 import lotterycategorywingo from "../assets/usaAsset/homeScreen/lotterycategorywingo.png"
 import lotterycategorytrx from "../assets/usaAsset/homeScreen/lotterycategorytrx.png"
 import alllotterybg from "../assets/usaAsset/homeScreen/alllotterybg.png"
@@ -27,6 +25,9 @@ import d5d from "../assets/usaAsset/homeScreen/d5d.png"
 // import aviatornew from "../assets/usaAsset/homeScreen/aviatornew.png"
 import dragontiger from "../assets/usaAsset/homeScreen/dragontiger.png"
 import Plinko from "../assets/usaAsset/homeScreen/Plinko.png"
+import mines from "../assets/Mines/minesBg.png"
+import hntBg from "../assets/HeadTail/hntBg.png"
+import trx_guc from "../assets/trx_guc.png"
 import andharBahar from "../assets/usaAsset/homeScreen/andharBahar.png"
 import { useNavigate } from "react-router-dom";
 import CasinoGamesList from "./CasinoGamesList";
@@ -35,6 +36,13 @@ import FishingGamesList from "./FishingGamesList";
 import PokerGamesList from "./PokerGamesList";
 import LobbyGamesList from "./LobbyGamesList";
 import MiniGamesList from "./MiniGamesList";
+import keno from "../assets/keno/keno.png"
+import spintowheel from "../assets/spintowheel/spintowheel.png"
+import dice from "../assets/dice.png"
+import redBlack from "../assets/redBlack.jpeg"
+import updown from "../assets/updown.png"
+import jhndimunda_gamelogo from "../assets/jhndimunda_gamelogo.png"
+import hilo from "../assets/hilo.png"
 function PopularGamesList() {
   const navigate = useNavigate()
   // const [loading, setLoading] = useState(false);
@@ -49,24 +57,31 @@ function PopularGamesList() {
 
   const games = [
     { id: 1, name: "Win Go", bgimage: alllotterybg, image: lotterycategorywingo, route: "/lottery/wingo", description1: "Guess Number", description2: "Green/Red/Violet to win", bgColor: "bg-gradient-to-l from-[#ff9a8e] to-[#f95959]" },
-    { id: 2, name: "Trx Win Go", bgimage: alllotterybg, image: lotterycategorytrx, route: "/lottery/trxwingo", description1: "Guess Number", description2: "Green/Red/Violet to win", bgColor: "bg-gradient-to-l from-[#ff9a8e] to-[#f95959]" },
-    { id: 3, name: "K3 ", bgimage: alllotterybg, image: k3, route: "/lottery/k3", description1: "Guess Number", description2: "Green/Red/Violet to win", bgColor: "bg-gradient-to-l from-[#ff9a8e] to-[#f95959]" },
+    { id: 2, name: "GUC", bgimage: trx_guc, image: lotterycategorytrx, route: "/lottery/trxwingo", description1: "Guess Number", description2: "Green/Red/Violet to win", bgColor: "bg-gradient-to-l from-[#ff9a8e] to-[#f95959]" },
+    // { id: 3, name: "K3 ", bgimage: alllotterybg, image: k3, route: "/lottery/k3", description1: "Guess Number", description2: "Green/Red/Violet to win", bgColor: "bg-gradient-to-l from-[#ff9a8e] to-[#f95959]" },
     // { id: 4, name: "5D", bgimage: alllotterybg, image: d5d, route: "/comingsoon", description1: "Guess Number", description2: "Green/Red/Violet to win", bgColor: "bg-gradient-to-l from-[#ff9a8e] to-[#f95959]" },
   ];
 
   const hotgames = [
-    { id: 1, name: "Andar Bahar ", bgimage: andharBahar, image: k3, route: "/andarbahar", description1: "Guess Number", description2: "Green/Red/Violet to win", bgColor: "bg-gradient-to-l from-[#ff9a8e] to-[#f95959]" },
-    { id: 2, name: "Dragon Tiger", bgimage: dragontiger, image: d5d, route: "/dragonTiger", description1: "Guess Number", description2: "Green/Red/Violet to win", bgColor: "bg-gradient-to-l from-[#ff9a8e] to-[#f95959]" },
-    { id: 3, name: "Avaitor", bgimage: aviatornew, image: lotterycategorywingo, route: "/aviator", description1: "Guess Number", description2: "Green/Red/Violet to win", bgColor: "bg-gradient-to-l from-[#ff9a8e] to-[#f95959]" },
-    { id: 4, name: "Plinko", bgimage: Plinko, image: lotterycategorytrx, route: "/plinko", description1: "Guess Number", description2: "Green/Red/Violet to win", bgColor: "bg-gradient-to-l from-[#ff9a8e] to-[#f95959]" },
+    { id: 1, name: "In Out ", bgimage: andharBahar, image: andharBahar, route: "/andarbahar", description1: "Guess Number", description2: "Green/Red/Violet to win", bgColor: "bg-gradient-to-l from-[#ff9a8e] to-[#f95959]" },
+    { id: 2, name: "Dragon Tiger", bgimage: dragontiger, image: dragontiger, route: "/dragonTiger", description1: "Guess Number", description2: "Green/Red/Violet to win", bgColor: "bg-gradient-to-l from-[#ff9a8e] to-[#f95959]" },
+    { id: 3, name: "Avaitor", bgimage: aviatornew, image: aviatornew, route: "/aviator", description1: "Guess Number", description2: "Green/Red/Violet to win", bgColor: "bg-gradient-to-l from-[#ff9a8e] to-[#f95959]" },
+    { id: 4, name: "Plinko", bgimage: Plinko, image: Plinko, route: "/plinko", description1: "Guess Number", description2: "Green/Red/Violet to win", bgColor: "bg-gradient-to-l from-[#ff9a8e] to-[#f95959]" },
+    { id: 5, name: "Mines", bgimage: mines, image: mines, route: "/mines", description1: "Guess Number", description2: "Green/Red/Violet to win", bgColor: "bg-gradient-to-l from-[#ff9a8e] to-[#f95959]" },
+    { id: 6, name: "Head n Tails", bgimage: hntBg, image: hntBg, route: "/headsntails", description1: "Guess Number", description2: "Green/Red/Violet to win", bgColor: "bg-gradient-to-l from-[#ff9a8e] to-[#f95959]" },
+    { id: 7, name: "Keno", bgimage: keno, image: keno, route: "/keno", description1: "Guess Number", description2: "Green/Red/Violet to win", bgColor: "bg-gradient-to-l from-[#ff9a8e] to-[#f95959]" },
+    { id: 8, name: "Spin To Wheel", bgimage: spintowheel, image: spintowheel, route: "/spintowheel", description1: "Guess Number", description2: "Green/Red/Violet to win", bgColor: "bg-gradient-to-l from-[#ff9a8e] to-[#f95959]" },
+    { id: 9, name: "Dice", bgimage: dice, image: dice, route: "/dice", description1: "Guess Number", description2: "Green/Red/Violet to win", bgColor: "bg-gradient-to-l from-[#ff9a8e] to-[#f95959]" },
+    { id: 10, name: "Red vs Black", bgimage: redBlack, image: redBlack, route: "/rednblack", description1: "Guess Number", description2: "Green/Red/Violet to win", bgColor: "bg-gradient-to-l from-[#ff9a8e] to-[#f95959]" },
+    { id: 11, name: "Seven up down", bgimage: updown, image: updown, route: "/sevenupdown", description1: "Guess Number", description2: "Green/Red/Violet to win", bgColor: "bg-gradient-to-l from-[#ff9a8e] to-[#f95959]" },
+    { id: 12, name: "Jhandi Munda", bgimage: jhndimunda_gamelogo, image: jhndimunda_gamelogo, route: "/jhandimunda", description1: "Guess Number", description2: "Green/Red/Violet to win", bgColor: "bg-gradient-to-l from-[#ff9a8e] to-[#f95959]" },
+    { id: 13, name: "HiLo", bgimage: hilo, image: hilo, route: "/hilo", description1: "Guess Number", description2: "Green/Red/Violet to win", bgColor: "bg-gradient-to-l from-[#ff9a8e] to-[#f95959]" },
   ];
   // console.log("allGamesListView?.data?.casino?.length", allGamesListView)
   return (
     <>
-
       <div className="flex items-center justify-between gap-2 w-full  pr-2">
         <div className="flex items-center gap-2">
-
           <div className="h-7 w-2 bg-customlightbtn gap-2  rounded-[2px] flex items-center"> </div>
           <div className="text-[16px] font-extrabold">Lottery</div>
         </div>
@@ -81,9 +96,6 @@ function PopularGamesList() {
             </div>
           </div>
         </div>
-
-
-
       </div>
       <div className="grid grid-cols-2 w-full pr-2 gap-2 pt-2">
         {games.length > 0 ? (
@@ -95,13 +107,13 @@ function PopularGamesList() {
                 backgroundImage: `url(${item?.bgimage})`,
                 backgroundPosition: "center",
               }}
-              className="flex flex-col items-center text-black p-2 h-[180px] w-full rounded-lg cursor-pointer"
+              className="flex flex-col bg-contain bg-center bg-no-repeat items-center text-black p-2 h-[180px] w-full rounded-lg cursor-pointer"
             >
               <div className="text-[18px] font-serif font-bold text-white">
                 {item.name}
               </div>
               <div className="h-16 w-16 pt-5">
-                <img className="" src={item.image} alt="" />
+                <img className="object-fill" src={item.image} alt="" />
               </div>
               <div className="pt-12 pl-20">
                 <div className="h-5 w-16 rounded-xl border-[0.5px] flex items-center justify-center text-[16px] text-white font-serif font-extrabold p-2">
@@ -133,14 +145,9 @@ function PopularGamesList() {
               <div className="text-[12px] text-customlightbtn pl-1 ">{hotgames?.length}</div>
               <div className="text-[12px] text-lightGray "> <IoIosArrowForward />
               </div>
-
-
             </div>
           </div>
         </div>
-
-
-
       </div>
       <div className="grid grid-cols-2 w-full pr-2 gap-2 pt-2">
 
@@ -149,15 +156,11 @@ function PopularGamesList() {
           hotgames.map((item,) => (
             <div
               key={item.id}
-              onClick={() => navigate(item.route)} className=" flex flex-col items-center text-black p-2  h-[180px] w-full  rounded-lg" alt="sd">
-
-              <img className="h-[180px] w-full  rounded-lg" src={item.bgimage} alt="" />
-
-
+              onClick={() => navigate(item.route)} className=" flex flex-col items-center text-black px-2   h-[165px] w-full  rounded-lg" alt="sd">
+              <img className="h-full w-full  rounded-lg" src={item.bgimage} alt="" />
             </div>
           )))
           : (
-
             <div className="flex items-center justify-center text-black text-xl w-full col-span-3">No data</div>
           )}
         {/* </div>         */}

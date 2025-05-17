@@ -627,7 +627,7 @@ const KThreeHome = () => {
               }}
             >
               <div className='flex justify-center gap-8 items-center'>
-                <p className='font-semibold text-xl'><b className='text-xl'>₹</b> &nbsp;{myDetails?.wallet.toFixed(2)}</p>
+                <p className='font-semibold text-xl'><b className='text-xl'></b> &nbsp;{myDetails?.wallet.toFixed(2)}</p>
                 <button onClick={profileDetails}>
                   <HiArrowPathRoundedSquare size={20} className='text-lightGray ' />
                 </button>
@@ -916,8 +916,8 @@ const KThreeHome = () => {
 
                 <p className="font-bold">Handling Fee:</p>
                 <p>
-                  A 2% handling fee is charged on all single bets. For example, if you bet ₹100, after
-                  deducting the fee, the actual betting amount will be ₹98.
+                  A 2% handling fee is charged on all single bets. For example, if you bet 100, after
+                  deducting the fee, the actual betting amount will be 98.
                 </p>
 
                 <p className="font-bold">Odds:</p>
@@ -970,8 +970,8 @@ const KThreeHome = () => {
 
                 <p className="font-bold">Handling Fee:</p>
                 <p>
-                  A 2% handling fee is charged on all single bets. For example, if you bet ₹100, after
-                  deducting the fee, the actual betting amount will be ₹98.
+                  A 2% handling fee is charged on all single bets. For example, if you bet 100, after
+                  deducting the fee, the actual betting amount will be 98.
                 </p>
 
                 <p className="font-bold">Odds:</p>
@@ -1024,8 +1024,8 @@ const KThreeHome = () => {
 
                 <p className="font-bold">Handling Fee:</p>
                 <p>
-                  A 2% handling fee is charged on all single bets. For example, if you bet ₹100, after
-                  deducting the fee, the actual betting amount will be ₹98.
+                  A 2% handling fee is charged on all single bets. For example, if you bet 100, after
+                  deducting the fee, the actual betting amount will be 98.
                 </p>
 
                 <p className="font-bold">Odds:</p>

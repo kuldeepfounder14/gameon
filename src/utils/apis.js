@@ -1,15 +1,9 @@
 // const baseUrlTirangaWin = "https://root.tirangawin.club/";
 // const configModalTirangaWin = `${baseUrlTirangaWin}api/`
 // import REACT_APP_API_URL from ""
-export const baseUrlUsaWin =import.meta.env.VITE_API_URL;
-
-;
-const configModalUsaWin = `${baseUrlUsaWin}/api/`
-// const baseUrlmobileappdemo = "https://tiranga.mobileappdemo.net/";
-// const configModalMobileappdemo = `${baseUrlmobileappdemo}api/`
-
-// const baseUrlCodingjourney = "// https://root.codingjourney.in/";
-// const configModalCodingjourney = `${baseUrlCodingjourney}api/`
+// export const baseUrlUsaWin =import.meta.env.VITE_API_URL;
+export const baseUrlUsaWin = "https://root.gameon.deals";
+export const configModalUsaWin = `${baseUrlUsaWin}/api/`
 
 const apis = {
   sendOtp: "https://otp.fctechteam.org/send_otp.php?mode=live&digit=4&mobile=",
@@ -20,12 +14,31 @@ const apis = {
   profile: `${configModalUsaWin}profile?id=`,
   changePassword: `${configModalUsaWin}changePassword`,
   fundTransfer: `${configModalUsaWin}main_wallet_transfers`,
+
+  //spin to wheel game urls
+  spin_bet: `${configModalUsaWin}spin/bet`,
+  spin_result: `${configModalUsaWin}spin/result`,
+  spin_betHistory: `${configModalUsaWin}spin/bet_history`,
+  // keno_multiplier: `${configModalUsaWin}keno_multiplier`,
+
+  //keno game urls
+  keno_bet: `${configModalUsaWin}keno-bet`,
+  keno_result: `${configModalUsaWin}keno_result`,
+  keno_betHistory: `${configModalUsaWin}keno-bet-history`,
+  keno_multiplier: `${configModalUsaWin}keno_multiplier`,
+  keno_win_amount: `${configModalUsaWin}keno-win-amount`,
+
   //plinko game urls
   plinko_bet: `${configModalUsaWin}plinko_bet`,
   plinko_index_list: `${configModalUsaWin}plinko_index_list?type=`,
   plinko_result: `${configModalUsaWin}plinko_result?userid=`,
   plinko_multiplier: `${configModalUsaWin}plinko_multiplier`,
 
+  //heads n tails game urls
+  headsntails_bet: `${configModalUsaWin}bets`,
+  headsntails_history: `${configModalUsaWin}bet_history`,
+  headsntails_result: `${configModalUsaWin}results?game_id=14&limit=8`,
+  results_api_sno: `${configModalUsaWin}results?game_id=14&limit=1`,
 
   wingo_bet: `${configModalUsaWin}bets`,
   wingo_my_history: `${configModalUsaWin}bet_history`,
@@ -33,10 +46,38 @@ const apis = {
   wingo_win_amount_announcement: `${configModalUsaWin}win-amount`,
   get_result_trx: `${configModalUsaWin}get_result`,
 
+  mines_bet: `${configModalUsaWin}mine_bet`,
+  mines_cashout: `${configModalUsaWin}mine_cashout`,
+  mines_result: `${configModalUsaWin}mine_result?userid=`,
+  mines_multiplier: `${configModalUsaWin}mine_multiplier`,
 
   dragon_bet: `${configModalUsaWin}dragon_bet`,
   dragonBet_history: `${configModalUsaWin}bet_history`,
   dragonResults: `${configModalUsaWin}results`,
+
+  dice_bet: `${configModalUsaWin}dragon_bet`,
+  dice_Bet_history: `${configModalUsaWin}bet_history`,
+  dice_Results: `${configModalUsaWin}results`,
+  dice_win_amount: `${configModalUsaWin}win-amount`,
+
+  rednblack_bet: `${configModalUsaWin}dragon_bet`,
+  rednblack_Bet_history: `${configModalUsaWin}bet_history`,
+  rednblack_Results: `${configModalUsaWin}results`,
+  rednblack_win_amount: `${configModalUsaWin}win-amount`,
+  // seven up down
+  sevenUpDown_bet: `${configModalUsaWin}dragon_bet`,
+  sevenUpDown_Bet_history: `${configModalUsaWin}bet_history`,
+  sevenUpDown_Results: `${configModalUsaWin}results`,
+  sevenUpDown_win_amount: `${configModalUsaWin}win-amount`,
+  // jhand munda
+  jhandiMunda_bet: `${configModalUsaWin}dragon_bet`,
+  jhandiMunda_Bet_history: `${configModalUsaWin}bet_history`,
+  jhandiMunda_Results: `${configModalUsaWin}results`,
+  jhandiMunda_win_amount: `${configModalUsaWin}win-amount`,
+
+  // high low 
+  high_low_bet: `${configModalUsaWin}high_low_bet`,
+
 
   payin_deposit: `${configModalUsaWin}payin`,
   payin_deposit_usdt: `${configModalUsaWin}usdt_payin`,
@@ -98,24 +139,25 @@ const apis = {
 export default apis
 
 
-
-// https://k3games.mobileappdemo.net/api/bet
-
+// [13:54, 10/5/2025] Akhilesh K Yadav FC: https://admin.gameon.deals/api/spin/bet
 // {
-//   "userid": 1,
-//   "game_id": 18,
-//   "gamesno":"111111",
+//   "user_id": 1,
 //   "bets": [
 //     {
-//       "number": 222,
-//       "amount": 200
+//       "game_id": 1,
+//       "amount": 5
 //     },
 //     {
-//       "number": 77,
-//       "amount": 120
+//       "game_id": 2,
+//       "amount": 30
 //     }
 //   ]
 // }
 
-//https://k3games.mobileappdemo.net/api/bet_history?userid=2&game_id=18&limit_offset=2
-//https://k3games.mobileappdemo.net/api/bet_result?userid=2&game_id=18&limit_offset=5
+
+// https://admin.gameon.deals/api/spin/bet_history?user_id=1&limit=4
+
+// https://admin.gameon.deals/api/spin/result?user_id=1
+
+// @Er. Kuldeep Verma🤔  spin2win gameon.deals api
+// [13:55, 10/5/2025] Akhilesh K Yadav FC: spinto win event name- gameon_spin

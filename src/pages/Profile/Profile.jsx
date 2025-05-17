@@ -164,7 +164,7 @@ function Profile() {
                     </div>
                     <div className="absolute bg-customdarkBlue shadow-lg left-3 right-3 top-40 px-3 pt-3 pb-6 rounded-md text-sm ">
                         <h1 className='text-white '>Total balance</h1>
-                        <p className='flex items-center font-bold text-white'> <b className='text-xl'>₹</b>  {myDetails ? Number(myDetails?.data?.wallet + myDetails?.data?.third_party_wallet).toFixed(2) : "0.00"} &nbsp;
+                        <p className='flex items-center font-bold text-white'> <b className='text-xl'></b>  {myDetails ? Number(myDetails?.data?.wallet + myDetails?.data?.third_party_wallet).toFixed(2) : "0.00"} &nbsp;
                          <span><HiMiniArrowPathRoundedSquare onClick={() => profileDetails(userId)} className='text-white text-xl' />
                         </span></p>
                         <div className='w-full bg-border1 mt-3 h-[1px]'></div>

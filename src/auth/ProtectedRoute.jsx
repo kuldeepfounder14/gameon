@@ -18,13 +18,13 @@ const ProtectedRoute = ({ children }) => {
       const response = await axios.get(`${apis.profile}${userid}`);
       const profileToken = response?.data?.data?.login_token;
       if (response?.data?.success === 423) {
-        console.log("blocked")
+        // console.log("blocked")
         handleLogout();
       } else if (response?.data?.success === 200 && profileToken === loginTokenFromLocalStorage) {
-        console.log("not blocked")
+        // console.log("not blocked")
         setTokenChecker(true);
       } else {
-        console.log('something went wrong')
+        // console.log('something went wrong')
         handleLogout();
       }
     } catch (e) {
@@ -35,7 +35,7 @@ const ProtectedRoute = ({ children }) => {
   };
 
   const handleLogout = () => {
-    console.log("Logging out...");
+    // console.log("Logging out...");
     localStorage.removeItem("userId");
     localStorage.removeItem("login_token");
     sessionStorage.clear();

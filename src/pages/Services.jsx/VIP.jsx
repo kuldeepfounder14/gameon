@@ -265,7 +265,7 @@ function VIP() {
                           Dear {item?.name} customer
                         </div>
                         <div className="border-white py-1 text-xs rounded mt-2 px-4">
-                          Bet ₹1=1EXP
+                          Bet 1=1EXP
                         </div>
                       </div>
                       <div className="flex items-center w-full justify-end">

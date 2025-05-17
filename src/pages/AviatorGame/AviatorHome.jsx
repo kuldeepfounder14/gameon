@@ -8,7 +8,7 @@ import { IoCaretDownSharp, IoCaretUpSharp } from "react-icons/io5";
 import { GrRefresh } from "react-icons/gr";
 import axios from 'axios'
 import { socket } from './AviatorSocket'
-import { baseUrlUsaWin } from '../../utils/apis'
+import { configModalUsaWin } from '../../utils/apis'
 
 function AviatorHome() {
   const [isPathRemoved, setIsPathRemoved] = useState(false);
@@ -26,12 +26,12 @@ function AviatorHome() {
       setHotAirData(q);
     };
 
-    socket.on("nitish_aviator", handleSocket);
-    return () => socket.off("nitish_aviator", handleSocket);
+    socket.on("admingameon_aviator", handleSocket);
+    return () => socket.off("admingameon_aviator", handleSocket);
   }, []);
   const getPreviousResult = async () => {
     try {
-      const res = await axios.get(`${baseUrlUsaWin}api/aviator_last_five_result`)
+      const res = await axios.get(`${configModalUsaWin}aviator_last_five_result`)
       // console.log("first", res)
       if (res?.data?.status === 200 || res?.data?.status === "200") {
         setGetData(res?.data?.data)

@@ -81,7 +81,7 @@ function AttendanceBonus() {
                             <h1 className='text-xsm font-bold'>Get rewards based on consecutive login days</h1>
                             <h1 className=' text-xsm text-nowrap  xsm:text-center z-50 font-bold pt-2'>Attendance Consecutively {attendanceHistoryData?.attendances_consecutively} Days</h1>
                             <h1 className='mt-3 text-lg font-bold'>Accumulated </h1>
-                            <h1 className='flex items-center gap-2 text-[#ffbd40]'>₹{attendanceHistoryData?.accumulated}
+                            <h1 className='flex items-center gap-2 text-[#ffbd40]'>{attendanceHistoryData?.accumulated}
                                 <HiArrowPathRoundedSquare onClick={attendanceHistory} className=' text-base sm:text-xl md:text-base' />
                             </h1>
                         </div>
@@ -108,7 +108,7 @@ function AttendanceBonus() {
                                     backgroundPosition: "center",
                                 }}
                             >
-                                ₹ {item?.attendance_bonus}
+                                 {item?.attendance_bonus}
                             </div>
                             <img src={coingifts} className="w-16 h-16 mt-4" alt="icon" />
                             <p className={`mt-2 text-xsm ${item?.status === "0" ? "text-lightGray" : "text-white"} mb-7`}>{item.id} Day</p>
@@ -121,7 +121,7 @@ function AttendanceBonus() {
                     <div className=' flex flex-col justify-center text-black items-center text-xsm'>
                         <p className=' flex items-center justify-center'>
                             <span className="left-0 w-5 h-px bg-white"></span>
-                            <span className='px-2'> ₹{attendanceHistoryData?.data?.length > 0 && attendanceHistoryData?.data[6]?.attendance_bonus}</span>
+                            <span className='px-2'> {attendanceHistoryData?.data?.length > 0 && attendanceHistoryData?.data[6]?.attendance_bonus}</span>
                             <span className="right-0 w-5 h-px bg-white"></span>
                         </p>
                         <p className='text-xs'>{attendanceHistoryData?.data?.length > 0 && attendanceHistoryData?.data[6]?.id} Day</p>

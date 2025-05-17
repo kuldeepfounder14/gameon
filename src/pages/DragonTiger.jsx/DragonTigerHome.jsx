@@ -18,10 +18,9 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import apis from '../../utils/apis'
-import socket from "../../shared/socket/DragonTigerSocket";
+import socket from '../../shared/socket/DragonTigerSocket';
 const profileApi = apis.profile
 // import {api} from "../"
-const duration = 30;
 function DragonTigerHome() {
   const [selectedCoins, setSelectedCoins] = useState(5)
   const [selectedBetBox, setSelectedBetBox] = useState(null)
@@ -128,10 +127,10 @@ function DragonTigerHome() {
       );
     };
 
-    socket.on("gbclubdragontiger", handleOneMin);
+    socket.on("admingameon_DT", handleOneMin);
 
     return () => {
-      socket.off("gbclubdragontiger", handleOneMin);
+      socket.off("admingameon_DT", handleOneMin);
     };
   }, []);
   // console.log("timerstimers",typeof timeLeft)
@@ -1055,7 +1054,7 @@ function DragonTigerHome() {
           <div className="grid grid-cols-3 w-full">
             <div className="col-span-1"></div>
             <div className="text-gold mr-2 flex items-center justify-center col-span-1 mt-1">
-              ₹{myDetails?.total_wallet}
+              {myDetails?.total_wallet}
             </div>
             <div className="col-span-1 mt-2">
               <div

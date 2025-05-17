@@ -137,7 +137,7 @@ const Layout = () => {
                         <Header />
                     </div>
                     <div
-                        className={`flex-1 overflow-auto ${headerDisplay === "hidden" ? "mt-0" : "mt-[3.22rem]"} hide-scrollbar  pb-${outletPadding}`}
+                        className={`flex-1 h-full overflow-auto ${headerDisplay === "hidden" ? "mt-0" : "mt-[3.22rem]"} hide-scrollbar  pb-${outletPadding}`}
                     >
                         <Outlet />
                     </div>

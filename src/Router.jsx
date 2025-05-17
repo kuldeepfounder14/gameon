@@ -68,6 +68,16 @@ import TronscanViewer from "./pages/Lottery/TronscanViewer";
 import TronscanViewer2 from "./pages/Lottery/Transconviewer2";
 import AvitatorLayout from "./pages/AviatorGame/AvitatorLayout";
 import PlinkoHome from "./pages/plinko/PlinkoHome";
+import Mineshome from "./pages/mines/Mineshome";
+import HeadTail from "./pages/HeadTail/HeadTail";
+import KinoHome from "./pages/kino/KinoHome";
+import HeadTailHistory from "./pages/HeadTail/HeadTailHistory";
+import SpinToWheelHome from "./pages/spintowheel/SpinToWheelHome";
+import DiceHome from "./pages/Dice/DiceHome";
+import RedAndBlackhome from "./pages/Redandblack/RedAndBlackhome";
+import SevenUpDownHome from "./pages/SevenUpDown/SevenUpDownHome";
+import JhandiMundaHome from "./pages/JhandiMunda/JhandiMundaHome";
+import HiLoHome from "./pages/HiLo/HiLoHome";
 
 export const Router = createBrowserRouter([
   {
@@ -114,7 +124,7 @@ export const Router = createBrowserRouter([
     children: [
       {
         path: "/aviator",
-        element:  <AvitatorLayout /> ,
+        element: <AvitatorLayout />,
       },
       {
         path: "/comingsoon",
@@ -351,6 +361,46 @@ export const Router = createBrowserRouter([
       {
         path: "/plinko",
         element: <PlinkoHome />,
+      },
+      {
+        path: "/mines",
+        element: <Mineshome />,
+      },
+      {
+        path: "/headsntails",
+        element: <HeadTail />,
+      },
+      {
+        path: "/headsntails/history",
+        element: <HeadTailHistory />,
+      },
+      {
+        path: "/keno",
+        element: <KinoHome />,
+      },
+      {
+        path: "/spintowheel",
+        element: <SpinToWheelHome />,
+      },
+      {
+        path: "/dice",
+        element: <DiceHome />,
+      },
+      {
+        path: "/rednblack",
+        element: <RedAndBlackhome />,
+      },
+      {
+        path: "/sevenupdown",
+        element: <SevenUpDownHome />,
+      },
+      {
+        path: "/jhandimunda",
+        element: <JhandiMundaHome />,
+      },
+      {
+        path: "/hilo",
+        element: <HiLoHome />,
       },
     ],
   },

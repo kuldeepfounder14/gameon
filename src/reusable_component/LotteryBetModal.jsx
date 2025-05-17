@@ -53,7 +53,7 @@ const colorClassMap = {
     bg3: '#2A95F3',
 };
 
-function LotteryBetModal({ placeBetEthereum, ethereumBalance, gameHistoryData, profileDetails, myHistory, bet_api, onClose, gameDetails }) {
+function LotteryBetModal({ gameHistoryData, profileDetails, myHistory, bet_api, onClose, gameDetails }) {
     const [balanceIndex, setBalanceIndex] = useState(0);
     const [quantityIndex, setQuantityIndex] = useState(gameDetails?.numericValue !== -1 ? gameDetails?.numericValue : 1);
     const [finalBetValue, setFinalBetValue] = useState(1);
@@ -94,19 +94,13 @@ function LotteryBetModal({ placeBetEthereum, ethereumBalance, gameHistoryData, p
             game_id: gameDetails?.gameId,
             number: gameDetails?.betButtonId,
             amount: finalBetValue,
-            games_no: Number(gameHistoryData[0]?.games_no) + 1
+            games_no:Number(gameHistoryData[0]?.games_no)+1
         }
-        console.log("payload", payload)
-        if (ethereumBalance < finalBetValue) {
-            toast.error("Less ethereum balance")
-            return
-        }
+        console.log("payload",payload)
         if (checkAgreement) {
             try {
-                const ethreumRes=await placeBetEthereum()
-                console.log("ethreumRes",ethreumRes)
                 const res = await axios.post(`${bet_api}`, payload)
-                // console.log("wingo nbet res",res)
+                console.log("wingo nbet res",res)
                 if (res?.data?.status === 200) {
                     const currentValue = parseInt(localStorage.getItem(`betStatus${gameDetails?.gameId}`)) || 0;
                     const updatedValue = currentValue + 1;
@@ -118,7 +112,7 @@ function LotteryBetModal({ placeBetEthereum, ethereumBalance, gameHistoryData, p
                     toast.success(res?.data?.message)
                 }
             } catch (err) {
-                console.log(err)
+                console.log("error bet wingo",err)
             }
         } else {
             toast.warn("Please check pre-sale rules")
@@ -168,7 +162,7 @@ function LotteryBetModal({ placeBetEthereum, ethereumBalance, gameHistoryData, p
                             <button onClick={decrementBet} className="w-7 h-7 rounded-md font-extrabold text-[14px] flex justify-center items-center" style={{ backgroundColor: colorClass }}>
                                 <FaMinus className="text-white text-center" />
                             </button>
-                            <input value={finalBetValue} inputMode="numeric" onChange={(e) => setFinalBetValue(e.target.value)} className="outline-none pl-1 w-20 h-7 flex items-center justify-center text-center bg-redLight text-white text-sm xsm:text-base" type="number" />
+                            <input value={finalBetValue}  inputMode="numeric" onChange={(e)=>setFinalBetValue(e.target.value)} className="outline-none pl-1 w-20 h-7 flex items-center justify-center text-center bg-redLight text-white text-sm xsm:text-base" type="number"/>
                             <button onClick={incrementBet} className="w-7 h-7 rounded-md font-extrabold text-[14px] flex justify-center items-center" style={{ backgroundColor: colorClass }}>
                                 <FaPlus className="text-white text-center" />
                             </button>
@@ -207,7 +201,7 @@ function LotteryBetModal({ placeBetEthereum, ethereumBalance, gameHistoryData, p
 
                     <div className="grid grid-cols-12 mt-5">
                         <button onClick={onClose} className={` bg-redLight text-white col-span-4 h-12`}>Cancel</button>
-                        <button onClick={() => wingoBetHandler()} className="bg-bg2 col-span-8 h-12" style={{ backgroundColor: colorClass }}>Total amount ₹{finalBetValue}</button>
+                        <button onClick={() => wingoBetHandler()} className="bg-bg2 col-span-8 h-12" style={{ backgroundColor: colorClass }}>Total amount {finalBetValue}</button>
                     </div>
                 </div>
             </div>

@@ -54,7 +54,7 @@ function AttendanceHistory() {
           {atttendanceList?.length > 0 ? atttendanceList?.map((item, i) => (
             <tr key={i} className='text-white opacity-65 text-xsm bg-customdarkBlue border-b '>
               <td className='text-center py-2'>{item?.id}</td>
-              <td className='text-center' >₹{item?.attendance_bonus}</td>
+              <td className='text-center' >{item?.attendance_bonus}</td>
               {/* <td className={`text-center ${item?.status === "0" ? "text-green" : ""}`}>{item?.status === "0" ? "Claimed" : "Yet to claim"}</td> */}
               <td className='text-center'>{moment(item?.created_at).format("DD-MM-YYYY")}</td>
             </tr>

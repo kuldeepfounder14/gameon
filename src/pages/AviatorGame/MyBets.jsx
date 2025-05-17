@@ -2,6 +2,8 @@
 import { useEffect, useState } from "react"
 import { toast } from "react-toastify"
 import axios from "axios"
+import { configModalUsaWin } from '../../utils/apis'
+
 function MyBets({ betApiHitted }) {
     const userId = localStorage.getItem("userId")
 
@@ -14,7 +16,7 @@ function MyBets({ betApiHitted }) {
         }
         // console.log("pYLOAD", payload)
         try {
-            const res = await axios.post(`https://root.globalbet24.club/api/aviator_history`, payload)
+            const res = await axios.post(`${configModalUsaWin}aviator_history`, payload)
             // toast.success(res?.data?.message)
             // console.log("betbetebetebete", res)
             if (res?.data?.status === 200) {
@@ -48,8 +50,8 @@ function MyBets({ betApiHitted }) {
             {/* <button onClick={myBetHandler}>click</button> */}
             <div className="w-full flex items-center py-0.5 justify-between">
                 <p className="text-gray w-[40%]">Date</p>
-                <p className="text-gray -mr-10 w-[30%]">Bet,INR X</p>
-                <p className="text-gray w-[30%]">Cash out,INR</p>
+                <p className="text-gray -mr-10 w-[30%]">Bet, X</p>
+                <p className="text-gray w-[30%]">Cash out,</p>
             </div>
             <div className="w-full h-full overflow-y-auto  hide-scrollbar">
                 <div className=" overflow-y-auto">

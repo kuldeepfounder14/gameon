@@ -232,7 +232,7 @@ function K3BetModal({ gameHistoryData, profileDetails, myHistory, bet_api, onClo
 
                     <div className="grid grid-cols-12 mt-5">
                         <button onClick={onClose} className={` bg-inputBg text-gray col-span-4 h-12`}>Cancel</button>
-                        <button onClick={() => wingoBetHandler()} className="bg-bg2 text-white col-span-8 h-12" style={{ backgroundColor: colorClass }}>Total amount ₹{finalBetValue}</button>
+                        <button onClick={() => wingoBetHandler()} className="bg-bg2 text-white col-span-8 h-12" style={{ backgroundColor: colorClass }}>Total amount {finalBetValue}</button>
                     </div>
                 </div>
             {/* </div> */}

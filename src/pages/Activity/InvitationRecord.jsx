@@ -52,7 +52,7 @@ function InvitationRecord() {
                         <div className="w-[50%] flex flex-col items-end">
                             <p className="text-sm text-white">UID:{item.u_id}</p>
                             <p className="text-xs mt-5 text-white">{item.created_at}</p>
-                            <p className="text-xsm text-customlightbtn mt-3">₹{item.first_recharge_amount}</p>
+                            <p className="text-xsm text-customlightbtn mt-3">{item.first_recharge_amount}</p>
                         </div>
                     </div>
                 ))}

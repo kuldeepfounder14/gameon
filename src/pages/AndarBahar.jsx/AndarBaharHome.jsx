@@ -132,24 +132,19 @@ function AndarBaharHome() {
           );
         };
     
-        socket.on("gbclubAB", handleOneMin);
+        socket.on("admingameon_AB", handleOneMin);
     
         return () => {
-          socket.off("gbclubAB", handleOneMin);
+          socket.off("admingameon_AB", handleOneMin);
         };
       }, []);
       const profileDetails = async (userId) => {
-        // if (!userId) {
-        //   toast.error("User not logged in");
-        //   navigate("/login");
-        //   return;
-        // }
+       
         try {
           const res = await axios.get(`${profileApi}${userId}`);
-          console.log("rprprrprprprrpprprpr",res)
+        //   console.log("rprprrprprprrpprprpr",res)
           if (res?.data?.success === 200) {
             setMyDetails(res?.data?.data)
-            // dispatch(setProfileDetails({ total_wallet: res.data.total_wallet }))
           }
         } catch (err) {
           toast.error(err);
@@ -193,7 +188,7 @@ function AndarBaharHome() {
         }
         try {
             const response = await axios.get(`${apis?.dragonResults}?game_id=13&limit=1`)
-            console.log("announcement",response)
+            console.log("announcement",response?.data?.data[0])
             if (response?.data?.status === 200) {
                 setBetResultDataAnnouncement(response?.data?.data[0])
                 profileDetails(userId)
@@ -724,7 +719,7 @@ function AndarBaharHome() {
                                         backgroundImage: `url(${assets.wallet})`,
                                     }}
                                 >
-                                    <p className=''>₹{myDetails?.total_wallet}</p>
+                                    <p className=''>{myDetails?.total_wallet}</p>
                                 </div>
                             </div>
                             {/* coins chips Icon */}

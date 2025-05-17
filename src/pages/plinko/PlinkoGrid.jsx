@@ -121,16 +121,11 @@ const PlinkoGrid = ({ betId, setBetId, ballDropped, setballDropped, getNumbersLi
 
     Matter.World.add(engineRef.current.world, ball);
 
-    // Detect collision with bottom slots
     Matter.Events.on(engineRef.current, "afterUpdate", () => {
-      // console.log("ball.positionball.position", ball.position)
-      if (ball.position.y > 460) { // Adjust Y value based on your layout
+      if (ball.position.y > 460) { 
         const ballX = ball.position.x;
-        // console.log("ballllxxxx", ballX)
-        // Find the closest slot index
-        const slotWidth = 26; // Adjust if needed
-        const dropIndex = (Math.round((ballX) / slotWidth)); // Adjust offset
-        // console.log("dropindex",dropIndex)
+        const slotWidth = 26; 
+        const dropIndex = (Math.round((ballX) / slotWidth)); 
         if (dropIndex) {
           setBetId(dropIndex)
           setballDropped(true)
@@ -138,49 +133,9 @@ const PlinkoGrid = ({ betId, setBetId, ballDropped, setballDropped, getNumbersLi
           setBetId(1)
           setballDropped(true)
         }
-
-        // console.log("Ball dropped at index:", dropIndex);
-
-        // Stop tracking to prevent multiple logs
         Matter.Events.off(engineRef.current, "afterUpdate");
       }
     });
-    // Matter.Events.on(engineRef.current, "afterUpdate", () => {
-    //   // console.log("ball.positionball.position", ball.position)
-    //   if (ball.position.y > 400) { // Adjust Y value based on your layout
-    //     const ballX = ball.position.x;
-    //     // Find the closest slot index
-    //     // Find the closest gap instead of a rounded slot index
-    //     const slotWidth = 26;
-    //     const slotCenters = getNumbersList?.data1?.map((_, i) => i * slotWidth + slotWidth / 2);
-
-    //     let closestGapIndex = 0;
-    //     let minDistance = Infinity;
-    //     slotCenters.forEach((gapX, i) => {
-    //       const distance = Math.abs(ballX - gapX);
-    //       if (distance < minDistance) {
-    //         minDistance = distance;
-    //         closestGapIndex = i;
-    //       }
-    //     });
-
-    //     console.log("Ball dropped at corrected index:", closestGapIndex);
-    //     let dropIndex
-    //     if (closestGapIndex === 0) {
-    //       dropIndex = 1
-    //     } else {
-    //       dropIndex = closestGapIndex
-    //       console.log("dropIndex2", dropIndex)
-    //     }
-    //     if (dropIndex) {
-    //       setBetId(dropIndex)
-    //       // console.log(`Ball with ID ${ball.id} landed in slot:`, dropIndex);
-    //       setballDropped(true)
-    //     }
-    //     // Stop tracking to prevent multiple logs
-    //     Matter.Events.off(engineRef.current, "afterUpdate");
-    //   }
-    // });
   }, [betAndDropStatus, setBetAndDrop]);
 
   useEffect(() => {
@@ -192,7 +147,6 @@ const PlinkoGrid = ({ betId, setBetId, ballDropped, setballDropped, getNumbersLi
       event.pairs.forEach((collision) => {
         let slotIndex = -1;
         let ball;
-        // console.log("collision", collision)
         if (collision.bodyA.label.startsWith("Circle Body")) {
           slotIndex = parseInt(collision.bodyA.label.replace("slot-", ""), 10);
           ball = collision.bodyB;
@@ -200,8 +154,6 @@ const PlinkoGrid = ({ betId, setBetId, ballDropped, setballDropped, getNumbersLi
           slotIndex = parseInt(collision.bodyB.label.replace("slot-", ""), 10);
           ball = collision.bodyA;
         }
-        // console.log("slot index", slotIndex)
-
       });
     };
     Matter.Events.on(engine, "collisionActive", handleCollision);
@@ -210,8 +162,6 @@ const PlinkoGrid = ({ betId, setBetId, ballDropped, setballDropped, getNumbersLi
       Matter.Events.off(engine, "collisionActive", handleCollision);
     };
   }, []);
-
-  // console.log("getNumbersList?.data2", getNumbersList?.data2)
 
   return (
     <div className="flex flex-col items-center mx-auto">
@@ -222,7 +172,7 @@ const PlinkoGrid = ({ betId, setBetId, ballDropped, setballDropped, getNumbersLi
           return (
             <div
               key={index}
-              className={`${(betId === i + 1 && ballDropped) ? "animate-zoomIn scale-110" : ""} ${betAndDropId === 1 ? "border-white" : "border-green"} border-[1px]relative  bg-gradient-to-tr from-[#448B02] to-[#5FAF09] text-white text-[10px] shadow-lg drop-shadow-[0_4px_3px_rgba(0,0,0,0.3)] rounded-sm h-5 w-[25px] flex items-center justify-center after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-full after:h-[2px] after:bg-black/50`}
+              className={`${(betId === i + 1 && ballDropped) ? "animate-zoomIn scale-110" : ""} ${betAndDropId === 1 ? "border-white" : "border-green"} border-[1px] relative  bg-gradient-to-tr from-[#448B02] to-[#5FAF09] text-white text-[10px] shadow-lg drop-shadow-[0_4px_3px_rgba(0,0,0,0.3)] rounded-sm h-5 w-[25px] flex items-center justify-center after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-full after:h-[2px] after:bg-black/50`}
             >
               {num?.multiplier}
             </div>
@@ -232,10 +182,6 @@ const PlinkoGrid = ({ betId, setBetId, ballDropped, setballDropped, getNumbersLi
       <div className="flex justify-center gap-1.5   mt-1">
         {getNumbersList?.data2?.map((num, index) => {
           const i = betId > 5 ? index + 1 : index
-          // console.log("numnumnum",num)
-          // console.log("indexindexindexindex", index)
-          // console.log("betIdbetIdbetId", betId)
-          // if (betId === index && ballDropped) console.log("truetruetruetruetruetruetruetrue")
           return (
             <div
               key={index}

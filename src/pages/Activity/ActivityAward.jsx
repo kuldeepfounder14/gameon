@@ -104,7 +104,7 @@ function ActivityAward() {
             <div className="text-white opacity-45 ">Award Amount</div>
             <div className='flex items-center gap-2'>
               <img className='w-6 h-6' src={depo_wallet} alt="as" />
-              <p className='text-gold text-[16px]'>₹{item?.amount}</p>
+              <p className='text-gold text-[16px]'>{item?.amount}</p>
             </div>
           </div>
           <div className="px-4 ">

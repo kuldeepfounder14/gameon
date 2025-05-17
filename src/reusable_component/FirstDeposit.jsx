@@ -20,7 +20,7 @@ function FirstDeposit() {
                 <div className='bg-inputBg w-full rounded-lg p-2 mt-3' key={i}>
                     <div className='flex items-center justify-between'>
                         <p className='text-black'>First deposit <span className='text-gold'>{item?.first_deposit_ammount}</span></p>
-                        <p className='text-gold'>+ ₹{item?.bonus.toFixed(2)}</p>
+                        <p className='text-gold'>+ {item?.bonus.toFixed(2)}</p>
                     </div>
                     <div className='text-gray mt-2'>Deposit <span>{item?.first_deposit_ammount}</span> for the first time and you will receive <span>{item?.bonus}</span> bonus</div>
                     <div className='flex items-center justify-between w-full mt-4'>

@@ -130,7 +130,7 @@ const WingoWinnerAnnoucement = ({ data, onClose }) => {
                     <p className={` text-2xl ${data?.win === 0 ? "mt-12" : "mt-8"} text-red`}>
                         <p className="font-bold text-xsm text-red">
                             {data?.win === 0 ? "" : "Bonus"}
-                            <p className=" text-2xl">{data?.win === 0 ? "Lost" : `₹ ${data?.win?.toFixed(2)}`}</p>
+                            <p className=" text-2xl">{data?.win === 0 ? "Lost" : ` ${data?.win?.toFixed(2)}`}</p>
                         </p>
                     </p>
                     <p className=" text-2xl  text-blackLight">

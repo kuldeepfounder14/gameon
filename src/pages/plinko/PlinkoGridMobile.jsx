@@ -5,19 +5,15 @@ import Matter from "matter-js";
 const PlinkoGridMobile = ({ betId, setBetId, ballDropped, setballDropped, getNumbersList, betAndDropId, betAndDropStatus, setBetAndDrop }) => {
   const sceneRef = useRef(null);
   const engineRef = useRef(null);
-  const [isMobile, setIsMobile] = useState(window.innerWidth); // Set initial width dynamically
+  const [isMobile, setIsMobile] = useState(window.innerWidth); 
 
   useEffect(() => {
-    // console.log("Initial window.innerWidth", window.innerWidth);
-
     const handleResize = () => {
-      // console.log("window.innerWidth", window.innerWidth);
       setIsMobile(window.innerWidth);
     };
-
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
-  }, []); // Empty array ensures this effect runs only once
+  }, []); 
 
   useEffect(() => {
     console.log("ballDropped", ballDropped);
@@ -39,25 +35,17 @@ const PlinkoGridMobile = ({ betId, setBetId, ballDropped, setballDropped, getNum
       },
     });
 
-    // Set background to transparent
     render.canvas.style.background = "transparent";
-
-    // **Plinko Pegs (grid layout)**
     const pegs = [];
     const rows = 14;
     const canvasWidth = isMobile > 400 ? 410 : isMobile > 420 ? 420 : isMobile > 389 ? 385 : 355;
-    const baseX = canvasWidth / 2; // Centered in the canvas
+    const baseX = canvasWidth / 2; 
 
     for (let row = 2; row < rows; row++) {
       for (let col = 0; col <= row; col++) {
-        // Center the V-shape pyramid
         const f = isMobile > 400 ? 30 : isMobile > 389 ? 28 : 26.5
         const offsetX = (col - row / 2) * f;
-        // console.log("xxxxxxx", offsetX)
-        // const offsetX = (col - row / 2) * 30;
         const offsetY = row * 27;
-        // console.log(`Peg at (${baseX + offsetX}, ${50 + offsetY})`);
-
         const peg = Matter.Bodies.circle(baseX + offsetX, 50 + offsetY, 5, {
           isStatic: true,
           render: { fillStyle: "white" },
@@ -67,28 +55,14 @@ const PlinkoGridMobile = ({ betId, setBetId, ballDropped, setballDropped, getNum
       }
     }
 
-    // Side walls (Hidden but still functional)
     const leftWall = Matter.Bodies.rectangle(0, 250, 10, 500, {
       isStatic: true,
-      render: { visible: false }, // Hide wall but keep its restriction
+      render: { visible: false }, 
     });
-    // console.log(`Left Wall: (0, 250), Right Wall: (${canvasWidth}, 250)`);
-
     const rightWall = Matter.Bodies.rectangle(canvasWidth, 250, 10, 500, {
       isStatic: true,
-      render: { visible: false }, // Hide wall but keep its restriction
+      render: { visible: false },
     });
-
-    // **Bottom Slots**
-    // const slotWidth = 39;
-    // const slots = [];
-    // for (let i = 0; i < 10; i++) {
-    //   const slot = Matter.Bodies.rectangle(i * slotWidth +30, 450, 5, 50, {
-    //     isStatic: true,
-    //     render: { fillStyle: "white" },
-    //   });
-    //   slots.push(slot);
-    // }
 
     // **Add Everything to the World**
     // Matter.World.add(world, [leftWall, rightWall, ...pegs, ...slots]);
@@ -128,43 +102,28 @@ const PlinkoGridMobile = ({ betId, setBetId, ballDropped, setballDropped, getNum
 
     Matter.World.add(engineRef.current.world, ball);
     Matter.Events.on(engineRef.current, "afterUpdate", () => {
-      // console.log("ball.positionball.position", ball.position)
-      if (ball.position.y > 400) { // Adjust Y value based on your layout
+      if (ball.position.y > 400) { 
         const ballX = ball.position.x;
-        // console.log("ballllxxxx", ballX)
-        // Find the closest slot index
-        const slotWidth = isMobile > 400 ? 30 : isMobile > 389 ? 29 : 2; // Adjust if needed
-        const dropIndex = (Math.round((ballX) / slotWidth)); // Adjust offset
+        const slotWidth = isMobile > 400 ? 30 : isMobile > 389 ? 29 : 27; 
+        const dropIndex = (Math.round((ballX) / slotWidth));
         console.log("dropindex", dropIndex)
         if (dropIndex) {
           setBetId(dropIndex)
-          // console.log(`Ball with ID ${ball.id} landed in slot:`, dropIndex);
           setballDropped(true)
         }
-
-        // console.log("Ball dropped at index:", dropIndex);
-
-        // Stop tracking to prevent multiple logs
         Matter.Events.off(engineRef.current, "afterUpdate");
       }
     });
-    // setTimeout(() => {
-    //   setBetAndDrop({ betStatus: false });
-    // }, 3000);
+   
   }, [betAndDropStatus, setBetAndDrop]);
 
   useEffect(() => {
     if (!engineRef.current) return;
-    // console.log("entryentry")
-
     const engine = engineRef.current;
-
     const handleCollision = (event) => {
-      // console.log("gvhgvbghvhvbhjvbh", event)
       event.pairs.forEach((collision) => {
         let slotIndex = -1;
         let ball;
-        // console.log("collision", collision)
         if (collision.bodyA.label.startsWith("Circle Body")) {
           slotIndex = parseInt(collision.bodyA.label.replace("slot-", ""), 10);
           ball = collision.bodyB;
@@ -172,8 +131,6 @@ const PlinkoGridMobile = ({ betId, setBetId, ballDropped, setballDropped, getNum
           slotIndex = parseInt(collision.bodyB.label.replace("slot-", ""), 10);
           ball = collision.bodyA;
         }
-        // console.log("slot index", slotIndex)
-
       });
     };
 
@@ -183,19 +140,12 @@ const PlinkoGridMobile = ({ betId, setBetId, ballDropped, setballDropped, getNum
       Matter.Events.off(engine, "collisionActive", handleCollision);
     };
   }, []);
-  // setballDropped(false);
-  // setTimeout(() => {
-  //     setballDropped(true);
-  // }, 200);
-
-  // console.log("getNumbersList", betId)
-  // console.log("getNumbersList", getNumbersList)
+ 
   return (
     <div className="flex flex-col items-center z-10">
       <div className="relative z-10 -mt-14 w-full xs1:w-[390px] xs:w-[400px] flex justify-center" ref={sceneRef}></div>
       <div className="flex justify-center w-full overflow-x-auto">
         {getNumbersList?.data1?.map((num, index) => {
-          // const i = betId > 5 ? index + 1 : index
           return (
             <div
               key={index}

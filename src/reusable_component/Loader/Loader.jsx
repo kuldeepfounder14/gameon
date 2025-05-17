@@ -8,7 +8,7 @@ const Loader = () => {
       <div className="loader-container">
         <div className="loader"></div>
         <div className="loader-dot"></div>
-        <img src={usawinlogo} alt="Loading" />
+        <img src={usawinlogo} className="rounded-full" alt="Loading" />
       </div>
     </div>
   );

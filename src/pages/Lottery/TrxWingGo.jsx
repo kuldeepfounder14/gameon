@@ -98,9 +98,9 @@ const imagesNum = [num0, num1, num2, num3, num4, num5, num6, num7, num8, num9];
 const imagesPrize = [prize0, prize1, prize2, prize3, prize4, prize5, prize6, prize7, prize8, prize9];
 const imagesAlphbet = [a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z];
 const notes = [
-  "Notice:To visit our official website, be sure to use the link below,https://usawin.com / Please re",
-  "Notice:To visit our official website, be sure to use the link below,https://usawin.com / Please re",
-  "Notice:To visit our official website, be sure to use the link below,https://usawin.com / Please re",
+  "Notice:To visit our official website, be sure to use the link below,https://admin.gameon.deals / Please re",
+  "Notice:To visit our official website, be sure to use the link below,https://admin.gameon.deals / Please re",
+  "Notice:To visit our official website, be sure to use the link below,https://admin.gameon.deals / Please re",
   // "Please be sure to always use our official website for playing the games with the fol",
   // "If your deposit is not received, Please send it directly to Tiranga Games Self-service Ce"
 ];
@@ -141,7 +141,7 @@ const TrxWinGo = () => {
   const userId = localStorage.getItem("userId");
   const limit = 10;
   useEffect(() => {
-    setEventName("gbclubtrx");  
+    setEventName("admingameon");  
   }, [setEventName]);
   useEffect(() => {
     const selectedTime =
@@ -269,7 +269,8 @@ const TrxWinGo = () => {
       const offset = (currentPage - 1) * limit;
       // console.log("`${wingo_game_history}?game_id=${i}&limit=${limit}&offset=${offset}`",`${wingo_game_history}?game_id=${i}&limit=${limit}&offset=${offset}`)
       const res = await axios.get(
-        `https://root.usawin.vip/api/trx/result?gameid=${gameDetails?.gameId}&limit=${limit}&offset=${offset}`
+        `${wingo_game_history}?game_id=${i}&limit=${limit}&offset=${offset}`
+        // `https://root.usawin.vip/api/trx/result?gameid=${gameDetails?.gameId}&limit=${limit}&offset=${offset}`
       );
       console.log("res?.data?.data", res)
       if (res?.data?.status === "200"||res?.data?.status === 200) {
@@ -297,7 +298,7 @@ const TrxWinGo = () => {
     try {
       const offset = (currentPage - 1) * limit;
       const res = await axios.get(
-        `https://root.usawin.vip/api/trx/result?gameid=${i}&limit=${limit}&offset=${offset}`
+        `${wingo_game_history}?game_id=${i}&limit=${limit}&offset=${offset}`
       );
       console.log("resres hai hai", res)
       if (res?.data?.status === "200"||res?.data?.status === 200) {
@@ -325,7 +326,7 @@ const TrxWinGo = () => {
     try {
       const offset = (currentPage - 1) * limit;
       const res = await axios.get(
-        `https://root.usawin.vip/api/trx/result?gameid=${i}&limit=${limit}&offset=${offset}`
+        `${wingo_game_history}?game_id=${i}&limit=${limit}&offset=${offset}`
       );
       if (res?.data?.status === "200"||res?.data?.status === 200) {
         try {
@@ -351,8 +352,9 @@ const TrxWinGo = () => {
     try {
       const offset = (currentPage - 1) * limit;
       const res = await axios.get(
-        `https://root.usawin.vip/api/trx/result?gameid=${i}&limit=${limit}&offset=${offset}`
+        `${wingo_game_history}?game_id=${i}&limit=${limit}&offset=${offset}`
       );
+      console.log("first",res)
       if (res?.data?.status === "200"||res?.data?.status === 200) {
         try {
           const resp = await axios.get(`${wingo_win_amount_announcement}?userid=${userId}&game_id=${i}&games_no=${res?.data?.data[0]?.games_no}`)
@@ -389,7 +391,7 @@ const TrxWinGo = () => {
     // console.log("my history payload",wingo_my_history)
     try {
       const res = await axios.post(`${wingo_my_history}`, payload)
-      // console.log("my history", res)
+      console.log("my history", res)
       if (res?.status === 200) {
         setMyHistoryData(res?.data)
         // console.log("res?.data", res?.data)
@@ -412,13 +414,13 @@ const TrxWinGo = () => {
       const res = await axios.get(
         `https://root.usawin.vip/api/trx/result?gameid=${gameDetails?.gameId}&limit=${limit}&offset=${offset}`
       );
-      // console.log("urls", `${'https://root.usawin.vip/api/trx/result'}?gameid=${gameDetails?.gameId}&offset=${offset}&limit=${limit}`)
+      // console.log("urls", `${'${wingo_game_history}'}?gameid=${gameDetails?.gameId}&offset=${offset}&limit=${limit}`)
       console.log("res game histiry", res)
       if (res?.data?.status === "200"||res?.data?.status === 200) {
         // console.log("Number(res?.data?.data[0]?.period)",(typeof Number(res?.data?.data[0]?.period)))
         setGameHistoryData(res?.data?.data);
         // console.log("res?.data?.data[0]",res?.data?.data[0])
-        const n = res?.data?.data[0]?.period.slice(-10)
+        const n = res?.data?.data[0]?.period.slice(7)
         setnextPeriod(n)
         setGameHistoryDataPagination(res?.data);
         if (res?.data?.data?.length < limit) {
@@ -431,8 +433,6 @@ const TrxWinGo = () => {
       setIsLoading(false);
     }
   };
-  // const getResultHandler = async (id, games_no) => {
-  //   if (!id || !games_no) {
   //     console.error("Invalid parameters", { id, games_no });
   //     return;
   //   }
@@ -466,9 +466,9 @@ const TrxWinGo = () => {
   //   try {
   //     const offset = (currentPage - 1) * limit;
   //     const res = await axios.get(
-  //       `${'https://root.usawin.vip/api/trx/result'}?gameid=${id}&limit=${limit}&offset=${offset}`
+  //       `${'${wingo_game_history}'}?gameid=${id}&limit=${limit}&offset=${offset}`
   //     );
-  //     console.log("urls", `${'https://root.usawin.vip/api/trx/result'}?gameid=${id}&offset=${offset}&limit=${limit}`)
+  //     console.log("urls", `${'${wingo_game_history}'}?gameid=${id}&offset=${offset}&limit=${limit}`)
   //     console.log("res gameHistoryCheck ", res)
   //     if (res?.data?.status === "200") {
   //       const next = res?.data?.data[0]?.period.slice(-10)
@@ -510,21 +510,21 @@ const TrxWinGo = () => {
       myHistory()
       gameHistory()
     }
-    if (timers.type3 === 179) {
+    if (timers.type3 === 178) {
       // console.log("winAmountAnnouncement2")
       winAmountAnnouncement2(7)
       profileDetails()
       myHistory()
       gameHistory()
     }
-    if (timers.type4 === 299) {
+    if (timers.type4 === 298) {
       // console.log("winAmountAnnouncement4")
       winAmountAnnouncement3(8)
       profileDetails()
       myHistory()
       gameHistory()
     }
-    if (timers.type5 === 599) {
+    if (timers.type5 === 598) {
       // console.log("winAmountAnnouncement2")
       winAmountAnnouncement4(9)
       profileDetails()
@@ -534,10 +534,6 @@ const TrxWinGo = () => {
     if (timers.type2 === 11) {
       setBetModal(false)
     }
-    if (timers.type2 === 11) {
-      setBetModal(false)
-    }
-
   }, [timeLeft])
 
 
@@ -651,7 +647,7 @@ const TrxWinGo = () => {
               }}
             >
               <div className='flex justify-center gap-8 items-center'>
-                <p className='font-semibold text-xl'><b className='text-xl'>₹</b> &nbsp;{myDetails?.wallet.toFixed(2)}</p>
+                <p className='font-semibold text-xl'><b className='text-xl'></b> &nbsp;{myDetails?.wallet.toFixed(2)}</p>
                 <button onClick={profileDetails}>
                   <HiArrowPathRoundedSquare size={20} className='text-lightGray ' />
                 </button>
@@ -957,8 +953,8 @@ const TrxWinGo = () => {
 
                 <p className="font-bold">Handling Fee:</p>
                 <p>
-                  A 2% handling fee is charged on all single bets. For example, if you bet ₹100, after
-                  deducting the fee, the actual betting amount will be ₹98.
+                  A 2% handling fee is charged on all single bets. For example, if you bet 100, after
+                  deducting the fee, the actual betting amount will be 98.
                 </p>
 
                 <p className="font-bold">Odds:</p>
@@ -1012,8 +1008,8 @@ const TrxWinGo = () => {
 
                 <p className="font-bold">Handling Fee:</p>
                 <p>
-                  A 2% handling fee is charged on all single bets. For example, if you bet ₹100, after
-                  deducting the fee, the actual betting amount will be ₹98.
+                  A 2% handling fee is charged on all single bets. For example, if you bet 100, after
+                  deducting the fee, the actual betting amount will be 98.
                 </p>
 
                 <p className="font-bold">Odds:</p>
@@ -1067,8 +1063,8 @@ const TrxWinGo = () => {
 
                 <p className="font-bold">Handling Fee:</p>
                 <p>
-                  A 2% handling fee is charged on all single bets. For example, if you bet ₹100, after
-                  deducting the fee, the actual betting amount will be ₹98.
+                  A 2% handling fee is charged on all single bets. For example, if you bet 100, after
+                  deducting the fee, the actual betting amount will be 98.
                 </p>
 
                 <p className="font-bold">Odds:</p>

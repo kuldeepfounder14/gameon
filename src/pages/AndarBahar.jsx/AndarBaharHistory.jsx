@@ -8,29 +8,33 @@ import apis from "../../utils/apis"
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { assets } from "./assets";
+import socket from '../../shared/socket/DragonTigerSocket';
 
 const duration = 30
 const AndarBaharHistory = () => {
     const [activeIndex, setActiveIndex] = useState(null);
     const [myHistoryData, setMyHistoryData] = useState([]);
-    const [timeLeft, setTimeLeft] = useState(0);
     const navigate = useNavigate()
     const userId = localStorage.getItem("userId");
-
-    const calculateTimeLeft = () => {
-        const now = new Date();
-        const secondsInCycle = (now.getMinutes() * 60 + now.getSeconds()) % duration;
-        const remainingTime = Math.max(duration - secondsInCycle, 0);
-        setTimeLeft(remainingTime);
-    };
+    
+    const [timeLeft, setTimeLeft] = useState(0);
     useEffect(() => {
-        calculateTimeLeft();
-        const timerInterval = setInterval(() => {
-            calculateTimeLeft();
-        }, 1000);
-
-        return () => clearInterval(timerInterval);
-    }, []);
+        const handleOneMin = (onemin) => {
+          const q = JSON.parse(onemin);
+    
+          const { timerBetTime } = q;
+    
+          setTimeLeft(
+            Number(timerBetTime) 
+          );
+        };
+    
+        socket.on("admingameon_AB", handleOneMin);
+    
+        return () => {
+          socket.off("admingameon_AB", handleOneMin);
+        };
+      }, []);
 
     useEffect(() => {
         if (timeLeft === 5) {
@@ -104,8 +108,8 @@ const AndarBaharHistory = () => {
                                         className={`font-bold text-center ${item?.win_amount === 0 && item?.status === 0 ? "text-gray" : (item?.win_amount === 0 ? "text-rose-500" : "text-green")}`}
                                     >
                                         {item?.win_amount === 0 && item?.status === 0 ? "--" : (item?.win_amount === 0
-                                            ? `- ₹${item?.amount}.00`
-                                            : `+ ₹${item?.win_amount}`)}
+                                            ? `- ${item?.amount}.00`
+                                            : `+ ${item?.win_amount}`)}
                                     </div>
                                 </div>
                             </div>
@@ -166,8 +170,8 @@ const AndarBaharHistory = () => {
                                 <div className="bg-redLight w-full mt-1 py-2 flex items-center justify-between px-2 text-white rounded-md">
                                     <p>Win/Loss</p>
                                     {item?.status !== 0 ? <p>{item?.win_amount == 0 ? (<>
-                                        <span className="text-bg2">₹0.00</span>
-                                    </>) : <span className="text-green">₹{item?.win_amount}</span>}</p> : <p>--</p>}
+                                        <span className="text-bg2">0.00</span>
+                                    </>) : <span className="text-green">{item?.win_amount}</span>}</p> : <p>--</p>}
                                 </div>
                                 <div className="bg-redLight w-full mt-1 py-2 flex items-center justify-between px-2 text-white rounded-md">
                                     <p>Order time</p>

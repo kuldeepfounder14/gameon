@@ -1,6 +1,6 @@
 {
-    "name": "Global Bet",
-    "short_name": "Global Bet",
+    "name": "Gameon",
+    "short_name": "Gameon",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#ffffff",

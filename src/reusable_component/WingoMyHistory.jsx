@@ -106,8 +106,8 @@ const WingoMyHistory = ({ myHistoryData, handlehistorybox }) => {
                                             className={`font-bold text-center ${item?.win_amount === 0 && item?.status === 0 ? "text-gray" : (item?.win_amount === 0 ? "text-customred" : "text-green")}`}
                                         >
                                             {item?.win_amount === 0 && item?.status === 0 ? "--" : (item?.win_amount === 0
-                                                ? `- ₹${item?.amount}.00`
-                                                : `+ ₹${item?.win_amount}`)}
+                                                ? `- ${item?.amount}.00`
+                                                : `+ ${item?.win_amount}`)}
                                         </div>
                                     </div>
                                 </div>
@@ -156,26 +156,26 @@ const WingoMyHistory = ({ myHistoryData, handlehistorybox }) => {
                                                 </>
                                             ) : item?.win_number === 2 || item?.win_number === 4 ? (
                                                 <>
-                                                    <span className="text-red font-bold">
+                                                    <span className="text-customred font-bold">
                                                         {item?.win_number}
                                                     </span>{" "}
-                                                    <span className="text-red">Red</span>
+                                                    <span className="text-customred">Red</span>
                                                     <span className="text-bg3">, Small</span>
                                                 </>
                                             ) : item?.win_number === 6 || item?.win_number === 8 ? (
                                                 <>
-                                                    <span className="text-red font-bold">
+                                                    <span className="text-customred font-bold">
                                                         {item?.win_number}
                                                     </span>{" "}
-                                                    <span className="text-red">Red</span>
+                                                    <span className="text-customred">Red</span>
                                                     <span className="text-yellow">, Big</span>
                                                 </>
                                             ) : item?.win_number === 0 ? (
                                                 <>
-                                                    <span className="text-red font-bold">
+                                                    <span className="text-customred font-bold">
                                                         {item?.win_number}
                                                     </span>{" "}
-                                                    <span className="text-red">Red</span>
+                                                    <span className="text-customred">Red</span>
                                                     <span className="text-bg3">, Small</span>
                                                 </>
                                             ) : item?.win_number === 5 ? (
@@ -201,7 +201,7 @@ const WingoMyHistory = ({ myHistoryData, handlehistorybox }) => {
                                             ) : item?.win_number == 30 ? (
                                                 <>
                                                     
-                                                    <span className="text-red">Red</span>
+                                                    <span className="text-customred">Red</span>
                                                     {/* <span className="text-bg3">, Big</span> */}
                                                 </>
                                             ) : item?.win_number == 40 ? (
@@ -221,18 +221,18 @@ const WingoMyHistory = ({ myHistoryData, handlehistorybox }) => {
                                     </div>
                                     <div className="bg-redLight text-white w-full mt-1 py-2 flex items-center justify-between px-2  rounded-md">
                                         <p>Select</p>
-                                        <p>{item?.number == 10 ? <p className="text-green">Green</p> : item?.number == 20 ? <p className="text-voilet">Violet</p> : item?.number == 30 ? <p className="text-red">Red</p> : item?.number == 40 ? <p className="text-yellow">Big</p> : item?.number == 50 ? <p className="text-bg3">Small</p> : item?.number}</p>
+                                        <p>{item?.number == 10 ? <p className="text-green">Green</p> : item?.number == 20 ? <p className="text-voilet">Violet</p> : item?.number == 30 ? <p className="text-customred">Red</p> : item?.number == 40 ? <p className="text-yellow">Big</p> : item?.number == 50 ? <p className="text-bg3">Small</p> : item?.number}</p>
                                     </div>
                                     <div className="bg-redLight text-white w-full mt-1 py-2 flex items-center justify-between px-2  rounded-md">
                                         <p>Status</p>
-                                        {item?.status === 2 ? <span className="text-red">Failed</span> : item?.status === 1 ? <span className="text-green">Succeed</span> : <p>Unpaid</p>}
+                                        {item?.status === 2 ? <span className="text-customred">Failed</span> : item?.status === 1 ? <span className="text-green">Succeed</span> : <p>Unpaid</p>}
 
                                     </div>
                                     <div className="bg-redLight text-white w-full mt-1 py-2 flex items-center justify-between px-2  rounded-md">
                                         <p>Win/Loss</p>
                                         {item?.status !== 0 ? <p>{item?.win_amount == 0 ? (<>
-                                            <span className="text-red">₹0.00</span>
-                                        </>) : <span className="text-green">₹{item?.win_amount}</span>}</p> : <p>--</p>}
+                                            <span className="text-customred">0.00</span>
+                                        </>) : <span className="text-green">{item?.win_amount}</span>}</p> : <p>--</p>}
                                     </div>
                                     <div className="bg-redLight text-white w-full mt-1 py-2 flex items-center justify-between px-2  rounded-md">
                                         <p>Order time</p>

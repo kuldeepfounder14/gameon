@@ -16,15 +16,25 @@ import apis from '../../utils/apis'
 import withdrawBg from "../../assets/usaAsset/wallet/withdrawBg.png"
 import Loader from '../../reusable_component/Loader/Loader';
 import { data } from 'autoprefixer';
+import Connection from '../../features/ethereum/Connection';
 
 const profileApi = apis.profile
 function Deposit() {
+    const {
+        currentAccount,
+        connectWallet,
+        balance,
+        tokenSymbol,
+        betAmount,
+        setBetAmount,
+        placeBet
+    } = Connection();
     const [loading, setloading] = useState(false);
     const [paymenLimts, setPaymenLimts] = useState({})
     const [amountError, setAmountError] = useState("");
     const [amountErrorUSDT, setAmountErrorUSDT] = useState("");
     const [amountErrorCamilino, setAmountErrorCamilino] = useState("");
-    const [activeModal, setActiveModal] = useState(0);
+    const [activeModal, setActiveModal] = useState(1);
     // const [payModesList, setPayModesList] = useState(0);
     const [selectedAmount, setSelectedAmount] = useState(200);
     const [selectedAmountCamilino, setSelectedAmountCamilino] = useState(1);
@@ -63,12 +73,12 @@ function Deposit() {
             minAmount = paymenLimts?.kuber_pay_minimum_deposit
             maxAmount = paymenLimts?.kuber_pay_maximum_deposit
         } else {
-            minAmount = paymenLimts?.INR_minimum_deposit;
-            maxAmount = paymenLimts?.INR_maximum_deposit;
+            minAmount = 0;
+            maxAmount = 1000;
         }
         amount = Number(amount);
         if (isNaN(amount) || amount < minAmount || amount > maxAmount) {
-            setAmountError(`Amount must be between ₹${minAmount} - ₹${maxAmount}`);
+            setAmountError(`Amount must be between ${minAmount} - ${maxAmount}`);
             setAmountErrorUSDT(`Amount must be between $${minAmount} - $${maxAmount}`);
             setAmountErrorCamilino(`Amount must be between $${minAmount} - $${maxAmount}`);
         } else {
@@ -84,7 +94,7 @@ function Deposit() {
         } else if (activeModal == 1) {
             validateAmount(upiAmount);
             // console.log("upiAmount", upiAmount)
-        }else{
+        } else {
             validateAmount(upiAmountCamilino)
         }
     }, [activeModal]);
@@ -109,58 +119,54 @@ function Deposit() {
     }, [])
 
     const payin_deposit = async () => {
+        setloading(true)
         if (!userId) {
             toast.error("User not logged in");
             navigate("/login");
             return;
         }
-        setloading(true)
+        const amount = String(upiAmount)
+        const ethereumRes = await placeBet(amount);
+        // console.log("ethereumRes", ethereumRes?.hash, ethereumRes?.status)
+        // if (ethereumRes) {
+        //     toast.error("Ethereum bet failed");
+        //     return;
+        // }
+        const hashID = ethereumRes?.hash
         const payload = {
             user_id: userId,
-            cash: upiAmount,
-            type: 1
+            amount: upiAmount,
+            hash_id: hashID,
+            status: 1
         }
         const apiIndianPay = apis.payin_deposit
-        const apiUsdtPay = apis.payin_deposit_usdt
-        const apiCamilinoPay = `https://root.globalbet24.club/api/camlenio?user_id=1&amount=200&type=2`
-        const payloadUsdt = {
-            user_id: userId,
-            amount: usdtAmount,
-            type: 0
-        }
-        // const payloadCamilino = {
-        //     user_id: userId,
-        //     amount: upiAmountCamilino,
-        //     type: 2
-        // }
-        // console.log("payload", activeModal === 0 ? payloadUsdt :payload, activeModal)
+
+        // console.log("payload", payload)
         try {
-            let res
-            if(activeModal==2){
-                res = await axios.get(apiCamilinoPay)
-            }else{
-                res = await axios.post(activeModal === 1 ? apiIndianPay : apiUsdtPay, activeModal === 1 ? payload :payloadUsdt)
-            }
+            let res = await axios.post(apiIndianPay, payload)
+
             // console.log("res", res)
-            if (res?.data?.status === true||res?.data?.status === "200" || res?.data?.status === 200 || res?.data?.status === "SUCCESS") {
-                // console.log("payment_link", activeModal === 1 ? res?.data?.payment_link : res?.data?.data?.status_url)
-                window.open(activeModal === 1 ? res?.data?.payment_link :activeModal===0? res?.data?.data?.status_url:res?.data?.result?.payment_url, "_blank");
+            if (res?.data?.status === true || res?.data?.status === "200" || res?.data?.status === 200 || res?.data?.status === "SUCCESS") {
+                profileDetails(userId)
+                connectWallet()
                 setloading(false)
-            } else {
-                setloading(false)
-                console.log("res?.data?.message", res?.data?.message)
-                toast.error(res?.data?.message)
             }
         } catch (er) {
+            // console.log("ethereum", er)
+            if (er?.response?.data?.status === 500) {
+                console.log("err", er)
+            } else {
+                toast.error(er)
+            }
+        } finally {
             setloading(false)
-            console.log(er)
-            toast.error(er)
         }
     }
     useEffect(() => {
         if (userId) {
             profileDetails(userId);
         }
+        connectWallet()
     }, [userId]);
 
     const handleSelectAmount = (amount) => {
@@ -190,57 +196,69 @@ function Deposit() {
         setAmountErrorUSDT("");
     };
 
-    const payMethod = [{
-        image: usdt_icon,
-        name: "USDT",
-        type: 0
-    },
-    {
-        image: indianpay,
-        name: "Indian pay",
-        type: 1
-    },
+    const payMethod = [
+        //{
+        //     image: usdt_icon,
+        //     name: "USDT",
+        //     type: 0
+        // },
+        {
+            image: indianpay,
+            name: "",
+            type: 1
+        },
 
-    {
-        image: camlenios,
-        name: "camlinio",
-        type: 2
-    }
+        // {
+        //     image: camlenios,
+        //     name: "camlinio",
+        //     type: 2
+        // }
     ]
 
     // console.log("paymenLimts", paymenLimts)
     return (
         <div className='mx-3'>
             {loading == true && <Loader setloading={setloading} loading={loading} />}
-            <div className='h-40 w-full object-fill bg-no-repeat  rounded-lg p-2'
+            <div className='h-40 w-full flex items-center justify-between object-fill bg-no-repeat  rounded-lg p-2'
                 style={{
                     backgroundImage: `url(${withdrawBg})`,
                     backgroundSize: "contain",
                     backgroundPosition: "center",
                 }}
             >
-                <p className='flex items-center gap-4 mt-5'>
-                    <p><img className='w-5 h-5' src={depo_wallet} alt="ds" /></p>
-                    <p>Balance</p>
-                </p>
-                <p className='mt-2 text-2xl flex items-center gap-4 ml-5 font-bold'>
-                    <p>₹ {myDetails ? Number(myDetails?.data?.wallet + myDetails?.data?.third_party_wallet).toFixed(2) : "0.00"}</p>
-                    <HiArrowPathRoundedSquare onClick={() => profileDetails(userId)} className=' text-xl' />
-                </p>
+                <div>
+                    <p className='flex items-center gap-4'>
+                        <p><img className='w-5 h-5' src={depo_wallet} alt="ds" /></p>
+                        <p>Balance</p>
+                    </p>
+                    <p className='mt-2 text-2xl flex items-center gap-4 ml-5 font-bold'>
+                        <p> {myDetails ? Number(myDetails?.data?.wallet + myDetails?.data?.third_party_wallet).toFixed(2) : "0.00"}</p>
+                        <HiArrowPathRoundedSquare onClick={() => profileDetails(userId)} className=' text-xl' />
+                    </p>
+                </div>
+
+                <div>
+                    {currentAccount && (
+                        <button disabled={currentAccount} onClick={connectWallet} className="bg-bg3 p-2  text-sm text-white w-full py-2 rounded-full outline-none font-semibold">{currentAccount ? "Connected" : "Connect"}</button>
+                    )}
+                    <p className='text-lg text-center pt-1 font-bold'>{balance}{tokenSymbol}</p>
+                </div>
+
+
             </div>
-            <div className="w-full grid grid-cols-3 gap-3 mt-2">
+            {/* <div className="w-full grid grid-cols-3 gap-3 mt-2">
                 {payMethod && payMethod?.map((item, i) => (
                     <div
-                        onClick={() => toggleModal(item?.type)}
+                        onClick={() => toggleModal(1)}
                         key={i}
                         className={`col-span-1 mb-2 p-4 rounded-md flex flex-col items-center text-xsm justify-evenly ${item?.type == activeModal ? "bg-gradient-to-l from-customlightbtn to-customdarkBluebtn text-white" : "bg-customdarkBlue text-gray"
                             } shadow-md text-lightGray`}
                     >
-                        <img className={`w-${item?.type===2?20:10} h-10`} src={item.image} alt="UPI Payment "/>
+                        <img className={`w-${item?.type === 2 ? 20 : 10} h-10`} src={item.image} alt="UPI Payment " />
                         <p className='text-nowrap'>{item?.name}</p>
                     </div>
                 ))}
-            </div>
+            </div> */}
             {/* Modals */}
             {(activeModal == 2) && (
                 <div className="mt-5 ">
@@ -255,13 +273,13 @@ function Deposit() {
                                     onClick={() => handleSelectAmountCamilino(item)}
                                     className={`col-span-1 border-[0.2px] border-lightGray flex items-center justify-center gap-3 rounded-md py-1  
                         ${selectedAmountCamilino == item ? 'bg-gradient-to-l from-customlightbtn to-customdarkBluebtn text-white' : 'text-lightGray'}`}>
-                                    ₹&nbsp;&nbsp;<p className={`${selectedAmountCamilino == item ? ' text-white' : 'text-customlightbtn'}`}>{i === 3 ? "1K" : i === 4 ? "5K" : i === 5 ? "10K" : i === 6 ? "20K" : i === 7 ? "50K" : i === 8 ? "100K" : item}</p>
+                                    &nbsp;&nbsp;<p className={`${selectedAmountCamilino == item ? ' text-white' : 'text-customlightbtn'}`}>{i === 3 ? "1K" : i === 4 ? "5K" : i === 5 ? "10K" : i === 6 ? "20K" : i === 7 ? "50K" : i === 8 ? "100K" : item}</p>
                                 </div>
                             ))}
                         </div>
                         {amountErrorCamilino && <p className="text-bg2 text-xs mt-2">{amountErrorCamilino}</p>}
                         <div className="flex items-center bg-red rounded-full text-sm mt-3 p-1">
-                            <div className="w-8 flex items-center justify-center text-customlightbtn text-2xl font-bold">₹</div>
+                            <div className="w-8 flex items-center justify-center text-customlightbtn text-2xl font-bold"></div>
                             <input
                                 value={upiAmountCamilino == 0 ? "" : upiAmountCamilino}
                                 onChange={(e) => {
@@ -269,7 +287,7 @@ function Deposit() {
                                     setUpiAmountCamilino(numericAmount);
                                     validateAmount(numericAmount);
                                 }}
-                                type="number"
+                                type="text"
                                 placeholder="Please enter the amount"
                                 className="w-full p-1 bg-red border-none focus:outline-none text-white placeholder:text-xsm"
                             />
@@ -278,7 +296,7 @@ function Deposit() {
                                 <RxCrossCircled size={20} />
                             </button>
                         </div>
-                        <button onClick={payin_deposit} className={`mt-4 w-full ${upiAmountCamilino >= paymenLimts?.INR_minimum_deposit ? "text-white bg-gradient-to-r from-customlightbtn to-customdarkBluebtn" : "bg-gradient-to-l from-[#cfd1de] to-[#c7c9d9] text-gray"}   py-3 rounded-full border-none text-xsm `}>
+                        <button onClick={payin_deposit} className={`mt-4 w-full ${upiAmountCamilino >= paymenLimts?._minimum_deposit ? "text-white bg-gradient-to-r from-customlightbtn to-customdarkBluebtn" : "bg-gradient-to-l from-[#cfd1de] to-[#c7c9d9] text-gray"}   py-3 rounded-full border-none text-xsm `}>
                             Deposit
                         </button>
                     </div>
@@ -319,20 +337,20 @@ function Deposit() {
                         <h3 className="text-lg font-semibold text-bg2 flex items-center ">
                             <img className='w-6 h-6' src={save_wallet} alt="sd" /> &nbsp; <p className='text-white'>Deposit amount </p>
                         </h3>
-                        <div className='grid grid-cols-3 mt-3 gap-3'>
+                        {/* <div className='grid grid-cols-3 mt-3 gap-3'>
                             {depositArray.map((item, i) => (
                                 <div
                                     key={i}
                                     onClick={() => handleSelectAmount(item)}
                                     className={`col-span-1 border-[0.2px] border-lightGray flex items-center justify-center gap-3 rounded-md py-1  
                         ${selectedAmount == item ? 'bg-gradient-to-l from-customlightbtn to-customdarkBluebtn text-white' : 'text-lightGray'}`}>
-                                    ₹&nbsp;&nbsp;<p className={`${selectedAmount == item ? ' text-white' : 'text-customlightbtn'}`}>{i === 3 ? "1K" : i === 4 ? "5K" : i === 5 ? "10K" : i === 6 ? "20K" : i === 7 ? "50K" : i === 8 ? "100K" : item}</p>
+                                    &nbsp;&nbsp;<p className={`${selectedAmount == item ? ' text-white' : 'text-customlightbtn'}`}>{i === 3 ? "1K" : i === 4 ? "5K" : i === 5 ? "10K" : i === 6 ? "20K" : i === 7 ? "50K" : i === 8 ? "100K" : item}</p>
                                 </div>
                             ))}
-                        </div>
+                        </div> */}
                         {amountError && <p className="text-bg2 text-xs mt-2">{amountError}</p>}
                         <div className="flex items-center bg-red rounded-full text-sm mt-3 p-1">
-                            <div className="w-8 flex items-center justify-center text-customlightbtn text-2xl font-bold">₹</div>
+                            <div className="w-8 flex items-center justify-center text-customlightbtn text-2xl font-bold"></div>
                             <input
                                 value={upiAmount == 0 ? "" : upiAmount}
                                 onChange={(e) => {
@@ -349,7 +367,7 @@ function Deposit() {
                                 <RxCrossCircled size={20} />
                             </button>
                         </div>
-                        <button onClick={payin_deposit} className={`mt-4 w-full ${upiAmount >= paymenLimts?.INR_minimum_deposit ? "text-white bg-gradient-to-r from-customlightbtn to-customdarkBluebtn" : "bg-gradient-to-l from-[#cfd1de] to-[#c7c9d9] text-gray"}   py-3 rounded-full border-none text-xsm `}>
+                        <button onClick={payin_deposit} className={`mt-4 w-full ${upiAmount >= paymenLimts?._minimum_deposit ? "text-white bg-gradient-to-r from-customlightbtn to-customdarkBluebtn" : "bg-gradient-to-l from-[#cfd1de] to-[#c7c9d9] text-gray"}   py-3 rounded-full border-none text-xsm `}>
                             Deposit
                         </button>
                     </div>
@@ -420,9 +438,9 @@ function Deposit() {
                                     className="w-full p-1 bg-red border-none focus:outline-none text-white placeholder:text-lightGray text-xsm"
                                 />
                             </div>
-                            {/* INR Input */}
+                            {/*  Input */}
                             <div className="flex items-center mt-3 bg-red w-full rounded-full text-sm p-2">
-                                <div className="w-8 flex items-center justify-center text-xl font-bold text-customlightbtn">₹</div>
+                                <div className="w-8 flex items-center justify-center text-xl font-bold text-customlightbtn"></div>
                                 <div className="w-[1px] mx-2 bg-lightGray h-5"></div>
                                 <input
                                     value={usdtAmount == 0 ? "" : usdtAmount * (paymenLimts?.deposit_conversion_rate || 1)}
@@ -432,7 +450,7 @@ function Deposit() {
                                         validateAmount(value / (paymenLimts?.deposit_conversion_rate || 1));
                                     }}
                                     type="number"
-                                    placeholder="Enter INR amount"
+                                    placeholder="Enter  amount"
                                     className="w-full p-1 bg-red border-none focus:outline-none text-white placeholder:text-lightGray text-xsm"
                                 />
                             </div>
@@ -458,7 +476,7 @@ function Deposit() {
                                 </button>
                             </div>
                             <div className="flex items-center bg-white w-full rounded-full text-sm mt-3 p-2">
-                                <div className="w-8 flex items-center justify-center text-xl font-bold text-bg2">₹</div>
+                                <div className="w-8 flex items-center justify-center text-xl font-bold text-bg2"></div>
                                 <div className="w-[1px] mx-2 flex items-center justify-center bg-lightGray h-5"></div>
                                 <p
                                     className="w-full p-1 bg-white border-none focus:outline-none text-redLight placeholder:text-lightGray text-xsm"

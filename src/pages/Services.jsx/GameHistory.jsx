@@ -90,7 +90,7 @@ function GameHistory() {
       </div>
       <div className='mt-3 px-3'>
         <div className='h-32 rounded-lg flex flex-col items-center justify-center bg-redLight'>
-          <p className='font-bold text-xl text-yellow'>₹{gameStats?.status === 200 ? gameStats?.grand_total : "0.00"}</p>
+          <p className='font-bold text-xl text-yellow'>{gameStats?.status === 200 ? gameStats?.grand_total : "0.00"}</p>
           <p className='mt-3'>Total bet</p>
         </div>
       </div>
@@ -107,7 +107,7 @@ function GameHistory() {
                 </div>
                 <div className="flex ml-10 text-[15px] items-center justify-between mt-2.5 gap-2">
                   <p>Total bet</p>
-                  <p className="text-yellow">₹{data?.total_bet_amount?.toFixed(2) || '0.00'}</p>
+                  <p className="text-yellow">{data?.total_bet_amount?.toFixed(2) || '0.00'}</p>
                 </div>
                 <div className="flex ml-10 text-[15px] items-center justify-between mt-2.5 gap-2">
                   <p>Number of bets</p>
@@ -115,7 +115,7 @@ function GameHistory() {
                 </div>
                 <div className="flex ml-10 text-[15px] items-center justify-between mt-2.5 gap-2">
                   <p>Winning amount</p>
-                  <p className="text-green">₹{data?.total_win_amount?.toFixed(2) || '0.00'}</p>
+                  <p className="text-green">{data?.total_win_amount?.toFixed(2) || '0.00'}</p>
                 </div>
               </div>
             );
@@ -231,7 +231,7 @@ function GameHistory() {
               </div>
               <div className="bg-bg2 w-full mt-1 py-2 flex items-center justify-between px-2 text-white rounded-md">
                 <p>Win/Loss</p>
-                <p> <span className="text-green">₹45</span></p>
+                <p> <span className="text-green">45</span></p>
               </div>
               <div className="bg-bg2 w-full mt-1 py-2 flex items-center justify-between px-2 text-white rounded-md">
                 <p>Order time</p>
@@ -320,7 +320,7 @@ function GameHistory() {
               </div>
               <div className="bg-bg2 w-full mt-1 py-2 flex items-center justify-between px-2 text-white rounded-md">
                 <p>Win/Loss</p>
-                <p> <span className="text-green">₹45</span></p>
+                <p> <span className="text-green">45</span></p>
               </div>
               <div className="bg-bg2 w-full mt-1 py-2 flex items-center justify-between px-2 text-white rounded-md">
                 <p>Order time</p>

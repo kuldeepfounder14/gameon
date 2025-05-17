@@ -61,8 +61,8 @@ function InvitationRewardRule() {
                                     } ${index === invitationListData?.length - 1 ? "last:rounded-b-lg" : ""}`}
                             >
                                 <td className="text-center py-2">{item?.no_of_user}</td>
-                                <td className="text-center">₹{item.amount}</td>
-                                <td className="text-center">₹{item.claim_amount}</td>
+                                <td className="text-center">{item.amount}</td>
+                                <td className="text-center">{item.claim_amount}</td>
                             </tr>
                         ))}
                     </tbody>

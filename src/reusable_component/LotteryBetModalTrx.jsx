@@ -87,7 +87,7 @@ function LotteryBetModalTrx({ gameHistoryData, profileDetails, myHistory, bet_ap
     const incrementBet = () => setQuantityIndex((prev) => prev + 1);
     const decrementBet = () => setQuantityIndex((prev) => (prev > 1 ? prev - 1 : 1));
     const colorClass = colorClassMap[gameDetails?.colorCode] || '#666';
-    const nextPeriod = gameHistoryData[0]?.period.slice(-10)
+    const nextPeriod = gameHistoryData[0]?.period.slice(7)
     const wingoBetHandler = async () => {
         console.log("gameHistoryData[0]?.period", gameHistoryData[0]?.period)
         const payload = {
@@ -95,7 +95,7 @@ function LotteryBetModalTrx({ gameHistoryData, profileDetails, myHistory, bet_ap
             game_id: gameDetails?.gameId,
             number: gameDetails?.betButtonId,
             amount: finalBetValue,
-            games_no: gameHistoryData[0]?.period.slice(0, 8) + (Number(nextPeriod) + 1)
+            games_no: gameHistoryData[0]?.period.slice(0, 7) + (Number(nextPeriod) + 1)
         }
         console.log("payload", payload)
         if (checkAgreement) {
@@ -204,7 +204,7 @@ function LotteryBetModalTrx({ gameHistoryData, profileDetails, myHistory, bet_ap
 
                     <div className="grid grid-cols-12 mt-5">
                         <button onClick={onClose} className={` bg-inputBg text-gray col-span-4 h-12`}>Cancel</button>
-                        <button onClick={() => wingoBetHandler()} className="bg-bg2 col-span-8 h-12" style={{ backgroundColor: colorClass }}>Total amount ₹{finalBetValue}</button>
+                        <button onClick={() => wingoBetHandler()} className="bg-bg2 col-span-8 h-12" style={{ backgroundColor: colorClass }}>Total amount {finalBetValue}</button>
                     </div>
                 </div>
             </div>

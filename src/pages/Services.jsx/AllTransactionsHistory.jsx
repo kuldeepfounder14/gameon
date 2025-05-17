@@ -155,7 +155,7 @@ function AllTransactionsHistory() {
                     }}
                     className='text-customlightbtn bg-redLight text-lg font-bold px-5'
                   >
-                    ₹{item?.amount}
+                    {item?.amount}
                   </p>
                 </div>
                 <div className='w-full h-14 bg-redLight rounded-md'></div>

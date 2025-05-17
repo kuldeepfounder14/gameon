@@ -22,7 +22,7 @@ function LotteryGamesList() {
     const games = [
         { id: 1, name: "Win Go", image: lotterycategorywingo, route: "/lottery/wingo", description1: "The highest bonus in history", description2: "Through the platform WIN GO Hash lottery seed as the result of the lottery", bgColor: "bg-redLight" },
         { id: 2, name: "Trx Win", image: lotterycategorytrx, route: "/lottery/trxwingo", description1: "The highest bonus in history", description2: "By obtaining the real-time hash value of the TRX blockchain as the result of the lottery", bgColor: "bg-redLight" },
-        { id: 3, name: "K3", image: k3, route: "/lottery/k3", description1: "The highest bonus in history", description2: "The player predicts 3 DICE numbers, the winning rate is high, the gameplay is simple, and it is easy to win", bgColor: "bg-redLight" },
+        // { id: 3, name: "K3", image: k3, route: "/lottery/k3", description1: "The highest bonus in history", description2: "The player predicts 3 DICE numbers, the winning rate is high, the gameplay is simple, and it is easy to win", bgColor: "bg-redLight" },
         // { id: 4, name: "5D", image: d5d, route: "/comingsoon", description1: "The highest bonus in history", description2: "5 numbers are used as the result of the lottery, and the playing methods are flexible and diverse", bgColor: "bg-redLight" },
 
 
@@ -54,7 +54,7 @@ function LotteryGamesList() {
 
             {loading && <Loader setLoading={setLoading} loading={loading} />}
             {games?.map((game) => {
-                console.log("gamegamegame",game)
+                // console.log("gamegamegame",game)
                 return (
                     <Link className="w-full mb-2  pr-2 flex items-center justify-center" to={`${game?.route}`} key={game.id}>
                         <div className={`${game.bgColor} flex justify-between px-1  pt-1 pb- w-full rounded-xl h-32`}>
@@ -77,7 +77,7 @@ function LotteryGamesList() {
                                 <div className="h-7 w-full rounded-lg bg-red mt-2 flex items-center justify-between px-2">
                                     <div className=" w-30 text-[10px]  flex items-start justify-start">{game.description1}</div>
                                     <div className="h-3 w-[0.5px] bg-white"></div>
-                                    <div className="text-customlightbtn">₹0.00</div>
+                                    <div className="text-customlightbtn">0.00</div>
                                 </div>
                                 <div
                                     className="flex items-start justify-between pt-2">

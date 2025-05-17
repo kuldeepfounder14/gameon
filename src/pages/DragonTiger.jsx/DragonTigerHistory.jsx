@@ -8,6 +8,8 @@ import { useNavigate } from "react-router-dom";
 import ic_dt_d from "../../assets/dragontiger/ic_dt_d.png"
 import ic_dt_t from "../../assets/dragontiger/ic_dt_t.png"
 import ic_dt_tie from "../../assets/dragontiger/ic_dt_tie.png"
+import socket from '../../shared/socket/DragonTigerSocket';
+
 const duration = 30
 const DragonTigerHistory = () => {
     const [activeIndex, setActiveIndex] = useState(null);
@@ -16,21 +18,23 @@ const DragonTigerHistory = () => {
     const navigate = useNavigate()
     const userId = localStorage.getItem("userId");
 
-    const calculateTimeLeft = () => {
-        const now = new Date();
-        const secondsInCycle = (now.getMinutes() * 60 + now.getSeconds()) % duration;
-        const remainingTime = Math.max(duration - secondsInCycle, 0);
-        setTimeLeft(remainingTime);
-    };
     useEffect(() => {
-        calculateTimeLeft();
-        const timerInterval = setInterval(() => {
-            calculateTimeLeft();
-        }, 1000);
-
-        return () => clearInterval(timerInterval);
-    }, []);
-
+        const handleOneMin = (onemin) => {
+          const q = JSON.parse(onemin);
+    
+          const { timerBetTime } = q;
+    
+          setTimeLeft(
+            Number(timerBetTime) 
+          );
+        };
+    
+        socket.on("admingameon_DT", handleOneMin);
+    
+        return () => {
+          socket.off("admingameon_DT", handleOneMin);
+        };
+      }, []);
     useEffect(() => {
         if (timeLeft === 5) {
             betHistory()
@@ -68,7 +72,7 @@ const DragonTigerHistory = () => {
         betHistory()
     }, [userId])
 
-    console.log("myHistoryDatamyHistoryData", myHistoryData)
+    // console.log("myHistoryDatamyHistoryData", myHistoryData)
     // 0 = pensding , 1= win, 2= loss
     return (
         <>
@@ -101,11 +105,11 @@ const DragonTigerHistory = () => {
                                         {item?.win_amount === 0 && item?.status === 0 ? "Pending" : (item?.win_amount === 0 ? "Failed" : "Success")}
                                     </div>
                                     <div
-                                        className={`font-bold text-center ${item?.win_amount === 0 && item?.status === 0 ? "text-gray" : (item?.win_amount === 0 ? "text-red" : "text-green")}`}
+                                        className={`font-bold text-center ${item?.win_amount === 0 && item?.status === 0 ? "text-gray" : (item?.win_amount === 0 ? "text-customred" : "text-green")}`}
                                     >
                                         {item?.win_amount === 0 && item?.status === 0 ? "--" : (item?.win_amount === 0
-                                            ? `- ₹${item?.amount}.00`
-                                            : `+ ₹${item?.win_amount}`)}
+                                            ? `- ${item?.amount}.00`
+                                            : `+ ${item?.win_amount}`)}
                                     </div>
                                 </div>
                             </div>
@@ -173,8 +177,8 @@ const DragonTigerHistory = () => {
                                 <div className="bg-redLight w-full mt-1 py-2 flex items-center justify-between px-2 text-white rounded-md">
                                     <p>Win/Loss</p>
                                     {item?.status !== 0 ? <p>{item?.win_amount == 0 ? (<>
-                                        <span className="text-rose-500">₹0.00</span>
-                                    </>) : <span className="text-green">₹{item?.win_amount}</span>}</p> : <p>--</p>}
+                                        <span className="text-rose-500">0.00</span>
+                                    </>) : <span className="text-green">{item?.win_amount}</span>}</p> : <p>--</p>}
                                 </div>
                                 <div className="bg-redLight w-full mt-1 py-2 flex items-center justify-between px-2 text-white rounded-md">
                                     <p>Order time</p>

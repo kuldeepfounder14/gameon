@@ -58,8 +58,8 @@ function AllBets({ setTotalBetValue }) {
             setHotAirData(q);
         };
 
-        socket.on("nitish_aviator", handleSocket);
-        return () => socket.off("nitish_aviator", handleSocket);
+        socket.on("admingameon_aviator", handleSocket);
+        return () => socket.off("admingameon_aviator", handleSocket);
     }, []);
     // console.log("hotAirData", hotAirData)
 
@@ -122,8 +122,8 @@ function AllBets({ setTotalBetValue }) {
         <div className='text-white w-full h-full'>
             <div className="w-full flex items-center py-0.5 justify-between">
                 <p className="text-gray w-[40%]">User</p>
-                <p className="text-gray xl:-mr-5 2xl:-mr-10 w-[30%]">Bet,INR X</p>
-                <p className="text-gray w-[30%]">Cash out,INR</p>
+                <p className="text-gray xl:-mr-5 2xl:-mr-10 w-[30%]">Bet, X</p>
+                <p className="text-gray w-[30%]">Cash out,</p>
             </div>
             <div className="w-full h-full overflow-y-auto  hide-scrollbar">
                 <div className="overflow-y-auto w-full">

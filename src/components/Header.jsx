@@ -64,11 +64,11 @@ function Header({ audioRef, isAudioOn, setIsAudioOn }) {
   // console.log("myDetails",myDetails)
   return (
     <div className="font-inter">
-      {location?.pathname === "/" ? <div className='bg-[#374992]  p-2 flex justify-between items-center'>
-        <img className='w-16 h-8' src={usawinlogo} alt="logo not found" />
+      {location?.pathname === "/" ? <div className='bg-bg4  px-2 py-0.5 flex justify-between items-center'>
+        <img className='w-12 h-12 rounded-full' src={usawinlogo} alt="logo not found" />
         {!userId ? <div className=" gap-2 flex">
           <Link to="/login" className="flex items-center border border-customlightbtn text-customlightbtn rounded-md text-xs py-1 px-4">Log in</Link>
-          <Link to="/register" className="bg-gradient-to-r from-customlightbtn to-customdarkBluebtn flex items-center  text-white rounded-md text-xs py-0.5 px-4">Register</Link>
+          {/* <Link to="/register" className="bg-gradient-to-r from-customlightbtn to-customdarkBluebtn flex items-center  text-white rounded-md text-xs py-0.5 px-4">Register</Link> */}
         </div> :
           <div className="flex items-center ">
             <div className="relative  h-8">
@@ -81,7 +81,7 @@ function Header({ audioRef, isAudioOn, setIsAudioOn }) {
             <img className="w-6 h-6 mt-2" src={engFlag} alt="sd" />
           </div>}
       </div>
-        : location?.pathname === "/activity" ? <div className="w-full h-[3.22rem] bg-gradient-to-r from-red to-redLight flex items-center justify-center"><img className='w-16 h-8' src={usawinlogo} alt="logo not found" /></div>
+        : location?.pathname === "/activity" ? <div className="w-full h-[3.22rem] bg-gradient-to-r from-red to-redLight flex items-center justify-center"><img className='w-12 h-12 rounded-full' src={usawinlogo} alt="logo not found" /></div>
           : location?.pathname === "/activity/invitationbonus" ? <div className='bg-gradient-to-r from-red to-redLight h-[3.22rem] flex items-center justify-between'>
             <Link to={-1} >
               <MdKeyboardArrowLeft className="font-extrabold text-4xl text-white" />
@@ -444,7 +444,7 @@ function Header({ audioRef, isAudioOn, setIsAudioOn }) {
                                                                                                               <Link to={-1}>
                                                                                                                 <MdKeyboardArrowLeft className="font-extrabold text-4xl text-white" />
                                                                                                               </Link>
-                                                                                                              <img className='w-16 h-8' src={usawinlogo} alt="logo not found" />
+                                                                                                              <img className='w-12 h-12 rounded-full' src={usawinlogo} alt="logo not found" />
                                                                                                               <p className='text-sm'></p>
 
                                                                                                             </div>
@@ -467,7 +467,7 @@ function Header({ audioRef, isAudioOn, setIsAudioOn }) {
                                                                                                                       <img src={backButton} alt="drf"
                                                                                                                         className="w-6 h-6" />
                                                                                                                     </Link>
-                                                                                                                    <img className='w-16 h-7 ' src={usawinlogo} alt="logo not found" />
+                                                                                                                    <img className='w-12 h-12 rounded-full ' src={usawinlogo} alt="logo not found" />
                                                                                                                     <div className="flex items-center gap-2">
                                                                                                                       <Link to="/customerservices" >
                                                                                                                         <img className='w-7 h-7' src={kefu} alt="logo not found" />

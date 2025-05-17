@@ -17,9 +17,13 @@ const profileApi = apis.profile
 const Wallet = () => {
   const [loading, setLoading] = useState(false);
   const {
+    currentAccount,
     connectWallet,
     balance,
     tokenSymbol,
+    betAmount,
+    setBetAmount,
+    placeBet,
   } = Connection();
   const [firstDepsoitModal, setFirstDepsoitModal] = useState(localStorage.getItem("firstDepositModalValue") === "1");
   const [myDetails, setMyDetails] = useState(null)
@@ -125,6 +129,7 @@ const Wallet = () => {
     } else {
       setFirstDepsoitModal(false);
     }
+    connectWallet()
   }, [])
   // console.log("timer",timer)
   return (
@@ -142,7 +147,7 @@ const Wallet = () => {
       <div className="min-h-screen text-white  flex font-inter flex-col items-center ">
         <div className="bg-gradient-to-l from-[#4673cf] to-[#374a93] flex flex-col justify-center items-center  text-white w-full px-6 pb-16 pt-5 text-center shadow-md">
           <img className="h-12 w-12" src={wallets} alt="cx" />
-          <p className="text-2xl font- mt-2">₹ {myDetails ? Number(myDetails?.data?.wallet + myDetails?.data?.third_party_wallet).toFixed(2) : "0.00"}</p>
+          <p className="text-2xl font- mt-2"> {myDetails ? Number(myDetails?.data?.wallet + myDetails?.data?.third_party_wallet).toFixed(2) : "0.00"}</p>
           <p className="text-xsm mt-1">Total Balance</p>
         </div>
         <div className="px-4 -mt-8">
@@ -151,30 +156,29 @@ const Wallet = () => {
               <div className="flex w-[50%] flex-col justify-center items-center">
                 <CircularIndicator percentage={mainWalletPercentage} />
 
-                {/* <p className="mt-2 text-white">₹ {myDetails ? Number(myDetails?.data?.wallet).toFixed(2) : "0.00"}</p> */}
+                {/* <p className="mt-2 text-white"> {myDetails ? Number(myDetails?.data?.wallet).toFixed(2) : "0.00"}</p> */}
                 <p className="mt-2 text-white">{balance} {tokenSymbol}</p>
                 <p className="bg-gradient-to-r from-[#43b5ec] to-[#759fde] bg-clip-text text-transparent text-xsm">Main wallet</p>
               </div>
               <div className="flex w-[50%] flex-col justify-center items-center">
                 <CircularIndicator percentage={thirdPartyWalletPercentage} />
-                <p className="mt-2  text-white">₹ {myDetails ? Number(myDetails?.data?.third_party_wallet).toFixed(2) : "0.00"}</p>
+                <p className="mt-2  text-white"> {myDetails ? Number(myDetails?.data?.third_party_wallet).toFixed(2) : "0.00"}</p>
                 <p className="bg-gradient-to-r from-[#43b5ec] to-[#759fde] bg-clip-text text-transparent text-xsm">Third party wallet</p>
               </div>
             </div>
             <button onClick={fundTransferHandler} className="bg-gradient-to-l from-[#4673cf] to-[#374a93]  text-sm text-white w-full py-2 mt-4 rounded-full outline-none font-semibold">
               {showModal ? `Recalling ${timer}...` : "Main wallet transfer"}
             </button>
-            <div>
-              {/* <button onClick={connectWallet}>Connect Wallet</button> */}
-              {/* {currentAccount && (
+            {/* <div>
+              {currentAccount && (
                 <div>
                   <p>Account: {currentAccount}</p>
                   <p>Balance: {balance} {tokenSymbol}</p>
                 </div>
-              )} */}
-            </div>
+              )}
+            </div> */}
 
-            <button onClick={connectWallet} className="bg-gradient-to-l from-[#4673cf] to-[#374a93]  text-sm text-white w-full py-2 mt-4 rounded-full outline-none font-semibold">Connect</button>
+            <button disabled={currentAccount} onClick={connectWallet} className="bg-gradient-to-l from-[#4673cf] to-[#374a93]  text-sm text-white w-full py-2 mt-4 rounded-full outline-none font-semibold">{currentAccount?"Connected":"Connect"}</button>
             <div className="grid grid-cols-4 gap-4 mt-6 max-w-md">
               <button className="">
                 <Link className=" rounded-lg flex flex-col justify-start h-20 items-center" to="/wallet/deposit"  >
@@ -228,7 +232,7 @@ const Wallet = () => {
                  justify-evenly ${i === 0 ? "bg-gradient-to-l from-[#4673cf] to-[#374a93] text-white" : "bg-customdarkBlue"
                 } shadow-md text-lightGray`}
             >
-              <p>₹ {item?.amount}</p>
+              <p> {item?.amount}</p>
               <p>{item?.game}</p>
             </div>
           ))}

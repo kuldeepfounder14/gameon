@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React, { createContext, useContext, useMemo, useEffect, useState, useCallback } from "react";
 import io from "socket.io-client";
 

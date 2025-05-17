@@ -11,6 +11,7 @@ import usdt_icon from '../../assets/images/usdt_icon.png';
 import Loader from '../../reusable_component/Loader/Loader';
 import camlenios from "../../assets/usaAsset/wallet/camlenios.png"
 import indianpay from "../../assets/usaAsset/wallet/indianpay.png"
+import Connection from '../../features/ethereum/Connection';
 function Withdrawal() {
     const [loading, setloading] = useState(false);
     const [amountError, setAmountError] = useState("");
@@ -21,13 +22,22 @@ function Withdrawal() {
     const [upiAmountCamlenio, setUpiAmountCamlenio] = useState(500);
     const [usdtwalletaddress, setusdtwalletaddress] = useState("");
     const [usdtAmount, setUsdtAmount] = useState(10)
-    const [activeModal, setActiveModal] = useState(0);
+    const [activeModal, setActiveModal] = useState(1);
     // const [payModesList, setPayModesList] = useState(0);
     const [viewAccountDetails, setViewAccountDetails] = useState(null)
     const [viewAccountDetailsUSDT, setViewAccountDetailsUSDT] = useState(null)
     const [myDetails, setMyDetails] = useState(null)
     const navigate = useNavigate();
     const userId = localStorage.getItem("userId");
+    const {
+        currentAccount,
+        connectWallet,
+        balance,
+        tokenSymbol,
+        betAmount,
+        setBetAmount,
+        placeBet
+    } = Connection();
     const toggleModal = (modalType) => {
         setActiveModal((prev) => (prev === modalType ? modalType : modalType));
     };
@@ -57,13 +67,13 @@ function Withdrawal() {
             //     minAmount = paymenLimts?.kuber_pay_minimum_withdraw
             //     maxAmount = paymenLimts?.kuber_pay_maximum_withdraw
         } else {
-            minAmount = paymenLimts?.INR_minimum_withdraw;
-            maxAmount = paymenLimts?.INR_maximum_withdraw;
+            minAmount = paymenLimts?._minimum_withdraw;
+            maxAmount = paymenLimts?._maximum_withdraw;
         }
         amount = Number(amount);
         if (isNaN(amount) || amount < minAmount || amount > maxAmount) {
-            setAmountError(`Amount must be between ₹${minAmount} - ₹${maxAmount}`);
-            setAmountErrorCamlenio(`Amount must be between ₹${minAmount} - ₹${maxAmount}`);
+            setAmountError(`Amount must be between ${minAmount} - ${maxAmount}`);
+            setAmountErrorCamlenio(`Amount must be between ${minAmount} - ${maxAmount}`);
             setAmountErrorUSDT(`Amount must be between $${minAmount} - $${maxAmount}`);
         } else {
             setAmountError("");
@@ -88,8 +98,8 @@ function Withdrawal() {
         }
         try {
             const res = await axios.get(`${apis.accountView}?user_id=${userid}`)
-            console.log('accountview----',res)
-            if (res?.data?.status === "200"||res?.data?.status === 200) {
+            // console.log('accountview----', res)
+            if (res?.data?.status === "200" || res?.data?.status === 200) {
                 setViewAccountDetails(res?.data?.data)
             }
         } catch (err) {
@@ -104,9 +114,9 @@ function Withdrawal() {
         }
         try {
             const res = await axios.get(`${apis.usdt_account_view}${userId}`);
-            console.log("res", res)
+            // console.log("res", res)
             if (res?.data?.status === 200) {
-                console.log("res?.data?.data", res?.data?.data)
+                // console.log("res?.data?.data", res?.data?.data)
                 setViewAccountDetailsUSDT(res?.data?.data);
             } else {
                 // toast.error("Error: " + res?.data?.message);
@@ -135,6 +145,7 @@ function Withdrawal() {
 
     useEffect(() => {
         getPaymentLimits()
+        connectWallet()
     }, [])
     useEffect(() => {
         if (userId) {
@@ -155,37 +166,34 @@ function Withdrawal() {
         // }
         // alert("dfdg")
         let payload
-        if(activeModal===0){
+        if (activeModal === 0) {
             payload = {
                 user_id: userId,
                 type: activeModal,
                 amount: usdtAmount,
                 usdt_wallet_address: usdtwalletaddress,
-                amount_inr: usdtAmount == 0 ? "" : usdtAmount * (paymenLimts?.withdraw_conversion_rate || 1),
+                amount_: usdtAmount == 0 ? "" : usdtAmount * (paymenLimts?.withdraw_conversion_rate || 1),
             }
             // console.log('wwwww',payloadusdt)
             // console.log("urlurl",activeModal===0? apis?.usdtpayout_withdraw:apis?.payout_withdraw,)
-        }else{
-             payload = {
+        } else {
+            payload = {
                 user_id: userId,
-                type: activeModal,
-                amount:  upiAmount ,
-                account_id: viewAccountDetails[0]?.id,
+                amount: upiAmount,
+                ethereum_account_id: currentAccount,
             }
         }
-     
-
          console.log("payload", payload)
         try {
-            const res = await axios.post(activeModal===0? apis?.usdtpayout_withdraw:apis?.payout_withdraw, payload)
-             console.log("response",res )
-            if (res?.data?.status === 200||res?.data?.status === true||res?.data?.status === '200'||res?.data?.success === true) {
+            const res = await axios.post(activeModal === 0 ? apis?.usdtpayout_withdraw : apis?.payout_withdraw, payload)
+            console.log("response", res)
+            if (res?.data?.status === 200 || res?.data?.status === true || res?.data?.status === '200' || res?.data?.success === true) {
                 setloading(false)
                 toast.success(res?.data?.message)
-                setUpiAmountCamlenio("")
-                setUsdtAmount("")
+                // setUpiAmountCamlenio("")
+                // setUsdtAmount("")
                 setUpiAmount("")
-                setusdtwalletaddress("")
+                // setusdtwalletaddress("")
             } else {
                 setloading(false)
                 toast.error(res?.response?.data?.message)
@@ -193,27 +201,28 @@ function Withdrawal() {
         } catch (err) {
             console.log(err)
             setloading(false)
-            toast.error(err?.response?.data?.message)
+            // toast.error(err?.response?.data?.message)
         }
     }
     // console.log("cricket match",myDetails)
-  const payMethod = [{
-           image: usdt_icon,
-           name: "USDT",
-           type: 0
-       },
-       {
-           image: indianpay,
-           name: "Indian pay",
-           type: 1
-       },
-   
-       {
-           image: camlenios,
-           name: "Camlenio",
-           type: 2
-       }
-       ]
+    const payMethod = [
+    //     {
+    //     image: usdt_icon,
+    //     name: "USDT",
+    //     type: 0
+    // },
+    {
+        image: indianpay,
+        name: "Indian pay",
+        type: 1
+    },
+
+    // {
+    //     image: camlenios,
+    //     name: "Camlenio",
+    //     type: 2
+    // }
+    ]
     return (
         <div className='px-3 h-full '>
             {loading == true && <Loader setloading={setloading} loading={loading} />}
@@ -229,12 +238,12 @@ function Withdrawal() {
                     <p>Availale Balance</p>
                 </p>
                 <p className='mt-2 text-2xl flex items-center gap-2 font-bold'>
-                    <p>₹ {myDetails?.data?.wallet + myDetails?.data?.third_party_wallet}</p>
+                    <p>{myDetails?.data?.wallet + myDetails?.data?.third_party_wallet} GUC</p>
                     <HiArrowPathRoundedSquare onClick={() => profileDetails(userId)} className=' ' size={22} />
                 </p>
 
             </div>
-            <div className="w-full grid grid-cols-3 gap-3 mt-2">
+            {/* <div className="w-full grid grid-cols-3 gap-3 mt-2">
                 {payMethod && payMethod?.map((item, i) => (
                     <div
                         onClick={() => toggleModal(item?.type)}
@@ -242,11 +251,11 @@ function Withdrawal() {
                         className={`col-span-1 mb-2 p-4 rounded-md flex flex-col items-center text-xsm justify-evenly ${item?.type == activeModal ? "bg-gradient-to-l from-customlightbtn to-customdarkBluebtn text-white" : "bg-redLight text-gray"
                             } shadow-md text-lightGray`}
                     >
-                        <img className={`w-${item?.type===2?20:10} h-10`} src={item.image} alt="UPI Payment" />
+                        <img className={`w-${item?.type === 2 ? 20 : 10} h-10`} src={item.image} alt="UPI Payment" />
                         <p className='text-nowrap'>{item?.name}</p>
                     </div>
                 ))}
-            </div>
+            </div> */}
             {/* Modals */}
             {(activeModal == 2) && (
                 <div className="mt-5 ">
@@ -254,7 +263,7 @@ function Withdrawal() {
                         {viewAccountDetails && viewAccountDetails.length > 0 ?
                             <div className='bg-redLight rounded-lg p-2'>
                                 <div className='text-customlightbtn text-xs border-b-[1px] border-dotted py-2'>
-                                <p className='text-customlightbtn'> <b>Bank name:</b>&nbsp;<span className='text-white'>{viewAccountDetails[0]?.bank_name}</span>  </p>
+                                    <p className='text-customlightbtn'> <b>Bank name:</b>&nbsp;<span className='text-white'>{viewAccountDetails[0]?.bank_name}</span>  </p>
                                     <p className='text-customlightbtn'> <b>Branch name:</b>&nbsp;<span className='text-white'>{viewAccountDetails[0]?.branch}</span>  </p>
                                     <p> <b>Recipient&apos;s Name:</b> &nbsp;<span className='text-white'>{viewAccountDetails[0]?.name}</span>  </p>
                                     <p> <b>Account Number:</b> &nbsp; <span className='text-white'>{viewAccountDetails[0]?.account_number}</span>  </p>
@@ -286,7 +295,7 @@ function Withdrawal() {
                         {amountErrorCamlenio && <p className="text-red text-xs mt-2">{amountErrorCamlenio}</p>}
                         <div className=' rounded-md p-3 flex mt-3 items-center justify-center'>
                             <div className="flex items-center bg-red w-full rounded-full text-sm p-2">
-                                <div className="w-8 flex items-center justify-center text-xl font-bold text-customlightbtn">₹</div>
+                                <div className="w-8 flex items-center justify-center text-xl font-bold text-customlightbtn"></div>
                                 <div className="w-[1px] mx-2 flex items-center justify-center bg-lightGray h-5"></div>
                                 <input
                                     value={upiAmountCamlenio == 0 ? "" : upiAmountCamlenio}
@@ -301,8 +310,8 @@ function Withdrawal() {
                                 />
                             </div>
                         </div>
-                        <button onClick={payoutWithdrawHandler} className={`mt-4 w-full ${upiAmount >= paymenLimts?.INR_minimum_withdraw ?
-                             "text-white bg-gradient-to-r from-customlightbtn to-customdarkBluebtn" : "bg-gradient-to-l from-[#cfd1de] to-[#c7c9d9] text-gray"}   py-3 rounded-full border-none text-xsm `}>
+                        <button onClick={payoutWithdrawHandler} className={`mt-4 w-full ${upiAmount >= paymenLimts?._minimum_withdraw ?
+                            "text-white bg-gradient-to-r from-customlightbtn to-customdarkBluebtn" : "bg-gradient-to-l from-[#cfd1de] to-[#c7c9d9] text-gray"}   py-3 rounded-full border-none text-xsm `}>
                             Withdraw
                         </button>
 
@@ -310,7 +319,7 @@ function Withdrawal() {
                             <ul className="px-2 py-4 my-2 bg-redLight   border-customlightbtn border-[0.5px] rounded-lg text-xs  text-white">
                                 <li className="flex items-start">
                                     <span className="text-customlightbtn  mr-2">◆</span>
-                                    Need to bet <p className='text-customlightbtn'> &nbsp; ₹{myDetails?.data?.recharge}&nbsp;</p> to be able to withdraw.
+                                    Need to bet <p className='text-customlightbtn'> &nbsp; {myDetails?.data?.recharge}&nbsp;</p> to be able to withdraw.
                                 </li>
                                 <li className="flex items-start mt-2">
                                     <span className="text-customlightbtn  mr-2">◆</span>
@@ -322,7 +331,7 @@ function Withdrawal() {
                                 </li>
                                 <li className="flex items-start mt-2">
                                     <span className="text-customlightbtn  mr-2">◆</span>
-                                    Withdrawal amount range  <p className='text-customlightbtn'>&nbsp;₹{paymenLimts?.INR_minimum_withdraw?.toFixed(2)} - ₹{paymenLimts?.INR_maximum_withdraw?.toFixed(2)}&nbsp;</p>
+                                    Withdrawal amount range  <p className='text-customlightbtn'>&nbsp;{paymenLimts?._minimum_withdraw?.toFixed(2)} - {paymenLimts?._maximum_withdraw?.toFixed(2)}&nbsp;</p>
                                 </li>
                                 <li className="flex items-start mt-2">
                                     <span className="text-customlightbtn  mr-2">◆</span>
@@ -339,7 +348,7 @@ function Withdrawal() {
             )}
             {(activeModal == 1) && (
                 <div className="mt-5 ">
-                    <div className=''>
+                    {/* <div className=''>
                         {viewAccountDetails && viewAccountDetails.length > 0 ?
                             <div className='bg-redLight rounded-lg p-2'>
                                 <div className='text-customlightbtn text-xs border-b-[1px] border-dotted py-2'>
@@ -370,13 +379,13 @@ function Withdrawal() {
                                 </div>
                             </div>
                         }
-                    </div>
+                    </div> */}
 
                     <div className='bg-redLight rounded-lg p-2 mt-3 mb-20'>
                         {amountError && <p className="text-red text-xs mt-2">{amountError}</p>}
                         <div className=' rounded-md p-3 flex mt-3 items-center justify-center'>
                             <div className="flex items-center bg-red w-full rounded-full text-sm p-2">
-                                <div className="w-8 flex items-center justify-center text-xl font-bold text-customlightbtn">₹</div>
+                                <div className="w-8 flex items-center justify-center text-xl font-bold text-customlightbtn"></div>
                                 <div className="w-[1px] mx-2 flex items-center justify-center bg-lightGray h-5"></div>
                                 <input
                                     value={upiAmount == 0 ? "" : upiAmount}
@@ -391,8 +400,8 @@ function Withdrawal() {
                                 />
                             </div>
                         </div>
-                        <button onClick={payoutWithdrawHandler} className={`mt-4 w-full ${upiAmount >= paymenLimts?.INR_minimum_withdraw ?
-                             "text-white bg-gradient-to-r from-customlightbtn to-customdarkBluebtn" : "bg-gradient-to-l from-[#cfd1de] to-[#c7c9d9] text-gray"}   py-3 rounded-full border-none text-xsm `}>
+                        <button onClick={payoutWithdrawHandler} className={`mt-4 w-full ${upiAmount >= paymenLimts?._minimum_withdraw ?
+                            "text-white bg-gradient-to-r from-customlightbtn to-customdarkBluebtn" : "bg-gradient-to-l from-[#cfd1de] to-[#c7c9d9] text-gray"}   py-3 rounded-full border-none text-xsm `}>
                             Withdraw
                         </button>
 
@@ -400,7 +409,7 @@ function Withdrawal() {
                             <ul className="px-2 py-4 my-2 bg-redLight   border-customlightbtn border-[0.5px] rounded-lg text-xs  text-white">
                                 <li className="flex items-start">
                                     <span className="text-customlightbtn  mr-2">◆</span>
-                                    Need to bet <p className='text-customlightbtn'> &nbsp; ₹{myDetails?.data?.recharge}&nbsp;</p> to be able to withdraw.
+                                    Need to bet <p className='text-customlightbtn'> &nbsp; {myDetails?.data?.recharge}&nbsp;</p> to be able to withdraw.
                                 </li>
                                 <li className="flex items-start mt-2">
                                     <span className="text-customlightbtn  mr-2">◆</span>
@@ -412,7 +421,7 @@ function Withdrawal() {
                                 </li>
                                 <li className="flex items-start mt-2">
                                     <span className="text-customlightbtn  mr-2">◆</span>
-                                    Withdrawal amount range  <p className='text-customlightbtn'>&nbsp;₹{paymenLimts?.INR_minimum_withdraw?.toFixed(2)} - ₹{paymenLimts?.INR_maximum_withdraw?.toFixed(2)}&nbsp;</p>
+                                    Withdrawal amount range  <p className='text-customlightbtn'>&nbsp;{paymenLimts?._minimum_withdraw?.toFixed(2)} - {paymenLimts?._maximum_withdraw?.toFixed(2)}&nbsp;</p>
                                 </li>
                                 <li className="flex items-start mt-2">
                                     <span className="text-customlightbtn  mr-2">◆</span>
@@ -482,9 +491,9 @@ function Withdrawal() {
                                         className="w-full p-1 bg-red border-none focus:outline-none text-customlightbtn placeholder:text-customlightbtn text-xsm"
                                     />
                                 </div>
-                                {/* INR Input */}
+                                {/*  Input */}
                                 <div className="flex items-center mt-3 bg-red w-full rounded-full text-sm p-2">
-                                    <div className="w-8 flex items-center justify-center text-xl font-bold text-customlightbtn">₹</div>
+                                    <div className="w-8 flex items-center justify-center text-xl font-bold text-customlightbtn"></div>
                                     <div className="w-[1px] mx-2 bg-customlightbtn h-5"></div>
                                     <input
                                         value={usdtAmount == 0 ? "" : usdtAmount * (paymenLimts?.withdraw_conversion_rate || 1)}
@@ -494,16 +503,16 @@ function Withdrawal() {
                                             validateAmount(value / (paymenLimts?.withdraw_conversion_rate || 1));
                                         }}
                                         type="number"
-                                        placeholder="Enter INR amount"
+                                        placeholder="Enter  amount"
                                         className="w-full p-1 bg-red border-none focus:outline-none text-customlightbtn placeholder:text-customlightbtn text-xsm"
                                     />
                                 </div>
                                 {/* usdt address */}
                                 <div className="flex items-center mt-3 bg-red w-full rounded-full text-sm p-2">
-                                    <div className="w-8 flex items-center justify-center text-xl font-bold text-customlightbtn"><img  src={usdt_icon} alt="UPI Payment" /></div>
+                                    <div className="w-8 flex items-center justify-center text-xl font-bold text-customlightbtn"><img src={usdt_icon} alt="UPI Payment" /></div>
                                     <div className="w-[1px] mx-2 bg-customlightbtn h-5"></div>
                                     <input
-                                       value={usdtwalletaddress}
+                                        value={usdtwalletaddress}
                                         onChange={(e) => {
                                             setusdtwalletaddress(e.target.value)
                                             // validateAmount(value / (paymenLimts?.withdraw_conversion_rate || 1));
@@ -519,10 +528,10 @@ function Withdrawal() {
                             </button>
                             <div className='mt-10 mx-4' >
                                 <ul className="px-2 py-4 my-2  border-customlightbtn border-[0.5px]  rounded-lg text-xs text-white">
-                                <li className="flex items-start">
-                                    <span className="text-customlightbtn  mr-2">◆</span>
-                                    Need to bet <p className='text-customlightbtn'> &nbsp; ₹{myDetails?.data?.recharge}&nbsp;</p> to be able to withdraw.
-                                </li>
+                                    <li className="flex items-start">
+                                        <span className="text-customlightbtn  mr-2">◆</span>
+                                        Need to bet <p className='text-customlightbtn'> &nbsp; {myDetails?.data?.recharge}&nbsp;</p> to be able to withdraw.
+                                    </li>
                                     <li className="flex items-start mt-2">
                                         <span className="text-customlightbtn  mr-2">◆</span>
                                         Withdraw time: <p className='text-customlightbtn'>&nbsp;00:00-23:59&nbsp;</p>
