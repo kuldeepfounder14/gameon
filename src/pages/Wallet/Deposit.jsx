@@ -196,26 +196,6 @@ function Deposit() {
         setAmountErrorUSDT("");
     };
 
-    const payMethod = [
-        //{
-        //     image: usdt_icon,
-        //     name: "USDT",
-        //     type: 0
-        // },
-        {
-            image: indianpay,
-            name: "",
-            type: 1
-        },
-
-        // {
-        //     image: camlenios,
-        //     name: "camlinio",
-        //     type: 2
-        // }
-    ]
-
-    // console.log("paymenLimts", paymenLimts)
     return (
         <div className='mx-3'>
             {loading == true && <Loader setloading={setloading} loading={loading} />}
@@ -243,22 +223,8 @@ function Deposit() {
                     )}
                     <p className='text-lg text-center pt-1 font-bold'>{balance}{tokenSymbol}</p>
                 </div>
-
-
             </div>
-            {/* <div className="w-full grid grid-cols-3 gap-3 mt-2">
-                {payMethod && payMethod?.map((item, i) => (
-                    <div
-                        onClick={() => toggleModal(1)}
-                        key={i}
-                        className={`col-span-1 mb-2 p-4 rounded-md flex flex-col items-center text-xsm justify-evenly ${item?.type == activeModal ? "bg-gradient-to-l from-customlightbtn to-customdarkBluebtn text-white" : "bg-customdarkBlue text-gray"
-                            } shadow-md text-lightGray`}
-                    >
-                        <img className={`w-${item?.type === 2 ? 20 : 10} h-10`} src={item.image} alt="UPI Payment " />
-                        <p className='text-nowrap'>{item?.name}</p>
-                    </div>
-                ))}
-            </div> */}
+          
             {/* Modals */}
             {(activeModal == 2) && (
                 <div className="mt-5 ">
@@ -402,7 +368,6 @@ function Deposit() {
 
                 </div>
             )}
-
             {activeModal == 0 && (
                 <div className="mt-5 ">
                     <div className='bg-customdarkBlue shadow-lg rounded-lg p-2'>

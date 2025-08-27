@@ -38,7 +38,7 @@ function MenuModal({ data,setToggleMenu }) {
                                                 : "High"}
                                     </td>
                                     <td className="py-1 text-center">{item?.amount}</td>
-                                    <td className="py-1 text-center">{item?.win_amount}</td>
+                                    <td className={`py-1 text-center ${item?.win_amount===0?"text-redAviator":"text-green"}`}>{item?.win_amount}</td>
                                     <td className="py-1 text-center">{item?.selected_numbers}</td>
                                     <td className="py-1 text-center">{item?.number}</td>
                                 </tr>

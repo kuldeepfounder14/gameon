@@ -42,16 +42,10 @@ function LotteryGamesList() {
                             <div className="text-[12px] text-customlightbtn pl-1 ">{allGamesListView?.data?.lobby?.length}</div>
                             <div className="text-[12px] text-lightGray "> <IoIosArrowForward />
                             </div>
-
-
                         </div>
                     </div>
                 </div> : <div></div>}
             </div>
-
-
-
-
             {loading && <Loader setLoading={setLoading} loading={loading} />}
             {games?.map((game) => {
                 // console.log("gamegamegame",game)

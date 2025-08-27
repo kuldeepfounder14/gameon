@@ -3,7 +3,7 @@ import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a lo
 import { Carousel } from "react-responsive-carousel";
 
 const ImageCarousel = ({ imagesData }) => {
-    // console.log("Carousel Data:", imagesData);
+    if (!imagesData || imagesData.length === 0) return null; // Or a loading placeholder
 
     return (
         <div className="relative w-full rounded-xl">
@@ -17,8 +17,8 @@ const ImageCarousel = ({ imagesData }) => {
                 transitionTime={500}
                 stopOnHover={true}
             >
-                {imagesData?.map((image, index) => (
-                    <img key={index} className="rounded-lg" src={image?.image} alt="df"/>
+                {imagesData.map((image, index) => (
+                    <img key={index} className="rounded-lg h-32" src={image?.image} alt={`Banner ${index + 1}`} />
                 ))}
             </Carousel>
         </div>

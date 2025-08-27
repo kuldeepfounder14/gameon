@@ -103,13 +103,13 @@ function SpinWheel({ gameResultData }, ref) {
           />
           {sectors.map((label, i) => {
             const angle = i * degreesPerSector + degreesPerSector / 2;
-            const effectiveRotation = rotation % 360; // Get current wheel rotation
+            const effectiveRotation = rotation % 360; 
             return (
               <div
                 key={i}
                 className="absolute top-1/2 left-[50%] -mt-4 -ml-1.5"
                 style={{
-                  transform: `rotate(${angle}deg) translate(-50%, -120px)`,
+                  transform: `rotate(${angle}deg) translate(-50%, -90px)`,
                   transformOrigin: "center center",
                 }}
               >

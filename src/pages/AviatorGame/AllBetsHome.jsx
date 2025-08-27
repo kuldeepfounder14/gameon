@@ -13,32 +13,6 @@ function AllBetsHome({ betApiHitted }) {
         localStorage.setItem('totalBetValue', totalBetValue.toFixed(2));
     }, [totalBetValue]);
 
-    // const bet="https://admin.xgamblur.com/api/aviator_bet"
-    // {
-    //     "uid" : "4",
-    //     "number" : number.toString(),
-    //     "amount" : amount.toString(),
-    //     "game_id" : "5",
-    //     "game_sr_num" : srNo.toString()
-    //   }
-
-    //   cancel ="aviator_bet_cancel"
-    //   userid=4&game_sr_num=$data&number=$number
-
-
-    //   my bet 
-    // aviator_history
-    // {"uid":"4", "game_id":"5"}
-
-    // aviator_last_five_result
-
-    // static const String aviatorBetCashOut = "${baseUrl}aviator_cashout?salt=
-    // {
-    //       "uid": "4",
-    //       "multiplier": multipier,
-    //       "game_sr_num": srNo,
-    //       "number": number
-    //     }
     return (
         <>
             <div className='border-b-2 border-black  py-0.5'>

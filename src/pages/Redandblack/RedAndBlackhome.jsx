@@ -89,7 +89,7 @@ function RedAndBlackhome() {
     const [gameResultHistory, setGameResultHistory] = useState([]);
     const [gameResultDataAnnouncemnt, setGameResultDataAnnouncemnt] = useState([]);
     const [gameResultData, setGameResultData] = useState([]);
-    const [betAmount, setBetAmount] = useState(10);
+    const [betAmount, setBetAmount] = useState(0.1);
     const [flipped, setFlipped] = useState(false);
     const [numberAmounts, setNumberAmounts] = useState(Array(7).fill(0));
     const handleNumberClick = (index) => {
@@ -105,33 +105,31 @@ function RedAndBlackhome() {
             const q = JSON.parse(hotair);
             setTimeLeft(q?.timerBetTime);
         };
-        RednBlackSocket.on("adminredblack", handleSocket);
-        return () => RednBlackSocket.off("adminredblack", handleSocket);
+        RednBlackSocket.on("gameon_redblack", handleSocket);
+        return () => RednBlackSocket.off("gameon_redblack", handleSocket);
     }, []);
 
     useEffect(() => {
-        gameResultAnnouncement()
+        // gameResultAnnouncement()
         gameResult()
         gameBetHistory()
     }, [])
     useEffect(() => {
         const betStatus = localStorage.getItem("rednblack_bet")
-        if (timeLeft === 11) {
+        if (timeLeft === 5) {
             gameResult()
         }
-        if (timeLeft === 10 && !shuffling) {
+        if (timeLeft === 4 && !shuffling) {
             setFlipped(true)
         }
-        if (timeLeft === 4) {
-            if (betStatus === "true") {
+        if (timeLeft === 3) {
+             if (betStatus === "true") {
                 gameResultAnnouncement()
                 localStorage.setItem("rednblack_bet", "false")
             }
-        }
-        if (timeLeft === 2) {
             gameBetHistory()
         }
-        if (timeLeft === 1) {
+        if (timeLeft === 30) {
             setIsResultModal(false)
             setCurrentDice(0);
             setFlipped(false)
@@ -210,7 +208,7 @@ function RedAndBlackhome() {
                     games_no: sr
                 }
             });
-            console.log("gameresult responsere", response)
+            // console.log("gameresult responsere", response)
             if (response?.data?.status === 200) {
                 setGameResultDataAnnouncemnt(response?.data)
                 setIsResultModal(true)
@@ -265,7 +263,7 @@ function RedAndBlackhome() {
                         className="h-8 w-24 bg-[#990000] opacity-90 rounded-lg text-center text-[10px] font-roboto"
                         style={{ textShadow: "1px 1px 3px black" }}
                     >
-                        S.no:-  <p className="font-bold">{gameResultData?.length > 0 && (timeLeft > 11 ? (Number(gameResultData[0]?.games_no) + 1) : gameResultData[0]?.games_no)}</p>
+                        S.no:-  <p className="font-bold">{gameResultData?.length > 0 && (Number(gameResultData[0]?.games_no) + 1) }</p>
                     </div>
                     <div
                         className="h-8 w-24 bg-[#990000] opacity-90 rounded-lg text-center text-[20px] font-bold font-mono"
@@ -281,9 +279,7 @@ function RedAndBlackhome() {
                     style={{ textShadow: "1px 1px 3px black" }}
                 >
                     {gameResultData?.length > 0 ? (
-                        gameResultData
-                            .slice(timeLeft > 11 ? 0 : 1)
-                            .map((item, i) => {
+                        gameResultData?.map((item, i) => {
                                 const url = cardList[item?.number - 1]
                                 return (
                                     <img
@@ -347,7 +343,7 @@ function RedAndBlackhome() {
                                         className={`bg-[#333333] text-xs p-1 "
                                     } mt-1 rounded-lg shadow-md cursor-pointer`}
                                     >
-                                        {numberAmounts[index]}
+                                        {Number(numberAmounts[index]).toFixed(2)}
                                     </div>
                                 </div>
                             );
@@ -355,9 +351,9 @@ function RedAndBlackhome() {
 
                     </div>
                 </div>
-                <div className="flex items-center gap-4 mx-5 mb-2 justify-center">
+                <div className="flex items-center gap-4 mx-5 mb-14 justify-center">
                     {diceImages.slice(4).map((image, index) => {
-                        const actualIndex = index + 5;
+                        const actualIndex = index + 4;
                         return (
                             <div
                                 key={actualIndex}
@@ -371,7 +367,7 @@ function RedAndBlackhome() {
                                     className="mx-auto w-20 xs1:w-24 h-16 xs1:h-24 mb-2"
                                 />
                                 <div className="bg-[#333333]   mt-2 rounded-lg shadow-md cursor-pointer">
-                                    {numberAmounts[actualIndex]}
+                                    {Number(numberAmounts[actualIndex]).toFixed(2)}
                                 </div>
                             </div>
                         );

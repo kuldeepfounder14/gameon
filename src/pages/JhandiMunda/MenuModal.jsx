@@ -24,11 +24,9 @@ function MenuModal({ data,setToggleMenu }) {
                             {data?.length > 0 ? data.map((item, i) => (
                                 <tr key={i} className="text-[12px]">
                                     <td className="py-1 text-center">{i + 1}</td>
-                                    
                                     <td className="py-1 text-center">{item?.games_no}</td>
                                     <td className="py-1 text-center">{item?.amount}</td>
-                                    <td className="py-1 text-center">{item?.win_amount}</td>
-                                    <td className="py-1 text-center">{item?.selected_numbers}</td>
+                                    <td className={`py-1 text-center ${item?.win_amount===0?"text-redAviator":"text-green"}`}>{item?.win_amount}</td>
                                 </tr>
                             )) : (
                                 <tr>

@@ -36,7 +36,7 @@ function FirstDepositModal({ firstDepsoitModal, setFirstDepsoitModal, onClose })
                         <p className='text-xl'>Extra first deposit bonus</p>
                         <p className='text-xsm'>Each account can only receive rewards once</p>
                     </header>
-                    <div className='font-semibold overflow-scroll h-[calc(100%-176px)] w-full p-3 text-white'>
+                    <div className='font-semibold overflow-scroll hide-scrollbar h-[calc(100%-176px)] w-full p-3 text-white'>
                         {getFirstDepositPlansData?.length > 0 ? getFirstDepositPlansData?.map((item, i) => (
                             <div className='bg-redLight w-full rounded-lg p-2 mt-3' key={i}>
                                 <div className='flex items-center justify-between'>

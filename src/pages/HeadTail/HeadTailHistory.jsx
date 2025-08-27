@@ -13,7 +13,7 @@ const duration = 30;
 const PAGE_LIMIT = 910;
 
 const HeadTailHistory = () => {
-    // const { timerBetTime } = useSocket("admingameon_hnt");
+    // const { timerBetTime } = useSocket("gameon_HT");
     // const timeLeft = timerBetTime?.timerBetTime;
     const [timeLeft, setTimeLeft] = useState(0);
 
@@ -32,8 +32,8 @@ const HeadTailHistory = () => {
             // console.log("timeleft", q)
         };
 
-        hntSocket.on("admingameon_hnt", handleSocket);
-        return () => hntSocket.off("admingameon_hnt", handleSocket);
+        hntSocket.on("gameon_HT", handleSocket);
+        return () => hntSocket.off("gameon_HT", handleSocket);
     }, []);
     const images = {
         1: assets.a,
@@ -101,7 +101,7 @@ const HeadTailHistory = () => {
             <div>
 
                 <div className={`flex items-center justify-between h-[3.22rem] px-2`}>
-                    <p className="!text-white flex items-center justify-between "><MdArrowBackIos onClick={() => navigate(-1)} />  Head Tail</p>
+                    <p className="!text-white flex items-center justify-between "><MdArrowBackIos onClick={() => navigate(-1)} /> </p>
                     <p >
                         Head Tail
                     </p>
@@ -145,7 +145,7 @@ const HeadTailHistory = () => {
                                                     className={`font-bold text-center ${item?.win_amount === 0 && item?.status === 0 ? "text-gray" : (item?.win_amount === 0 ? "text-bg2" : "text-green")}`}
                                                 >
                                                     {item?.win_amount === 0 && item?.status === 0 ? "--" : (item?.win_amount === 0
-                                                        ? `- ${item?.amount}.00`
+                                                        ? `- ${item?.amount}`
                                                         : `+ ${item?.win_amount}`)}
                                                 </div>
                                             </div>

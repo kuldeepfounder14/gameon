@@ -71,9 +71,9 @@ function PromotionHome() {
     // console.log("object",myDetails?.data?.referral_code_url)
     const handleCopyInvitationLink = () => {
         if (myDetails?.data?.u_id) {
-            const baseUrl = "https://admin.gameon.deals/";
-            const invitationCode = myDetails?.data?.referral_code;
-            const referralLink = `${baseUrl}register?referral=${invitationCode}`;
+            // const baseUrl = "https://admin.gameon.deals/";
+            const referralLink = myDetails?.data?.referral_code_url;
+            // const referralLink = `${baseUrl}register?referral=${invitationCode}`;
     
             if (navigator.clipboard && navigator.clipboard.writeText) {
                 navigator.clipboard
@@ -244,7 +244,7 @@ function PromotionHome() {
                             <img className='w-9 h-9' src={invitation_code} alt="ds" />
                             <p>Copy inviation code</p>
                         </div>
-                        <div className='text-xsm text-white'>{myDetails?.data?.referral_code}</div>
+                        {/* <div className='text-xsm text-white'>{myDetails?.data?.referral_code}</div> */}
                     </div>
                     <Link to="/promotion/subordinatedata" className='w-full flex items-center justify-between mt-2 bg-customdarkBlue p-4 rounded-md'>
                         <div className='flex items-center gap-2 text-white '>

@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import HiloHeader from './HiloHeader';
+import { useEffect, useState } from "react";
+import HiloHeader from "./HiloHeader";
 import card1 from "../../assets/cards/1.png";
 import card2 from "../../assets/cards/2.png";
 import card3 from "../../assets/cards/3.png";
@@ -55,302 +55,428 @@ import card52 from "../../assets/cards/52.png";
 import cards3 from "../../assets/Hilo/cards3.png";
 import backCard from "../../assets/Hilo/cardback.png";
 import { IoIosRefresh } from "react-icons/io";
-import './HiloSlide.css';
-import { MdKeyboardDoubleArrowUp, MdOutlineImageSearch, MdOutlineKeyboardDoubleArrowDown } from 'react-icons/md';
-import HiloFooter from './HiloFooter';
-import { useNavigate } from 'react-router-dom';
-import ResultModal from './ResultModal';
-import axios from 'axios';
-import apis from '../../utils/apis';
-import { toast } from 'react-toastify';
-import HiLoSocket from './HiLoSocket';
+import "./HiloSlide.css";
+import {
+  MdKeyboardDoubleArrowUp,
+  MdOutlineImageSearch,
+  MdOutlineKeyboardDoubleArrowDown,
+} from "react-icons/md";
+import HiloFooter from "./HiloFooter";
+import { useNavigate } from "react-router-dom";
+import ResultModal from "./ResultModal";
+import axios from "axios";
+import apis from "../../utils/apis";
+import { toast } from "react-toastify";
+import HiLoSocket from "./HiLoSocket";
 const allCards = [
-    card1, card2, card3, card4, card5, card6, card7, card8, card9, card10,
-    card11, card12, card13, card14, card15, card16, card17, card18, card19, card20,
-    card21, card22, card23, card24, card25, card26, card27, card28, card29, card30,
-    card31, card32, card33, card34, card35, card36, card37, card38, card39, card40,
-    card41, card42, card43, card44, card45, card46, card47, card48, card49, card50,
-    card51, card52
+  card1,
+  card2,
+  card3,
+  card4,
+  card5,
+  card6,
+  card7,
+  card8,
+  card9,
+  card10,
+  card11,
+  card12,
+  card13,
+  card14,
+  card15,
+  card16,
+  card17,
+  card18,
+  card19,
+  card20,
+  card21,
+  card22,
+  card23,
+  card24,
+  card25,
+  card26,
+  card27,
+  card28,
+  card29,
+  card30,
+  card31,
+  card32,
+  card33,
+  card34,
+  card35,
+  card36,
+  card37,
+  card38,
+  card39,
+  card40,
+  card41,
+  card42,
+  card43,
+  card44,
+  card45,
+  card46,
+  card47,
+  card48,
+  card49,
+  card50,
+  card51,
+  card52,
 ];
 
 function HiLoHome() {
-    const userId = localStorage.getItem("userId");
-    const [betAmount, setBetAmount] = useState(10);
-    const [profileRefresher, setProfileRefresher] = useState(false)
-    const cardHistory = [card1, card4, card6, card3, card12, card18, card1, card5, card17, card18, card19, card14, card12, card18, card19, card16, card12];
-    const [startAnimation, setStartAnimation] = useState(false);
-    const [showFrontCard, setShowFrontCard] = useState(false);
-    const [randomCard, setRandomCard] = useState(null);
-    const [timeLeft, setTimeLeft] = useState(0);
-    const [isResultModal, setIsResultModal] = useState(false);
-    const [gameResultHistory, setGameResultHistory] = useState([]);
-    const [gameResultDataAnnouncemnt, setGameResultDataAnnouncemnt] = useState([]);
-    const [gameResultData, setGameResultData] = useState([]);
-    const navigate = useNavigate()
+  const userId = localStorage.getItem("userId");
+  const [betAmount, setBetAmount] = useState(0.1);
+  const [revealedCard, setRevealedCard] = useState(null);
+  const [profileRefresher, setProfileRefresher] = useState(false);
+  const [startAnimation, setStartAnimation] = useState(false);
+  const [showFrontCard, setShowFrontCard] = useState(false);
+  const [randomCard, setRandomCard] = useState(null);
+  const [randomCardIndex, setRandomCardIndex] = useState(null);
+  const [timeLeft, setTimeLeft] = useState(0);
+  const [isResultModal, setIsResultModal] = useState(false);
+  const [gameResultHistory, setGameResultHistory] = useState([]);
+  const [gameResultDataAnnouncemnt, setGameResultDataAnnouncemnt] = useState(
+    []
+  );
+  const [gameResultData, setGameResultData] = useState([]);
+  const [betConcept, setBetConcept] = useState(1);
+  const navigate = useNavigate();
 
-    useEffect(() => {
-        const handleSocket = (hotair) => {
-            const q = JSON.parse(hotair);
-            setTimeLeft(q?.timerBetTime);
-        };
-        HiLoSocket.on("admin_hilo", handleSocket);
-        return () => HiLoSocket.off("admin_hilo", handleSocket);
-    }, []);
-    const handleTapCard3 = () => {
-        const randomIndex = Math.floor(Math.random() * allCards.length);
-        const selectedCard = allCards[randomIndex];
-
-        setRandomCard(selectedCard);
-        setStartAnimation(true);
-        setShowFrontCard(false);
-
-        setTimeout(() => {
-            setShowFrontCard(true);
-
-        }, 400);
-
-        setTimeout(() => {
-            //  setStartAnimation(false);
-        }, 1500);
+  useEffect(() => {
+    const handleSocket = (hotair) => {
+      const q = JSON.parse(hotair);
+      setTimeLeft(q?.timerBetTime);
     };
+    HiLoSocket.on("admin_hilo", handleSocket);
+    return () => HiLoSocket.off("admin_hilo", handleSocket);
+  }, []);
 
-    useEffect(() => {
-        gameResult()
-        gameBetHistory()
-    }, [])
-    useEffect(() => {
-        const betStatus = localStorage.getItem("hilo_bet")
-        if (timeLeft === 11) {
-            gameResult()
-        }
-        if (timeLeft === 10) {
-            const diceNumber = gameResultData?.length > 0 && Number(gameResultData[0]?.number)
-            // shuffleDice(diceNumber);
-        }
-        if (timeLeft === 4) {
-            if (betStatus === "true") {
-                gameResultAnnouncement()
-                localStorage.setItem("hilo_bet", "false")
-            }
-        }
-        if (timeLeft === 2) {
-            gameBetHistory()
-        }
-        if (timeLeft === 1) {
-            setIsResultModal(false)
-            // setCurrentDice(0);
-            // handleClear()
-        }
-    }, [timeLeft]);
+  const handleTapCard3 = () => {
+    const randomIndex = Math.floor(Math.random() * allCards.length);
+    const selectedCard = allCards[randomIndex];
+    setRandomCardIndex(randomIndex);
+    setRandomCard(selectedCard); // card to animate
+    setShowFrontCard(false); // flipping logic
+    setStartAnimation(true);
 
-    const placeBetHandler = async () => {
-        if (!userId) {
-            toast.error("User not logged in");
-            navigate("/login");
-            return;
-        }
-        const bets = [];
-        // numberAmounts.forEach((amount, index) => {
-        //     if (amount > 0) bets.push({ number: Number(index + 1), amount });
-        // });
+    // After animation is done, keep the revealed card on right side
+    setTimeout(() => {
+      setStartAnimation(false);
+      setRevealedCard(selectedCard); // set it to show on right
+    }, 1000);
+  };
 
-        const payload = {
-            userid: userId,
-            game_id: 24,
-            json: bets
-        }
-        // console.log("object", payload)
-        try {
-            const response = await axios.post(apis?.dragon_bet, payload)
-            // console.log("bet resoinse", response)
-            if (response?.data?.status === 200) {
-                setProfileRefresher(true)
-                localStorage.setItem("hilo_bet", "true");
-                toast.success(response?.data?.message)
-            } else {
-                toast.error("Bet failed!");
-            }
-        } catch (err) {
-            console.log("error hisotry", err);
-            if (err?.response?.data?.status === 500) {
-                console.log("error hisotry", err);
-            } else {
-                toast.error(err?.response?.data?.message)
-            }
-        }
+  useEffect(() => {
+    gameResult();
+    gameBetHistory();
+  }, []);
+
+  // console.log("randomCard", randomCardIndex)
+  useEffect(() => {
+    const betStatus = localStorage.getItem("hilo_bet");
+    if (timeLeft === 5) {
+      gameResult();
     }
 
-    // period number and last some results
-    const gameResult = async () => {
-        try {
-            const res = await axios.get(
-                `${apis?.dice_Results}?game_id=24&limit=15`
-            );
-            console.log("game res", res)
-            if (res?.data?.status === 200) {
-                setGameResultData(res?.data?.data)
-            }
-        } catch (err) {
-            if (err?.response?.data?.status === 500) {
-                console.log("error hisotry", err);
-            } else {
-                toast.error(err?.response?.data?.message)
-            }
-        }
-    };
-
-    const gameResultAnnouncement = async () => {
-        if (!userId) {
-            toast.error("User not logged in");
-            navigate("/login");
-            return;
-        }
-        console.log("userId", typeof Number(userId))
-        const sr = gameResultData?.length > 0 && (Number(gameResultData[0]?.games_no) + 1)
-        try {
-            const response = await axios.get(`${apis?.dice_win_amount}/`, {
-                params: {
-                    userid: Number(userId),
-                    game_id: 24,
-                    games_no: sr
-                }
-            });
-            console.log("gameresult responsere", response)
-            if (response?.data?.status === 200) {
-                setGameResultDataAnnouncemnt(response?.data)
-                setIsResultModal(true)
-            }
-        } catch (err) {
-            console.log("server erro ", err)
-            if (err?.response?.data?.status === 500) {
-                console.log("server erro ", err)
-            } else {
-                toast.error(err?.response?.data?.message)
-            }
-        }
+    if (timeLeft === 4) {
+      if (betStatus === "true") {
+        gameResultAnnouncement();
+        localStorage.setItem("hilo_bet", "false");
+      }
     }
+    if (timeLeft === 3) {
+      gameBetHistory();
+    }
+    if (timeLeft === 1) {
+      resetGame();
+    }
+  }, [timeLeft]);
 
-    const gameBetHistory = async () => {
-        const payload = {
-            userid: userId,
-            game_id: 24,
-            limit: 10,
-            offset: 0
-        }
-        try {
-            const res = await axios.post(
-                `${apis?.dice_Bet_history}`, payload
-            );
-            // console.log("hisotry", res)
-            if (res?.data?.status === 200) {
-                setGameResultHistory(res?.data?.data)
-            }
-        } catch (err) {
-            if (err?.response?.data?.status === 500) {
-                console.log("error hisotry", err);
-            } else {
-                toast.error(err?.response?.data?.message)
-            }
-        }
+  const placeBetHandler = async (number) => {
+    if (!userId) {
+      toast.error("User not logged in");
+      navigate("/login");
+      return;
+    }
+    const payload = {
+      userid: userId,
+      game_id: 24,
+      number: number,
+      amount: betAmount,
+      card_number: randomCardIndex + 1,
     };
-    return (
-        <div
-            className="h-full w-full overflow-y-scroll justify-between flex flex-col items-center hide-scrollbar"
-            style={{
-                background: "linear-gradient(to right, orange, #FFBF00, #FFBF00, orange)"
-            }}
-        >
-            <div className="w-full">
-                <HiloHeader profileRefresher={profileRefresher} gameResultHistory={gameResultHistory} setProfileRefresher={setProfileRefresher} />
+    // high=1,low-2
+    console.log("object", payload);
+    try {
+      const response = await axios.post(apis?.high_low_bet, payload);
+      console.log("bet resoinse", response);
+      if (response?.data?.status === 200) {
+        setBetConcept(3);
+        setProfileRefresher(true);
+        localStorage.setItem("hilo_bet", "true");
+        toast.success(response?.data?.message);
+      } else {
+        toast.error("Bet failed!");
+      }
+    } catch (err) {
+      console.log("error hisotry", err);
+      if (err?.response?.data?.status === 500) {
+        console.log("error hisotry", err);
+      } else {
+        toast.error(err?.response?.data?.message);
+      }
+    }
+  };
 
-                {/* Serial + Timer */}
-                <div className="flex justify-between m-4">
-                    <div className="h-8 w-24 bg-[#a77b2a] opacity-90 rounded-lg text-center text-[10px] font-roboto"
-                        style={{ textShadow: "1px 1px 3px black" }}>
-                        S.no:- 1234567890987
-                    </div>
-                    <div className="h-8 w-24 bg-[#a77b2a] opacity-90 rounded-lg text-center text-[20px] font-bold font-mono"
-                        style={{ textShadow: "1px 1px 3px black" }}>
-                        {timeLeft}
-                    </div>
-                </div>
+  const gameResult = async () => {
+    try {
+      const res = await axios.get(
+        `${apis?.high_low_results}?game_id=24&limit=15`
+      );
+      console.log("game res", res);
+      if (res?.data?.status === 200) {
+        setGameResultData(res?.data?.data);
+      }
+    } catch (err) {
+      if (err?.response?.data?.status === 500) {
+        console.log("error hisotry", err);
+      } else {
+        toast.error(err?.response?.data?.message);
+      }
+    }
+  };
 
-                {/* Card History */}
-                <div className="flex overflow-x-auto hide-scrollbar space-x-2 items-center h-12 bg-[#a77b2a] opacity-90 rounded-lg text-center text-[20px] font-bold font-mono m-2 p-2"
-                    style={{ textShadow: "1px 1px 3px black" }}>
-                    {cardHistory.map((imgSrc, index) => (
-                        <img key={index} src={imgSrc} alt={`Card ${index}`} className="w-6 h-8 shadow-md" />
-                    ))}
-                </div>
+  const gameResultAnnouncement = async () => {
+    if (!userId) {
+      toast.error("User not logged in");
+      navigate("/login");
+      return;
+    }
+    const sr =
+      gameResultData?.length > 0 && Number(gameResultData[0]?.games_no) + 1;
+    try {
+      const response = await axios.get(`${apis?.high_low_win_amount}`, {
+        params: {
+          userid: Number(userId),
+          game_id: 24,
+          games_no: sr,
+        },
+      });
+      console.log("gameresult responsere", response);
+      if (response?.data?.status === 200) {
+        setGameResultDataAnnouncemnt(response?.data);
+        setIsResultModal(true);
+      }
+    } catch (err) {
+      console.log("server erro ", err);
+      if (err?.response?.data?.status === 500) {
+        console.log("server erro ", err);
+      } else {
+        toast.error(err?.response?.data?.message);
+      }
+    }
+  };
 
-                {/* Main Cards */}
-                <div className='flex items-center justify-center gap-6 mt-5 relative' style={{ height: "200px" }}>
-                    {/* Static Card */}
-                    <div
-                        className='h-40 w-36 rounded-md relative z-10'
-                    >
-                        <img src={cards3} alt='cards3' className="h-full w-full object-contain" />
-                        {/* Overlay animation: slides in + flips */}
-                        {startAnimation && (
-                            <div className={`absolute -top-6 left-0 h-52 w-36 z-10 card-overlay ${showFrontCard ? 'flip' : ''}`}>
-                                <div className="flipper">
-                                    <img src={backCard} alt='Back Card' className="front h-full w-full object-cover" />
-                                    <img src={randomCard ?? card10} alt='Revealed Card' className="back h-full w-full object-cover" />
-                                </div>
-                            </div>
-                        )}
-                        {/* Keep showing the last revealed card */}
-                        {!startAnimation && randomCard && (
-                            <div className="absolute -top-6 left-0 h-52 w-36 z-10">
-                                <img src={randomCard} alt='Revealed Card' className="h-full w-full object-contain" />
-                            </div>
-                        )}
-                    </div>
+  const gameBetHistory = async () => {
+    const payload = {
+      userid: userId,
+      game_id: 24,
+      limit: 10,
+      offset: 0,
+    };
+    try {
+      const res = await axios.get(
+        `${apis?.high_low_bet_history}?userid=${userId}&game_id=24`,
+        payload
+      );
+      //   console.log("hisotry", res)
+      if (res?.data?.status === 200) {
+        setGameResultHistory(res?.data?.data);
+      }
+    } catch (err) {
+      if (err?.response?.data?.status === 500) {
+        console.log("error hisotry", err);
+      } else {
+        toast.error(err?.response?.data?.message);
+      }
+    }
+  };
 
-                    {/* Right card (placeholder only, non-functional) */}
-                    <div className='h-52 w-52 rounded-md'>
-                        <img src={backCard} alt='Right Back Card' className="h-full w-full object-contain opacity-70" />
-                    </div>
-                </div>
-                <div className='flex items-center justify-center mt-8'
-                    onClick={handleTapCard3}
-                >
-                    <div className='h-10 w-36 rounded-lg border border-white flex items-center justify-center gap-6 '>
-                        <div className='text-2xl text-white'>
-                            <IoIosRefresh />
+  const resetGame = () => {
+    setBetAmount(10);
+    setRevealedCard(null);
+    setStartAnimation(false);
+    setShowFrontCard(false);
+    setRandomCard(null);
+    setRandomCardIndex(null);
+    // setIsResultModal(false);
+    setBetConcept(1);
+  };
 
-                        </div>
-                        <div className='text-2xl text-white'>
-                            <MdOutlineImageSearch />
-                        </div>
-                    </div>
-                </div>
-                <div className='flex items-center justify-center'>
-                    <div className='flex items-center justify-between'>
-                        <button
-                            className="relative bg-gradient-to-tr from-[#0052CC] to-[#3399FF] text-white shadow-lg drop-shadow-[0_4px_3px_rgba(0,0,0,0.3)] h-11 w-40 font-serif font-bold text-[12px] m-2 rounded-lg flex items-center justify-center">
-                            <div className='text-[25px]'> <MdOutlineKeyboardDoubleArrowDown /></div>
-                            LOW OR SAME
-                        </button>
-                    </div >
-                    <div className='flex items-center justify-between'>
-                        <button
-                            className="relative bg-gradient-to-tr from-[#B30000] to-[#FF4D4D] text-white shadow-lg drop-shadow-[0_4px_3px_rgba(0,0,0,0.3)] h-11 w-40 font-serif font-bold text-[12px] m-2 rounded-lg flex items-center justify-center">
-                            <div className='text-[25px]'> <MdKeyboardDoubleArrowUp />
-                            </div>
-                            HIGH OR SAME
-                        </button>
-                    </div>
-                </div>
-            </div>
-            <div className="w-full">
-                <HiloFooter betAmount={betAmount} setBetAmount={setBetAmount} onPlaceBet={placeBetHandler} timeLeft={timeLeft} />
-            </div>
-            {isResultModal && (
-                <ResultModal onClose={() => setIsResultModal(false)} announcementData={gameResultDataAnnouncemnt} />
-            )}
+  return (
+    <div
+      className="h-full w-full overflow-y-scroll justify-between flex flex-col items-center hide-scrollbar"
+      style={{
+        background:
+          "linear-gradient(to right, orange, #FFBF00, #FFBF00, orange)",
+      }}
+    >
+      <div className="w-full">
+        <HiloHeader
+          profileRefresher={profileRefresher}
+          gameResultHistory={gameResultHistory}
+          setProfileRefresher={setProfileRefresher}
+        />
+
+        {/* Serial + Timer */}
+        <div className="flex justify-between m-4">
+          <div
+            className="h-8 w-24 bg-[#a77b2a] opacity-90 rounded-lg text-center text-[10px] font-roboto"
+            style={{ textShadow: "1px 1px 3px black" }}
+          >
+            S.no:-{" "}
+            <p className="font-bold">
+              {Number(gameResultData[0]?.games_no) + 1}
+            </p>
+          </div>
+          <div
+            className="h-8 w-24 bg-[#a77b2a] opacity-90 rounded-lg text-center text-[20px] font-bold font-mono"
+            style={{ textShadow: "1px 1px 3px black" }}
+          >
+            {timeLeft}
+          </div>
         </div>
-    );
+
+        {/* Card History */}
+        <div
+          className="flex overflow-x-auto hide-scrollbar space-x-2 items-center h-12 bg-[#a77b2a] opacity-90 rounded-lg text-center text-[20px] font-bold font-mono m-2 p-2"
+          style={{ textShadow: "1px 1px 3px black" }}
+        >
+          {gameResultData?.length > 0 ? (
+            gameResultData.map((item, i) => {
+              const url = allCards[item?.number - 1];
+              return (
+                <img
+                  key={i}
+                  src={url}
+                  alt={`Dice ${i}`}
+                  className="w-6 h-8 shadow-md"
+                />
+              );
+            })
+          ) : (
+            <p>no data</p>
+          )}
+        </div>
+
+        {/* Main Cards */}
+        <div
+          className="flex items-center justify-between gap-6 mt-5 relative"
+          style={{ height: "200px" }}
+        >
+          {/* Left Stack */}
+          <div className="h-40 w-36 rounded-md relative z-10">
+            <img
+              src={cards3}
+              alt="cards3"
+              className="h-full w-full object-contain"
+            />
+
+            {/* Flying Card Animation should start from here */}
+            {startAnimation && (
+              <div className="animated-card">
+                <div className="flipper">
+                  <img
+                    src={backCard}
+                    alt="Back"
+                    className="front h-full w-full object-contain"
+                  />
+                  <img
+                    src={randomCard ?? card10}
+                    alt="Card"
+                    className="back h-full w-full object-contain"
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Right Side (Revealed Card after animation ends) */}
+          <div className="h-52 w-52 rounded-md">
+            {revealedCard ? (
+              <img
+                src={revealedCard}
+                alt="Revealed Card"
+                className="h-full w-full object-contain"
+              />
+            ) : (
+              <img
+                src={backCard}
+                alt="Right Back Card"
+                className="h-full w-full object-contain opacity-70"
+              />
+            )}
+          </div>
+        </div>
+
+        {(timeLeft < 0 || timeLeft > 11) && betConcept === 1 && (
+          <div className="flex items-center justify-center mt-8">
+            <div className="h-10 w-36 rounded-lg border border-white flex items-center justify-center gap-6 ">
+              <div className="text-2xl text-white">
+                <IoIosRefresh />
+              </div>
+              <button onClick={handleTapCard3} className="text-2xl text-white">
+                <MdOutlineImageSearch />
+              </button>
+            </div>
+          </div>
+         )}
+        {betConcept === 2 && (
+          <div className="flex items-center justify-center mt-2">
+            <div className="flex items-center justify-between">
+              <button
+                onClick={() => placeBetHandler(2)}
+                className="relative bg-gradient-to-tr from-[#0052CC] to-[#3399FF] text-white shadow-lg drop-shadow-[0_4px_3px_rgba(0,0,0,0.3)] h-11 w-40 font-serif font-bold text-[12px] m-2 rounded-lg flex items-center justify-center"
+              >
+                <div className="text-[25px]">
+                  {" "}
+                  <MdOutlineKeyboardDoubleArrowDown />
+                </div>
+                LOW OR SAME
+              </button>
+            </div>
+            <div className="flex items-center justify-between">
+              <button
+                onClick={() => placeBetHandler(1)}
+                className="relative bg-gradient-to-tr from-[#B30000] to-[#FF4D4D] text-white shadow-lg drop-shadow-[0_4px_3px_rgba(0,0,0,0.3)] h-11 w-40 font-serif font-bold text-[12px] m-2 rounded-lg flex items-center justify-center"
+              >
+                <div className="text-[25px]">
+                  {" "}
+                  <MdKeyboardDoubleArrowUp />
+                </div>
+                HIGH OR SAME
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+      <div className="w-full">
+        <HiloFooter
+          betConcept={betConcept}
+          setBetConcept={setBetConcept}
+          betAmount={betAmount}
+          setBetAmount={setBetAmount}
+          timeLeft={timeLeft}
+        />
+      </div>
+      {isResultModal && (
+        <ResultModal
+          onClose={() => setIsResultModal(false)}
+          announcementData={gameResultDataAnnouncemnt}
+        />
+      )}
+    </div>
+  );
 }
 
 export default HiLoHome;

@@ -38,22 +38,22 @@ const ChartTrx = ({ handlehistorybox, gameHistoryData }) => {
       const totalGames = gameData.length;
       const rowHeight = window.innerWidth < 500 ? 48 : 48; // Adjust for small screens
       const colWidth = window.innerWidth < 380 ? 16 :window.innerWidth < 400 ? 18 :window.innerWidth < 420 ? 21 :window.innerWidth < 440 ? 22 :window.innerWidth < 460 ? 23  : 21;  // Adjust column width for smaller screens
-      const x = (gameData[index]?.result || 0) * colWidth + 6; // Adjust circle position
+      const x = (gameData[index]?.number || 0) * colWidth + 6; // Adjust circle position
       const y = index * rowHeight + 24; // Adjust for vertical position
       return { x, y };
     };
   
     const renderGameRow = (item) => {
       return (
-        <div key={item?.period} className="w-full flex items-center justify-between relative">
+        <div key={item?.games_no} className="w-full flex items-center justify-between relative">
           <div className="w-[39%] flex justify-start text-center">
-            <p className="text-[12px">{item?.period}</p>
+            <p className="text-[12px">{item?.games_no}</p>
           </div>
           <div className="flex gap-1 w-[55%] justify-end px-1 h-10 text-[12px] items-center">
             {["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"].map((num, numIndex) => {
-              const isHighlighted = num == item?.result;
-              const isGreenNumber = [1, 3, 7, 9].includes(item?.result);
-              const isRedNumber = [2, 4, 6, 8].includes(item?.result);
+              const isHighlighted = num == item?.number;
+              const isGreenNumber = [1, 3, 7, 9].includes(item?.number);
+              const isRedNumber = [2, 4, 6, 8].includes(item?.number);
   
               return (
                 <div
@@ -72,12 +72,12 @@ const ChartTrx = ({ handlehistorybox, gameHistoryData }) => {
             })}
           </div>
           <p
-            className={`ml-2 border border-[#bbbbbb] ${[0, 1, 2, 3, 4].includes(item?.result)
+            className={`ml-2 border border-[#bbbbbb] ${[0, 1, 2, 3, 4].includes(item?.number)
               ? "bg-bg3"
               : "bg-yellow"
               } h-3.5 xsm:h-4 w-3.5 xsm:w-4 col-span-1 rounded-full flex justify-center items-center p-1 text-white`}
           >
-            {[0, 1, 2, 3, 4].includes(item?.result) ? "S" : "B"}
+            {[0, 1, 2, 3, 4].includes(item?.number) ? "S" : "B"}
           </p>
         </div>
       );
@@ -86,9 +86,9 @@ const ChartTrx = ({ handlehistorybox, gameHistoryData }) => {
       let prevPosition = null; // Store the last valid position
   
       return gameHistoryData.map((item, index) => {
-        const isHighlighted = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].includes(item?.result);
+        const isHighlighted = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].includes(item?.number);
   
-        if (!isHighlighted) return null; // Skip non-highlighted results
+        if (!isHighlighted) return null; // Skip non-highlighted numbers
   
         const { x, y } = calculatePosition(index, gameHistoryData);
   
@@ -111,7 +111,7 @@ const ChartTrx = ({ handlehistorybox, gameHistoryData }) => {
           );
         }
   
-        // Store first highlighted result position
+        // Store first highlighted number position
         prevPosition = { x, y };
         return null;
       });

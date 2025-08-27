@@ -148,23 +148,23 @@ function DepositHistory() {
     }, [isOrderidCopied, setIsOrderidCopied]);
 
   
-      const payMethod = [{
-          image: usdt_icon,
-          name: "USDT",
-          type: 0
-      },
-      {
-          image: indianpay,
-          name: "Indian pay",
-          type: 1
-      },
+    //   const payMethod = [{
+    //       image: usdt_icon,
+    //       name: "USDT",
+    //       type: 0
+    //   },
+    //   {
+    //       image: indianpay,
+    //       name: "Indian pay",
+    //       type: 1
+    //   },
   
-      {
-          image: camlenios,
-          name: "",
-          type: 2
-      }
-      ]
+    //   {
+    //       image: camlenios,
+    //       name: "",
+    //       type: 2
+    //   }
+    //   ]
     return (
         <>
             <div className='w-full'>
@@ -242,7 +242,7 @@ function DepositHistory() {
                                     <div className="bg-border1 mt-3 w-full h-[1px]"></div>
                                     <div className="flex mt-3 text-white justify-between items-center">
                                         <p className="text-xsm font-bold">Balance</p>
-                                        <p className="text-xsm font-semibold text-customlightbtn">{item?.cash}.00</p>
+                                        <p className="text-xsm font-semibold text-customlightbtn">{item?.cash}</p>
                                     </div>
                                     {/* <div className="flex mt-4 text-white opacity-55 justify-between items-center">
                                         <p className="text-xsm font-bold">Type</p>

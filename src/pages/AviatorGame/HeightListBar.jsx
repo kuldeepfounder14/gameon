@@ -6,12 +6,9 @@ import { configModalUsaWin } from '../../utils/apis'
 // eslint-disable-next-line react/prop-types
 function HeightListBar({ hotAirData, betApiHitted, refreshHeightList, setRefreshHeightList }) {
     const [getData, setGetData] = useState(null)
-    // console.log("refreshHeightList",refreshHeightList)
     const getPreviousResult = async () => {
-        // console.log("first")
         try {
             const res = await axios.get(`${configModalUsaWin}aviator_last_five_result`)
-            // alert("hittedd")
             console.log("aviator_last_five_result", res)
             if (res?.data?.status === 200 || res?.data?.status === "200") {
                 setGetData(res?.data?.data)
@@ -25,7 +22,11 @@ function HeightListBar({ hotAirData, betApiHitted, refreshHeightList, setRefresh
             getPreviousResult()
         }
     }, [hotAirData?.status])
-    // console.log("hotAirData",hotAirData)
+        useEffect(() => {
+        
+            getPreviousResult()
+        
+    }, [hotAirData?.status])
     const colors = ["text-[#F85050]", "text-blue-500", "text-green", "text-yellow", "text-purple-500", "text-pink-500"];
 
     return (

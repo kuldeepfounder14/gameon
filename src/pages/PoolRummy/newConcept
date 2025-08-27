@@ -1,0 +1,940 @@
+import PoolPlayer from "../models/poolPlayerModel.js";
+import PoolRoom from "../models/poolRoomModel.js";
+import cards from "../utils/cards.js";
+import { analyzeHand } from "../utils/analyzeHand.js";
+import { broadcastToRoom } from "../poolsocketIOBroadcast.js";
+import {
+  updateHandAnalysis,
+  getHandAnalysis,
+  getRoomAnalysis,
+} from "../utils/dealGlobalHandState.js";
+// example file: gameController.js or any other file
+import { isValidHand } from "../controllers/poolDeclareController.js";
+//import {
+  //initPoolRoundState,
+  //incrementRound,
+  //isFinalDeal,
+  //getFinalWinnerLoser,
+  //getRoundState,
+  //cleanupRoundState,
+//} from "../utils/poolRoundState.js";
+const duration = 120;
+const gameStates = new Map();
+const playerDiscardStatus = new Map(); // Map<roomId, { [userId]: boolean }>
+const cleanupGame = (roomId) => {
+  const timers = PoolGameController.turnTimers[roomId];
+  if (timers) {
+    if (timers.timer) clearTimeout(timers.timer);
+    if (timers.interval) clearInterval(timers.interval);
+    delete PoolGameController.turnTimers[roomId];
+  }
+  gameStates.delete(roomId);
+  playerDiscardStatus.delete(roomId);
+};
+
+const eliminateAndDeclareOpponentWinner = async (
+  roomId,
+  eliminatedPlayerId,
+  io
+) => {
+  try {
+    const players = await PoolPlayer.getPlayersInRoom(roomId);
+    const eliminated = players.find((p) => p.user_id === eliminatedPlayerId);
+    const remaining = players.find((p) => p.user_id !== eliminatedPlayerId);
+    const gameState = gameStates.get(roomId);
+    const { jokers, playerHands } = gameState || {};
+    const cards = playerHands?.[eliminatedPlayerId];
+    if (cards.length===0) {
+      throw new Error("Eliminated player's cards not found in playerHands");
+    }
+    const result = analyzeHand(cards, jokers);
+    const leftPoints = result?.leftPoints || 0;
+    await PoolRoom.addToWallet(remaining.user_id, leftPoints+100);
+    if (!eliminated || !remaining) throw new Error("Invalid player data");
+    broadcastToRoom(io, roomId, "pool_eliminated", 100, 0, 0, {
+      loserId: eliminated.user_id,
+      winnerId: remaining.user_id,
+      message: `eliminated due to not played its turn.`,
+      jokers,
+		leftPoints
+    });
+    return { gameFinished: true };
+  } catch (error) {
+    console.error("eliminateAndDeclareOpponentWinner error:", error);
+  }
+};
+const manageTurn = async (
+  currentPlayer,
+  roomId,
+  io,
+  players,
+  currentPlayerIndex,
+  playerTurnOrder,
+  turnTimerRef
+) => {
+  if (turnTimerRef.timer) clearTimeout(turnTimerRef.timer);
+  if (turnTimerRef.interval) clearInterval(turnTimerRef.interval);
+  let countdown = duration;
+  const totalBetValue = players.reduce(
+    (total, player) => total + player.bet_value,
+    0
+  );
+  players.forEach((player, index) => {
+    player.is_turn = index === currentPlayerIndex ? 1 : 0;
+  });
+  // Turn countdown broadcasting
+  turnTimerRef.interval = setInterval(async () => {
+    for (const player of players) {
+      player.viewCardStatus = await PoolPlayer.getPlayerViewCardStatus(
+        roomId,
+        player.user_id
+      );
+    }
+    const state = gameStates.get(roomId);
+    if (!state) throw new Error("Game state not found");
+    const { playerHands, jokers } = state;
+    // console.log("currentPlayerIndex", currentPlayer);
+    const results = {};
+    for (const player of players) {
+      const hand = playerHands[player.user_id];
+      const result = analyzeHand(hand, jokers);
+      results[player.user_id] = result;
+      updateHandAnalysis(roomId, player.user_id, result);
+    }
+    broadcastToRoom(
+      io,
+      roomId,
+      "pool_turn_started",
+      9,
+      2,
+      totalBetValue,
+      { status: 4, countdown },
+      {
+        players: players.map((player) => ({ ...player })),
+        results,
+      }
+    );
+
+    if (--countdown <= 0) {
+      clearInterval(turnTimerRef.interval);
+    }
+  }, 1000);
+  // ✅ Set discard flag to false at start of turn
+  if (!playerDiscardStatus.has(roomId)) playerDiscardStatus.set(roomId, {});
+  const discardStatus = playerDiscardStatus.get(roomId);
+  discardStatus[currentPlayer.user_id] = false;
+
+  // Move to next player when time is up or eliminate
+  turnTimerRef.timer = setTimeout(async () => {
+    const didDiscard = discardStatus[currentPlayer.user_id];
+    if (!didDiscard) {
+      // ✅ If player didn’t discard, eliminate as before
+      await eliminateAndDeclareOpponentWinner(
+        roomId,
+        currentPlayer.user_id,
+        io
+      );
+      cleanupGame(roomId);
+      return;
+    }
+
+    // ✅ If discarded but isFinalDeclare === false, just move turn
+    const gameState = gameStates.get(roomId);
+    const isFinalDeclare =
+      gameState?.isFinalDeclareMap?.[currentPlayer.user_id] || false;
+
+    if (!isFinalDeclare) {
+      // Move to next player
+      const nextIndex = (currentPlayerIndex + 1) % players.length;
+      const nextPlayer = playerTurnOrder[nextIndex];
+      players.forEach((player, index) => {
+        player.is_turn = index === nextIndex ? 1 : 0;
+      });
+      manageTurn(
+        nextPlayer,
+        roomId,
+        io,
+        players,
+        nextIndex,
+        playerTurnOrder,
+        turnTimerRef
+      );
+      return;
+    }
+
+    // ✅ If isFinalDeclare === true, do nothing. The timeout in handleDiscardCard will handle the flow.
+
+    const nextIndex = (currentPlayerIndex + 1) % players.length;
+    const nextPlayer = playerTurnOrder[nextIndex];
+    players.forEach((player, index) => {
+      player.is_turn = index === nextIndex ? 1 : 0;
+    });
+    manageTurn(
+      nextPlayer,
+      roomId,
+      io,
+      players,
+      nextIndex,
+      playerTurnOrder,
+      turnTimerRef
+    );
+  }, duration * 1000);
+};
+const PoolGameController = {
+  turnTimers: {},
+  handleSelectCardFromDeck: async (roomId, userId, cardId, io) => {
+     // console.log("handleSelectCardFromDeck", roomId, userId, cardId);
+    const state = gameStates.get(roomId);
+    if (!state) throw new Error("Game state not found");
+    //console.log("state of handleSelectCardFromDeck", state);
+    const { finalDeck, playerHands, jokers } = state;
+    const cardIndex = finalDeck.findIndex(
+      (c) => Number(c.id) === Number(cardId)
+    );
+    if (cardIndex === -1) throw new Error("Card not found in deck", cardId);
+    const card = finalDeck.splice(cardIndex, 1)[0];
+    playerHands[userId] = playerHands[userId] || [];
+    playerHands[userId].push(card);
+    const players = await PoolPlayer.getPlayersInRoom(roomId);
+    const results = {};
+    for (const player of players) {
+      if (player.user_id === userId) {
+        const hand = playerHands[userId];
+        const updatedResult = analyzeHand(hand, jokers);
+        updateHandAnalysis(roomId, userId, updatedResult);
+        results[userId] = updatedResult;
+      } else {
+        const cached = getHandAnalysis(roomId, player.user_id);
+        if (cached) results[player.user_id] = cached;
+      }
+    }
+    broadcastToRoom(
+      io,
+      roomId,
+      "pool_card_drawn_from_deck",
+      0,
+      0,
+      0,
+      { status: 4, countdown: 0 },
+      {
+        userId,
+        card,
+        leftDeck: finalDeck,
+        playerHands,
+        results,
+      }
+    );
+  },
+  handleSelectCardFromDiscarded: async (roomId, userId, cardId, io) => {
+    // console.log(" handleSelectCardFromDiscarded", roomId, userId, cardId);
+	//  console.log('gameStates1111111111111111',gameStates)
+    const state = gameStates.get(roomId);
+    if (!state)
+      throw new Error("Game state not found for handleSelectCardFromDiscarded");
+    const { discardedCards, playerHands } = state;
+    const cardIndex = discardedCards.findIndex((c) => c.id === cardId);
+    //  console.log("cardIndexcardIndex", cardIndex);
+    if (cardIndex === -1) throw new Error("Card not in discard pile");
+    const card = discardedCards.splice(cardIndex, 1)[0];
+    //  console.log("cardcard", card);
+    playerHands[userId] = playerHands[userId] || [];
+    playerHands[userId].push(card);
+
+    const players = await PoolPlayer.getPlayersInRoom(roomId);
+    const results = {};
+    for (const player of players) {
+      if (player.user_id === userId) {
+        const hand = playerHands[userId];
+        const updatedResult = analyzeHand(hand, jokers);
+        updateHandAnalysis(roomId, userId, updatedResult);
+        results[userId] = updatedResult;
+      } else {
+        const cached = getHandAnalysis(roomId, player.user_id);
+        if (cached) results[player.user_id] = cached;
+      }
+    }
+
+    broadcastToRoom(
+      io,
+      roomId,
+      "pool_card_drawn_from_discard",
+      0,
+      0,
+      0,
+      { status: 4, countdown: 0 },
+      {
+        userId,
+        card,
+        discardedCard: discardedCards[discardedCards.length - 1], // last one
+        playerHands,
+        results,
+      }
+    );
+    //  console.log("donedone");
+  },
+  handleDiscardCard: async (
+    roomId,
+    userId,
+    cardId,
+    io,
+    isFinalDeclare = false
+  ) => {
+    const state = gameStates.get(roomId);
+    if (!state) throw new Error("Game state not found");
+    const { discardedCards, playerHands, jokers } = state;
+    const hand = playerHands[userId];
+    let card = null;
+    if (!hand) throw new Error("Player hand not found");
+    if (!isFinalDeclare) {
+      const cardIndex = hand.findIndex((c) => c.id === cardId);
+      if (cardIndex === -1) throw new Error("Card not in player hand");
+      card = hand.splice(cardIndex, 1)[0];
+      discardedCards.push(card);
+    }
+    // save hand of 1st declaring hand
+    const room = await PoolRoom.getRoomById(roomId);
+    //const jokers = room.jokers || [];
+    const valid = isValidHand(hand, jokers);
+    const declaringResult = analyzeHand(hand, jokers);
+    updateHandAnalysis(roomId, userId, declaringResult);
+    await PoolPlayer.saveDeclaredHand(roomId, userId, hand, valid);
+    // end of  1st declaring hand
+	  
+	  ///////
+//const declaringResult = analyzeHand(declaringPlayer.cards); // returns { leftPoints, ... }
+	  		      const players = await PoolPlayer.getPlayersInRoom(roomId);
+	  console.log("playersplayers",userId,players)
+const opponent = players.filter((p) => Number(p.user_id) !== Number(userId));
+	  console.log("opponentopponent",opponent)
+const opponentResult = analyzeHand(opponent[0].cards,jokers)
+if (declaringResult.leftPoints > 100 ) {
+  const winnerId =
+    declaringResult.leftPoints > 100 ? opponent.user_id :user_id;
+  const loserId =
+    declaringResult.leftPoints > 100 ? user_id : opponent.user_id;
+
+  broadcastToRoom(io, roomId, "final_pool_result", 200, 0, 0, {
+    winnerId,
+    loserId,
+    message: `Final winner declared on the basis of all pools`,
+    jokers,
+    results: {
+      [declaringPlayer.user_id]: declaringResult,
+      [opponent.user_id]: opponentResult,
+    },
+  });
+
+  return;
+}
+	  ////////
+	  
+
+    if (!playerDiscardStatus.has(roomId)) playerDiscardStatus.set(roomId, {});
+    const discardStatus = playerDiscardStatus.get(roomId);
+    discardStatus[userId] = true;
+    // ✅ Track isFinalDeclare for the user
+    if (!state.isFinalDeclareMap) state.isFinalDeclareMap = {};
+    state.isFinalDeclareMap[userId] = isFinalDeclare;
+
+    if (!state.savedHands) state.savedHands = {};
+    if (!isFinalDeclare) {
+      state.savedHands[userId] = [...hand.map((card) => ({ ...card }))]; // clone hand
+    }
+    if (!isFinalDeclare) {
+		 const turnTimerRef = PoolGameController.turnTimers[roomId];
+      if (turnTimerRef) {
+        if (turnTimerRef.timer) clearTimeout(turnTimerRef.timer);
+        if (turnTimerRef.interval) clearInterval(turnTimerRef.interval);
+        delete PoolGameController.turnTimers[roomId];
+      }
+
+      // ✅ Now switch turn
+      const declaredUseid = {
+        user_id: userId,
+      };
+		      const players = await PoolPlayer.getPlayersInRoom(roomId);
+  const currentIndex = players.findIndex((p) => p.user_id == userId);
+    if (currentIndex === -1) throw new Error("Invalid userId in players list");
+    const nextPlayer = players[(currentIndex + 1) % players.length];
+		
+      await PoolPlayer.updateTurn(roomId, declaredUseid, false); // declare player turn off
+      await PoolPlayer.updateTurn(roomId, nextPlayer, true); // opponent turn on
+
+      let updatedPlayers = await PoolPlayer.getPlayersInRoom(roomId);
+      //console.log("updatedPlayers",updatedPlayers)
+      // ✅ Ensure updated is_turn flags (in case DB delay or cache issue
+
+      // ✅ Broadcast wait_for_opponent_declare
+    //  let countdown = duration;
+      const results = {};
+      for (const player of players) {
+        if (player.user_id === userId) {
+          const hand = playerHands[userId];
+          const updatedResult = analyzeHand(hand, jokers);
+          updateHandAnalysis(roomId, userId, updatedResult);
+          results[userId] = updatedResult;
+        } else {
+          const cached = getHandAnalysis(roomId, player.user_id);
+          if (cached) results[player.user_id] = cached;
+        }
+      }
+
+      broadcastToRoom(
+        io,
+        roomId,
+        "pool_card_discarded",
+        0,
+        0,
+        0,
+        { status: 4, countdown: 0 },
+        {
+          userId,
+          card,
+          discardedCard: card,
+          playerHands,
+          results,
+        }
+      );
+		 // ✅ ✅ ✅ ADD THIS BELOW TO START NEXT TURN
+  const playerTurnOrder = [...updatedPlayers];
+  const newTurnTimerRef = PoolGameController.turnTimers[roomId] || {
+    timer: null,
+    interval: null,
+  };
+  PoolGameController.turnTimers[roomId] = newTurnTimerRef;
+
+  const nextIndex = updatedPlayers.findIndex(
+    (p) => p.user_id === nextPlayer.user_id
+  );
+  manageTurn(
+    nextPlayer,
+    roomId,
+    io,
+    updatedPlayers,
+    nextIndex,
+    playerTurnOrder,
+    newTurnTimerRef
+  );
+
+    }
+    //const players = await PoolPlayer.getPlayersInRoom(roomId);
+    // console.log("playersplayers in game contri", players, userId);
+    const currentIndex = players.findIndex((p) => p.user_id == userId);
+    if (currentIndex === -1) throw new Error("Invalid userId in players list");
+    const nextPlayer = players[(currentIndex + 1) % players.length];
+
+    //await Player.updateTurn(roomId, players[currentIndex].user_id, false);
+    // await Player.updateTurn(roomId, nextPlayer.user_id, true);
+
+    //const playerTurnOrder = [...players];
+    // const turnTimerRef = DealGameController.turnTimers[roomId] || { timer: null, interval: null };
+    // DealGameController.turnTimers[roomId] = turnTimerRef;
+
+    if (isFinalDeclare) {
+      // ✅ STOP current turn timer and interval (cancel manageTurn)
+      const turnTimerRef = PoolGameController.turnTimers[roomId];
+      if (turnTimerRef) {
+        if (turnTimerRef.timer) clearTimeout(turnTimerRef.timer);
+        if (turnTimerRef.interval) clearInterval(turnTimerRef.interval);
+        delete PoolGameController.turnTimers[roomId];
+      }
+
+      // ✅ Now switch turn
+      const declaredUseid = {
+        user_id: userId,
+      };
+      await PoolPlayer.updateTurn(roomId, declaredUseid, false); // declare player turn off
+      await PoolPlayer.updateTurn(roomId, nextPlayer, true); // opponent turn on
+
+      let updatedPlayers = await PoolPlayer.getPlayersInRoom(roomId);
+      //console.log("updatedPlayers",updatedPlayers)
+      // ✅ Ensure updated is_turn flags (in case DB delay or cache issue)
+      if (!Array.isArray(updatedPlayers)) {
+        // console.error("updatedPlayers is not an array:", updatedPlayers);
+        updatedPlayers = [];
+      }
+      updatedPlayers = updatedPlayers.map((player) => {
+        if (player.user_id === userId) {
+          return { ...player, is_turn: 0 };
+        }
+        if (player.user_id === Number(nextPlayer.user_id)) {
+          return { ...player, is_turn: 1 };
+        }
+        return player;
+      });
+
+      // ✅ Broadcast wait_for_opponent_declare
+      let countdown = duration;
+      const updatedResults = {
+        [userId]: analyzeHand(state.savedHands[userId] || [], jokers),
+        [nextPlayer.user_id]: analyzeHand(
+          playerHands[nextPlayer.user_id] || [],
+          jokers
+        ),
+      };
+      const results = {};
+      //console.log("before",updatedPlayers)
+      for (const p of updatedPlayers) {
+        const hand = state.playerHands[p.user_id];
+        const result = analyzeHand(hand, jokers);
+        updateHandAnalysis(roomId, p.user_id, result);
+        results[p.user_id] = result;
+      }
+      //console.log("countdowncountdown",countdown,updatedPlayers)
+      broadcastToRoom(
+        io,
+        roomId,
+        "pool_wait_for_opponent_declare",
+        0,
+        0,
+        0,
+        { status: 4, countdown },
+        {
+          declaringUserId: userId,
+          messageForFirstDeclaredUser: "Waiting for opponent to declare",
+          messageForNextDeclaredUser:
+            "Player has made a valid declaration. Please group your cards and declare",
+          opponentId: nextPlayer.user_id,
+          players: updatedPlayers.map((player) => ({ ...player })),
+          results,
+        }
+      );
+
+      // ✅ Start timeout for opponent to declare
+      setTimeout(async () => {
+        const declared = await PoolPlayer.getDeclaredHand(
+          roomId,
+          nextPlayer.user_id
+        );
+        if (!declared) {
+          await eliminateAndDeclareOpponentWinner(
+            roomId,
+            nextPlayer.user_id,
+            io
+          );
+          cleanupGame(roomId);
+          await PoolRoom.updateStatus(roomId, "finished");
+        }
+      }, duration * 1000);
+    }
+  },
+  handleTossSocket: async (roomId, gameId, tossCardId,dealsCount, io) => {
+	  const no_of_deals=dealsCount
+    const gameDetails = await PoolRoom.getGameDetails(gameId);
+    if (!gameDetails) throw new Error("Invalid gameId");
+    const entry_fees = parseFloat(gameDetails.entry_fees);
+    const players = await PoolPlayer.getPlayersInRoom(roomId);
+    const tossCard = cards.find((card) => card.id === tossCardId);
+    if (!tossCard) throw new Error(`Invalid tossCardId: ${tossCardId}`);
+    const shuffleDeck = () => {
+      const deck = [...cards];
+      for (let i = deck.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [deck[i], deck[j]] = [deck[j], deck[i]];
+      }
+      return deck;
+    };
+    const totalBetValue = players.reduce(
+      (total, player) => total + player.bet_value,
+      0
+    );
+    let deck = shuffleDeck();
+    const playerCards = {};
+    let tossWinner = null;
+    for (const player of players) {
+      const card = deck.pop();
+      if (!card) continue;
+      playerCards[player.user_id] = card;
+      broadcastToRoom(
+        io,
+        roomId,
+        "pool_toss_card_distribution",
+        4,
+        2,
+        totalBetValue,
+        { status: 1, countdown: 0 },
+        {
+          players: [{ id: player.id, toss_card: card }],
+        }
+      );
+    }
+    tossWinner = players.reduce((winner, player) => {
+      const playerCard = playerCards[player.user_id];
+      if (!playerCard) return winner;
+      return !winner || playerCard.value > winner.card.value
+        ? { user_id: player.user_id, card: playerCard }
+        : winner;
+    }, null);
+    if (!tossWinner) throw new Error("No toss winner found, re-running toss");
+    await PoolRoom.updateTossWinner(roomId, tossWinner);
+    await PoolRoom.updateStatus(roomId, "active");
+    await PoolRoom.deductWalletBalance(roomId, entry_fees);
+    broadcastToRoom(
+      io,
+      roomId,
+      "pool_toss_result",
+      5,
+      2,
+      totalBetValue,
+      { status: 1, countdown: 0 },
+      {
+        players: players.map((player) => ({
+          id: player.id,
+          toss_result: tossWinner.user_id === player.user_id ? 1 : 0,
+        })),
+      }
+    );
+    await new Promise((resolve) => {
+      let countdown = 3;
+      const interval = setInterval(() => {
+        broadcastToRoom(io, roomId, "pool_loading_timer", 6, 2, totalBetValue, {
+          status: 2,
+          countdown,
+        });
+        if (--countdown < 0) {
+          clearInterval(interval);
+          resolve();
+        }
+      }, 1000);
+    });
+    // 1. Create full deck (52 or 104 based on player count)
+    let finalDeck = [...cards];
+    if (players.length === 4) {
+      finalDeck = [...cards, ...cards]; // 104 cards
+    }
+    // 2. Shuffle deck (Fisher–Yates shuffle)
+    for (let i = finalDeck.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [finalDeck[i], finalDeck[j]] = [finalDeck[j], finalDeck[i]];
+    }
+	   // 6. Distribute 13 cards to each player
+    const playerHands = {};
+    for (const player of players) {
+      if (finalDeck.length >= 13) {
+        const playerCards = finalDeck.splice(0, 13);
+        playerHands[player.user_id] = playerCards;
+        broadcastToRoom(
+          io,
+          roomId,
+          "pool_game_card_distribution",
+          7,
+          2,
+          totalBetValue,
+          { status: 2, countdown: 0 },
+          {
+            players: [
+              {
+                id: player.id,
+                game_card: { cards: playerCards },
+              },
+            ],
+          }
+        );
+      }
+    }
+    // 3. Pop one random card and push to jokers array
+    const jokers = [];
+    const randomJokerIndex = Math.floor(Math.random() * finalDeck.length);
+    const jokerCard = finalDeck.splice(randomJokerIndex, 1)[0]; // remove from deck
+    jokers.push(jokerCard);
+    // 4. Find all same rank cards in the remaining deck (do NOT remove them)
+    const sameRankJokers = finalDeck.filter((c) => c.rank === jokerCard.rank);
+    jokers.push(...sameRankJokers);
+    // 5. Pop one more random card as discardedCard
+    const discardedCardIndex = Math.floor(Math.random() * finalDeck.length);
+    const discardedCard = finalDeck.splice(discardedCardIndex, 1)[0]; // remove from deck
+   
+    gameStates.set(roomId, {
+      finalDeck,
+      discardedCards: [discardedCard],
+      playerHands, // ✅ now added properly
+      jokers,
+    });
+    await PoolPlayer.updateTurn(roomId, tossWinner, true);
+    await new Promise((resolve) => {
+      let countdown = 5;
+      const interval = setInterval(() => {
+        broadcastToRoom(io, roomId, "pool_loading_timer", 8, 2, totalBetValue, {
+          status: 3,
+          countdown,
+        });
+        if (--countdown < 0) {
+          clearInterval(interval);
+          resolve();
+        }
+      }, 1000);
+    });
+    // 7. Broadcast jokers, discarded card, left deck, and player hands
+    broadcastToRoom(
+      io,
+      roomId,
+      "pool_joker_and_discarded",
+      12,
+      2,
+      totalBetValue,
+      { status: 2, countdown: 0 },
+      {
+        jokers,
+        discardedCard,
+        leftDeck: finalDeck, // ✅ send remaining deck
+        playerHands, // ✅ send player hands
+      }
+    );
+    const currentPlayerIndex = players.findIndex(
+      (p) => p.user_id === tossWinner.user_id
+    );
+    const turnTimerRef = PoolGameController.turnTimers[roomId] || {
+      timer: null,
+      interval: null,
+    };
+    PoolGameController.turnTimers[roomId] = turnTimerRef;
+    const playerTurnOrder = [...players];
+    manageTurn(
+      players[currentPlayerIndex],
+      roomId,
+      io,
+      players,
+      currentPlayerIndex,
+      playerTurnOrder,
+      turnTimerRef
+    );
+	  
+	  const playerIds = players.map((p) => p.user_id);
+ // or however many deals your game supports
+// initPoolRoundState(roomId, playerIds, no_of_deals);
+  },
+  handlePlayTurn: async (roomId, userId, bet_value, io) => {
+    const players = await PoolPlayer.getPlayersInRoom(roomId);
+    const currentPlayer = players.find((p) => p.user_id == userId);
+    if (!currentPlayer) throw new Error("Player not found");
+
+    const turnTimerRef = PoolGameController.turnTimers[roomId] || {
+      timer: null,
+      interval: null,
+    };
+    const isPlayerTurn = await PoolPlayer.getPlayerTurnStatus(roomId, userId);
+    if (!isPlayerTurn) {
+      return broadcastToRoom(
+        io,
+        roomId,
+        "pool_error",
+        0,
+        0,
+        0,
+        { status: 0, countdown: 0 },
+        {
+          players: [],
+          message: "It's not your turn!",
+        }
+      );
+    }
+    const viewCardStatus = await PoolPlayer.getPlayerViewCardStatus(roomId, userId);
+    const otherPlayers = players.filter((p) => p.user_id !== userId);
+    const lastBetPlayer = otherPlayers.sort(
+      (a, b) => b.bet_value - a.bet_value
+    )[0];
+    const lastBetValue = lastBetPlayer?.bet_value || 0;
+    if (
+      viewCardStatus === 1 &&
+      lastBetValue > 0 &&
+      bet_value < lastBetValue * 2
+    ) {
+      return broadcastToRoom(
+        io,
+        roomId,
+        "pool_error",
+        0,
+        0,
+        0,
+        { status: 0, countdown: 0 },
+        {
+          players: [],
+          message: `Your bet must be at least 2 times the last bet value (${
+            lastBetValue * 2
+          }).`,
+        }
+      );
+    }
+    currentPlayer.bet_value += bet_value;
+    await PoolPlayer.updateBetValue(roomId, currentPlayer, currentPlayer.bet_value);
+    const totalBetValue = players.reduce((sum, p) => sum + p.bet_value, 0);
+    broadcastToRoom(
+      io,
+      roomId,
+      "pool_turn_response",
+      10,
+      2,
+      totalBetValue,
+      { status: 4, countdown: 0 },
+      {
+        players: players.map((p) => ({
+          ...p,
+          bet_value:
+            p.user_id === userId ? currentPlayer.bet_value : p.bet_value,
+          viewCardStatus:
+            p.user_id === userId ? viewCardStatus : p.viewCardStatus,
+        })),
+      }
+    );
+    const currentPlayerIndex = players.findIndex((p) => p.user_id === userId);
+    const nextPlayer = players[(currentPlayerIndex + 1) % players.length];
+    await PoolPlayer.updateTurn(roomId, currentPlayer, false);
+    await PoolPlayer.updateTurn(roomId, nextPlayer, true);
+    const playerTurnOrder = [...players];
+    manageTurn(
+      nextPlayer,
+      roomId,
+      io,
+      players,
+      (currentPlayerIndex + 1) % players.length,
+      playerTurnOrder,
+      turnTimerRef
+    );
+  },
+  handleViewCards: async (userId, roomId, io) => {
+    const players = await PoolPlayer.getPlayersInRoom(roomId);
+    const totalBetValue = players.reduce(
+      (total, player) => total + player.bet_value,
+      0
+    );
+    const currentPlayer = players.find((p) => p.user_id == userId);
+    if (!currentPlayer) throw new Error("Player not found");
+    currentPlayer.viewCardStatus = 1;
+    await PoolPlayer.updateViewCardStatus(roomId, userId, 1);
+    broadcastToRoom(
+      io,
+      roomId,
+      "pool_view_cards_response",
+      11,
+      2,
+      totalBetValue,
+      { status: 4, countdown: 0 },
+      {
+        players: players.map((p) => ({
+          ...p,
+          viewCardStatus: p.user_id === userId ? 1 : p.viewCardStatus,
+        })),
+      }
+    );
+  },
+	
+	// next deals process 
+
+	startNewPoolFromDeclare: async (roomId, io) => {
+  const players = await PoolPlayer.getPlayersInRoom(roomId);
+  const totalBetValue = players.reduce((total, p) => total + p.bet_value, 0);
+
+  let finalDeck = [...cards];
+  if (players.length === 4) finalDeck = [...cards, ...cards]; // 104 cards for 4 players
+
+  for (let i = finalDeck.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [finalDeck[i], finalDeck[j]] = [finalDeck[j], finalDeck[i]];
+  }
+
+  const jokers = [];
+  const randomJokerIndex = Math.floor(Math.random() * finalDeck.length);
+  const jokerCard = finalDeck.splice(randomJokerIndex, 1)[0];
+  jokers.push(jokerCard);
+  const sameRankJokers = finalDeck.filter((c) => c.rank === jokerCard.rank);
+  jokers.push(...sameRankJokers);
+
+  const discardedCardIndex = Math.floor(Math.random() * finalDeck.length);
+  const discardedCard = finalDeck.splice(discardedCardIndex, 1)[0];
+
+  const playerHands = {};
+  for (const player of players) {
+    if (finalDeck.length >= 13) {
+      const playerCards = finalDeck.splice(0, 13);
+      playerHands[player.user_id] = playerCards;
+      broadcastToRoom(
+        io,
+        roomId,
+        "pool_game_card_distribution",
+        7,
+        2,
+        totalBetValue,
+        { status: 2, countdown: 0 },
+        {
+          players: [
+            {
+              id: player.id,
+              game_card: { cards: playerCards },
+            },
+          ],
+        }
+      );
+    }
+  }
+
+  gameStates.set(roomId, {
+    finalDeck,
+    discardedCards: [discardedCard],
+    playerHands,
+    jokers,
+  });
+
+  // Toss winner becomes first player (or use round winner)
+  const tossWinner = players[0]; // Or pick using custom logic
+  await PoolPlayer.updateTurn(roomId, tossWinner, true);
+
+  await new Promise((resolve) => {
+    let countdown = 5;
+    const interval = setInterval(() => {
+      broadcastToRoom(io, roomId, "pool_loading_timer", 15, 2, totalBetValue, {
+        status: 3,
+        countdown,
+      });
+      if (--countdown < 0) {
+        clearInterval(interval);
+        resolve();
+      }
+    }, 1000);
+  });
+
+  broadcastToRoom(
+    io,
+    roomId,
+    "pool_joker_and_discarded",
+    12,
+    2,
+    totalBetValue,
+    { status: 2, countdown: 0 },
+    {
+      jokers,
+      discardedCard,
+      leftDeck: finalDeck,
+      playerHands,
+    }
+  );
+
+  const currentPlayerIndex = players.findIndex((p) => p.user_id === tossWinner.user_id);
+  const turnTimerRef = PoolGameController.turnTimers[roomId] || { timer: null, interval: null };
+  PoolGameController.turnTimers[roomId] = turnTimerRef;
+
+  manageTurn(
+    players[currentPlayerIndex],
+    roomId,
+    io,
+    players,
+    currentPlayerIndex,
+    [...players],
+    turnTimerRef
+  );
+}
+
+};
+const handleSelectCardFromDiscarded =
+  PoolGameController.handleSelectCardFromDiscarded;
+const handleSelectCardFromDeck = PoolGameController.handleSelectCardFromDeck;
+const handleDiscardCard = PoolGameController.handleDiscardCard;
+
+export {
+  cleanupGame,
+  PoolGameController,
+  handleSelectCardFromDeck,
+  handleSelectCardFromDiscarded,
+  handleDiscardCard,
+  eliminateAndDeclareOpponentWinner,
+	PoolGameController as default,
+};

@@ -5,7 +5,7 @@ export default function ResultModal({ onClose, gameResultNumber, announcementDat
     if (!announcementData) return null;
 
     // Check the object structure
-    console.log("Announcement data:", announcementData?.number);
+    // console.log("Announcement data:", announcementData?.number);
 
     // const numberEntries = Object.entries(announcementData?.number).filter(([key]) => !isNaN(Number(key)));
     // console.log("numberEntries", numberEntries)

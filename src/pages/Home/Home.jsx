@@ -65,9 +65,9 @@ import FirstDepositModal from "../../reusable_component/FirstDepositModal";
 import Loader from "../../reusable_component/Loader/Loader";
 import { updateUserWalletFromJili, updateUserWalletFromSpribe } from "../../reusable_component/gameApi";
 const notes = [
-    "Welcome to the Tiranga Games! Greetings, Gamers and Enthusiasts! the Tiranga",
+    "Welcome to the Gameon Games! Greetings, Gamers and Enthusiasts! the Gameon",
     "Please be sure to always use our official website for playing the games with the fol",
-    "If your deposit is not received, Please send it directly to Tiranga Games Self-service Ce"
+    "If your deposit is not received, Please send it directly to Gameon Games Self-service Ce"
 ];
 function Home() {
     const [loading, setLoading] = useState(false);
@@ -147,19 +147,19 @@ function Home() {
 
     const buttonData = [
         { onClick: handlePopularContainer, key: "popular", bg: popularbg, icon: cup, label: "Popular" },
-        { onClick: handleLotteryContainer, key: "lottery", bg: lotterybg, icon: lotteryicons, label: "Lottery" },
+        // { onClick: handleLotteryContainer, key: "lottery", bg: lotterybg, icon: lotteryicons, label: "Lottery" },
         { onClick: handleCasinoContainer, key: "casino", bg: slotbg, icon: casinoicon, label: "Casino" },
-        { onClick: handleSlotsContainer, key: "slots", bg: casinobg, icon: gamecategoryslots, label: "Slots" },
-        { onClick: handleFishingContainer, key: "fishing", bg: fishbg, icon: gamecategoryfish, label: "Fishing" },
-        { onClick: handlePokerContainer, key: "rummy", bg: sportsbg, icon: gamecategorycasino, label: "Rummy" },
-        { onClick: handleLobbyContainer, key: "sports", bg: pokerbg, icon: gamecategoryloby, label: "Sports" },
-        { onClick: handleMiniGamesContainer, key: "orignal", bg: orignal, icon: gamecategoryminigames, label: "Orignal" },
+        // { onClick: handleSlotsContainer, key: "slots", bg: casinobg, icon: gamecategoryslots, label: "Slots" },
+        // { onClick: handleFishingContainer, key: "fishing", bg: fishbg, icon: gamecategoryfish, label: "Fishing" },
+        // { onClick: handlePokerContainer, key: "rummy", bg: sportsbg, icon: gamecategorycasino, label: "Rummy" },
+        // { onClick: handleLobbyContainer, key: "sports", bg: pokerbg, icon: gamecategoryloby, label: "Sports" },
+        // { onClick: handleMiniGamesContainer, key: "orignal", bg: orignal, icon: gamecategoryminigames, label: "Orignal" },
     ];
     const bannerDataHandler = async () => {
         setLoading(true)
         try {
             const res = await axios.get(apis.slider)
-            if (res?.data?.success === 200) {
+            if (res?.data?.status === 200) {
                 setLoading(false)
                 setBannerData(res?.data?.data)
             } else {
@@ -246,52 +246,38 @@ function Home() {
             setFirstDepsoitModal(false);
         }
     }, [])
-    useEffect(() => {
-        const updateWallet = async () => {
+    // useEffect(() => {
+    //     const updateWallet = async () => {
 
-            const statusJili = localStorage.getItem("jilligamePlayed") || "0";
-            const statusSpribe = localStorage.getItem("spribegamePlayed") || "0";
-
-            // console.log("Status Jili:", statusJili);
-            // console.log("Status Spribe:", statusSpribe);
-
-            if (statusJili === "1") {
-                await updateUserWalletFromJili();
-                localStorage.setItem("jilligamePlayed", "0");
-            }
-
-            if (statusSpribe === "1") {
-                await updateUserWalletFromSpribe();
-                localStorage.setItem("spribegamePlayed", "0");
-            }
-        };
-
-        // Run on page load
-        updateWallet();
-
-        // Detect if user switches back to this tab/page
-        const handleVisibilityChange = () => {
-            if (!document.hidden) {
-                updateWallet();
-            }
-        };
-
-        // Detect if localStorage was changed
-        const handleStorageChange = (event) => {
-            if (event.key === "jilligamePlayed" || event.key === "spribegamePlayed") {
-                updateWallet();
-            }
-        };
-
-        document.addEventListener("visibilitychange", handleVisibilityChange);
-        window.addEventListener("storage", handleStorageChange);
-
-        return () => {
-            document.removeEventListener("visibilitychange", handleVisibilityChange);
-            window.removeEventListener("storage", handleStorageChange);
-        };
-    }, []);
-
+    //         const statusJili = localStorage.getItem("jilligamePlayed") || "0";
+    //         const statusSpribe = localStorage.getItem("spribegamePlayed") || "0";
+    //         if (statusJili === "1") {
+    //             await updateUserWalletFromJili();
+    //             localStorage.setItem("jilligamePlayed", "0");
+    //         }
+    //         if (statusSpribe === "1") {
+    //             await updateUserWalletFromSpribe();
+    //             localStorage.setItem("spribegamePlayed", "0");
+    //         }
+    //     };
+    //     updateWallet();
+    //     const handleVisibilityChange = () => {
+    //         if (!document.hidden) {
+    //             updateWallet();
+    //         }
+    //     };
+    //     const handleStorageChange = (event) => {
+    //         if (event.key === "jilligamePlayed" || event.key === "spribegamePlayed") {
+    //             updateWallet();
+    //         }
+    //     };
+    //     document.addEventListener("visibilitychange", handleVisibilityChange);
+    //     window.addEventListener("storage", handleStorageChange);
+    //     return () => {
+    //         document.removeEventListener("visibilitychange", handleVisibilityChange);
+    //         window.removeEventListener("storage", handleStorageChange);
+    //     };
+    // }, []);
 
     return (
         <>
@@ -307,7 +293,7 @@ function Home() {
             )}
             <div className="mb-28 font-roboto w-full">
                 {/* <NavLink to="/aviator">fdsfds</NavLink> */}
-                <div className="rounded-xl px-3">
+                <div className="rounded-xl px-3 mt-2">
                     <ImageCarousel imagesData={bannerData} />
                 </div>
                 <div className="p-4 flex items-center justify-center w-full">
@@ -341,7 +327,7 @@ function Home() {
                                     style={{
                                         backgroundImage: `url(${item?.bg})`,
                                         backgroundPosition: "center",
-                                        backgroundSize: "cover",
+                                        // backgroundSize: "",
                                     }}
                                     className="h-[90px] w-[100%] flex items-center justify-center text-white rounded-xl shadow-lg overflow-hidden"
                                 >
@@ -353,9 +339,7 @@ function Home() {
                                             {item?.label}
                                         </div>
                                     </div>
-
                                 </button>
-
                             ))}
                         </div>
 

@@ -16,31 +16,6 @@ const TimerModal = ({ timeLeft,duration, isOpen, onClose, parentRef }) => {
     }
   }, [parentRef]);
 
-//   useEffect(() => {
-//     setTimeLeft(duration); // Reset timeLeft when duration changes
-  
-//     const interval = setInterval(() => {
-//       setTimeLeft((prev) => {
-//         if (prev > 0) return prev - 1;
-//         clearInterval(interval);
-//         return 0;
-//       });
-//     }, 1000);
-  
-//     return () => clearInterval(interval);
-//   }, [duration]);
-  // useEffect(() => {
-  //   const calculateTimeLeft = () => {
-  //     const now = new Date();
-  //     const elapsed = now.getSeconds() % duration;
-  //     setTimeLeft(duration - elapsed);
-  //   };
-
-  //   calculateTimeLeft();
-  //   const interval = setInterval(calculateTimeLeft, 1000);
-  //   return () => clearInterval(interval);
-  // }, [duration]);
-
   useEffect(() => {
     if (timeLeft <= 5 && timeLeft > 0) {  
       setIsWarning(true);

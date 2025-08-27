@@ -22,7 +22,8 @@ import socket from '../../shared/socket/DragonTigerSocket';
 const profileApi = apis.profile
 // import {api} from "../"
 function DragonTigerHome() {
-  const [selectedCoins, setSelectedCoins] = useState(5)
+    const [betAmount, setBetAmount] = useState(null);
+  const [selectedCoins, setSelectedCoins] = useState(null)
   const [selectedBetBox, setSelectedBetBox] = useState(null)
   const [coinAnimation, setCoinAnimation] = useState(false);
 
@@ -119,18 +120,14 @@ function DragonTigerHome() {
   useEffect(() => {
     const handleOneMin = (onemin) => {
       const q = JSON.parse(onemin);
-
       const { timerBetTime } = q;
-
       setTimeLeft(
         Number(timerBetTime)
       );
     };
-
-    socket.on("admingameon_DT", handleOneMin);
-
+    socket.on("gameon_DT", handleOneMin);
     return () => {
-      socket.off("admingameon_DT", handleOneMin);
+      socket.off("gameon_DT", handleOneMin);
     };
   }, []);
   // console.log("timerstimers",typeof timeLeft)
@@ -144,12 +141,7 @@ function DragonTigerHome() {
     setStartAnimationUser(true)
     updateRandomPlayers()
     setIsAnimating(false)
-    // calculateTimeLeft();
-    // const timerInterval = setInterval(() => {
-    //   calculateTimeLeft();
-    // }, 1000);
 
-    // return () => clearInterval(timerInterval);
   }, []);
 
   useEffect(() => {
@@ -285,15 +277,16 @@ function DragonTigerHome() {
       setRandomPositionsTigerHundred({});
       setRandomPositionsTigerFiveHundred({});
       setRandomPositionsTigerThousand({});
+       setBetAmount(null)
       localStorage.removeItem("tieBetValue");
       localStorage.removeItem("dragonBetValue");
       localStorage.removeItem("tigerBetValue");
-
       // Clear the displayed values
       updateBetValue("tieBetValue", setTieBetValue);
       updateBetValue("dragonBetValue", setDragonBetValue);
       updateBetValue("tigerBetValue", setTigerBetValue);
     }
+   
     if (flipCards) {
       timeoutId = setTimeout(() => {
         setShowFlipCards(true);
@@ -530,14 +523,14 @@ function DragonTigerHome() {
   };
 
   // Generalized function to handle bet updates in the bet box components
-  const handleBetUpdate = (betType, selectedValue, setBetValue, coinConfig) => {
+  const handleBetUpdate = (betType, selectedValue, betAmount, setBetValue, coinConfig) => {
     // Update bet value in both state and localStorage
     setBetValue((prev) => {
-      const newBetValue = prev + selectedValue;
+      const newBetValue = prev + (selectedValue + Number(betAmount));
       localStorage.setItem(betType, newBetValue);
       return newBetValue;
     });
-
+ if (selectedCoins) {
     // Animation and position updates (generic for all bets)
     setStartAnimationCoin(coinConfig.animation);
 
@@ -552,7 +545,7 @@ function DragonTigerHome() {
       [coinConfig.indices.length]: randomIndex,
     }));
     coinConfig.setUsedPositions((prev) => new Set(prev).add(randomIndex));
-  };
+  }};
 
   // Example of updating the tieBetBox, dragonBetBox, and tigerBetBox
   const TieBetBox = () => {
@@ -560,21 +553,21 @@ function DragonTigerHome() {
     betHandler(userId, 3)
     // console.log("userId, 3userId, 3", userId, 3)
     const selectedConfig = tieCoinConfigs[selectedCoins];
-    handleBetUpdate("tieBetValue", selectedCoins, setTieBetValue, selectedConfig);
+    handleBetUpdate("tieBetValue", selectedCoins, betAmount, setTieBetValue, selectedConfig);
   };
 
   const DragonBetBox = () => {
     setSelectedBetBox(1);
     betHandler(userId, 1)
     const selectedConfig = dragonCoinConfigs[selectedCoins];
-    handleBetUpdate("dragonBetValue", selectedCoins, setDragonBetValue, selectedConfig);
+    handleBetUpdate("dragonBetValue", selectedCoins, betAmount, setDragonBetValue, selectedConfig);
   };
 
   const TigerBetBox = () => {
     setSelectedBetBox(2);
     betHandler(userId, 2)
     const selectedConfig = tigerCoinConfigs[selectedCoins];
-    handleBetUpdate("tigerBetValue", selectedCoins, setTigerBetValue, selectedConfig);
+    handleBetUpdate("tigerBetValue", selectedCoins, betAmount, setTigerBetValue, selectedConfig);
   };
   // console.log("selectedCoins", selectedCoins)
   // const reset = () => {
@@ -674,27 +667,26 @@ function DragonTigerHome() {
 
   // bet api started
   const betHandler = async (userId, number) => {
-    // if (!userId) {
-    //   toast.error("User not logged in");
-    //   navigate("/login");
-    //   return;
-    // }
+       const amount = selectedCoins ? selectedCoins : betAmount;
+
     const payload = {
       userid: userId,
       game_id: 10,
       json: [
-        { number: number, amount: selectedCoins }, // 1- dragon
-        // { number: 2, amount: 0 }, // tiegr
-        // { number: 3, amount: 0 },// tie
+        { number, amount },
       ]
     }
-    console.log("object", payload)
     try {
       const response = await axios.post(apis?.dragon_bet, payload)
-      console.log("bet resoinse", response)
       if (response?.data?.status === 200) {
         toast.success(response?.data?.message)
         profileDetails(userId);
+         const currentSno =
+          betResultData.length > 0 &&Number( betResultData[0]?.games_no) + 1;
+        const va = localStorage.getItem("gameon_DT");
+        if (va !== currentSno) {
+          localStorage.setItem("gameon_DT", `${currentSno}`);
+        }
       }
     } catch (err) {
       console.log("error bet bete ", err)
@@ -715,34 +707,50 @@ function DragonTigerHome() {
   };
 
   const betResult = async () => {
-    // if (!userId) {
-    //   toast.error("User not logged in");
-    //   navigate("/login");
-    //   return;
-    // }
+
     try {
       const response = await axios.get(`${apis?.dragonResults}?game_id=10&limit=11`)
-      console.log("response result", response)
+      // console.log("response result", response)
       if (response?.data?.status === 200) {
         profileDetails()
         setBetResultData(response?.data?.data)
-        // toast.success(response?.data?.message)
+      }
+    } catch (err) {
+      console.log("error bet bete ", err)
+    }
+  }
+  const betResultChecker = async () => {
+   
+    try {
+      const response = await axios.get(`${apis?.dragonResults}?game_id=10&limit=11`)
+      // console.log("response result", response)
+      if (response?.data?.status === 200) {
+        profileDetails()
+         const sr = Number(
+          response?.data?.data[0] && response?.data?.data[0]?.games_no
+        );
+        const localSr = localStorage.getItem("gameon_DT");
+        // console.log("srsrsrsrsr",sr,localSr)
+        if (Number(sr) !== Number(localSr-1)) {
+          // alert("hey")
+          updateBetValue("tieBetValue", setTieBetValue);
+          updateBetValue("dragonBetValue", setDragonBetValue);
+          updateBetValue("tigerBetValue", setTigerBetValue);
+          localStorage.removeItem("tieBetValue");
+          localStorage.removeItem("dragonBetValue");
+          localStorage.removeItem("tigerBetValue");
+        }
       }
     } catch (err) {
       console.log("error bet bete ", err)
     }
   }
   const betResultAnnouncement = async () => {
-    // if (!userId) {
-    //   toast.error("User not logged in");
-    //   navigate("/login");
-    //   return;
-    // }
+  
     try {
       const response = await axios.get(`${apis?.dragonResults}?game_id=10&limit=1`)
       if (response?.data?.status === 200) {
         setBetResultDataAnnouncement(response?.data?.data[0])
-        // toast.success(response?.data?.message)
       }
     } catch (err) {
       console.log("error bet bete ", err)
@@ -750,7 +758,8 @@ function DragonTigerHome() {
   }
   useEffect(() => {
     betResult()
-  }, [userId])
+    betResultChecker()
+  }, [])
 
 
   return (
@@ -818,14 +827,14 @@ function DragonTigerHome() {
           <img className="w-full h-[7rem]" src={dvst} alt="slider" />
         </div>
         {/* start bet image */}
-        {startbetImage && <div className="w-full z-50 absolute top-[35vh] flex items-center justify-center" >
+        {startbetImage && <div className="w-full z-50 absolute top-[30vh] flex items-center justify-center" >
           <img src={Startbetting} alt="sd" />
         </div>}
         {/* stop bet image */}
-        {stopbetImage && <div className="w-full z-50 absolute top-[35vh] flex items-center justify-center" >
+        {stopbetImage && <div className="w-full z-50 absolute top-[30vh] flex items-center justify-center" >
           <img src={stopbetting} alt="sd" />
         </div>}
-        {showWinner && <div className="w-full z-50 absolute top-[35vh] flex items-center justify-center" >
+        {showWinner && <div className="w-full z-50 absolute top-[30vh] flex items-center justify-center" >
           {betResultDataAnnouncement?.number && <img src={winnerImages[JSON.parse(betResultDataAnnouncement?.number)]} alt="sd" />}
         </div>}
         {/* list images div */}
@@ -845,7 +854,7 @@ function DragonTigerHome() {
         </div>
         {/* tie box bet amount */}
         <div className="absolute w-full top-[42vh] flex justify-center">
-          <p className="text-center text-gold text-sm font-bold">{tieBetValue}</p>
+          <p className="text-center text-gold text-sm font-bold">{Number(tieBetValue).toFixed(2)}</p>
         </div>
         {/* dragon betting box */}
         <div className="w-full flex justify-center absolute top-[46.5vh]">
@@ -857,11 +866,11 @@ function DragonTigerHome() {
         {/* dragon box bet amount */}
         <div className="grid grid-cols-2 w-full absolute top-[72vh]">
           <div className="col-span-1 w-full flex justify-center">
-            <p className="text-center text-gold text-sm font-bold">{dragonBetValue}</p>
+            <p className="text-center text-gold text-sm font-bold">{Number(dragonBetValue).toFixed(2)}</p>
           </div>
           {/* tiger box bet amount */}
           <div className="col-span-1 w-full flex justify-center">
-            <p className="text-center text-gold text-sm font-bold">{tigerBetValue}</p>
+            <p className="text-center text-gold text-sm font-bold">{Number(tigerBetValue).toFixed(2)}</p>
           </div>
         </div>
         {/* Random Players */}
@@ -1084,13 +1093,48 @@ function DragonTigerHome() {
             </div>
           </div>
         </div>
+          <input
+                  inputMode="decimal"
+                  placeholder="Enter amount"
+                  type="number"
+                  value={betAmount}
+                  onClick={(e) => {
+                    const val = e.target.value;
+                    setSelectedCoins(null);
+                    if (/^\d*\.?\d{0,2}$/.test(val) || val === "") {
+                      setBetAmount(val);
+                    }
+                  }}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setSelectedCoins(null);
+                    if (/^\d*\.?\d{0,2}$/.test(val) || val === "") {
+                      setBetAmount(val);
+                    }
+                  }}
+                  onBlur={() => {
+                    if (betAmount !== "") {
+                      const num = Number(betAmount);
+                      if (!isNaN(num)) {
+                        setBetAmount(
+                          num % 1 === 0 ? num.toString() : num.toFixed(2)
+                        );
+                      }
+                    }
+                  }}
+                  className="h-6 z-50 left-[14vh] w-[150px] bottom-[7vh] xsm:bottom-[9vh] bg-[#666666] absolute xsm:left-[18vh] no-spinner placeholder:text-[10px] border-black border-[0.5px] text-center rounded-3xl text-white outline-none px-1"
+                />
         {/* coins */}
         <div className="absolute bottom-2 w-full flex justify-center gap-2">
           {coinData?.map((coin) => (
             <button
               key={coin.value}
               className={`${selectedCoins === coin.value ? "bg-green -mt-2" : ""} flex items-center justify-center rounded-full h-12 w-12`}
-              onClick={() => setSelectedCoins(coin.value)}
+              onClick={() => {
+                      // console.log("betamont coin", betAmount);
+                      setBetAmount(null);
+                      setSelectedCoins(coin.value);
+                    }}
             >
               <img
                 onClick={() => setStartAnimationCoin(coin.startAnimationCoin)}

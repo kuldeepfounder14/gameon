@@ -427,7 +427,7 @@ function Header({ audioRef, isAudioOn, setIsAudioOn }) {
                                                                                                           <Link to={-1} >
                                                                                                             <MdKeyboardArrowLeft className="font-extrabold text-4xl text-white" />
                                                                                                           </Link>
-                                                                                                          <p className='text-sm'>Andar Bahar</p>
+                                                                                                          <p className='text-sm'>In Out</p>
                                                                                                           <Link to="/andarbahar/history" className="col-span-1 bg-gradient-to-l from-red to-redLight" >
                                                                                                             <img className="h-8 w-8" src={bethistory} alt="ds" />
                                                                                                           </Link>

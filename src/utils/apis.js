@@ -40,35 +40,53 @@ const apis = {
   headsntails_result: `${configModalUsaWin}results?game_id=14&limit=8`,
   results_api_sno: `${configModalUsaWin}results?game_id=14&limit=1`,
 
+  //wingo game urls
   wingo_bet: `${configModalUsaWin}bets`,
   wingo_my_history: `${configModalUsaWin}bet_history`,
   wingo_game_history: `${configModalUsaWin}results`,
   wingo_win_amount_announcement: `${configModalUsaWin}win-amount`,
   get_result_trx: `${configModalUsaWin}get_result`,
 
+  // mines game urls
   mines_bet: `${configModalUsaWin}mine_bet`,
   mines_cashout: `${configModalUsaWin}mine_cashout`,
   mines_result: `${configModalUsaWin}mine_result?userid=`,
   mines_multiplier: `${configModalUsaWin}mine_multiplier`,
 
+  // dragon tiger game urls
   dragon_bet: `${configModalUsaWin}dragon_bet`,
   dragonBet_history: `${configModalUsaWin}bet_history`,
   dragonResults: `${configModalUsaWin}results`,
 
+  // dice game urls
   dice_bet: `${configModalUsaWin}dragon_bet`,
   dice_Bet_history: `${configModalUsaWin}bet_history`,
   dice_Results: `${configModalUsaWin}results`,
   dice_win_amount: `${configModalUsaWin}win-amount`,
 
+  // red n black
   rednblack_bet: `${configModalUsaWin}dragon_bet`,
   rednblack_Bet_history: `${configModalUsaWin}bet_history`,
   rednblack_Results: `${configModalUsaWin}results`,
   rednblack_win_amount: `${configModalUsaWin}win-amount`,
+
   // seven up down
   sevenUpDown_bet: `${configModalUsaWin}dragon_bet`,
   sevenUpDown_Bet_history: `${configModalUsaWin}bet_history`,
   sevenUpDown_Results: `${configModalUsaWin}results`,
   sevenUpDown_win_amount: `${configModalUsaWin}win-amount`,
+  // mini roulette 
+  miniroullete_bet: `${configModalUsaWin}miniroullete-bet`,
+  miniroulletebet_history: `${configModalUsaWin}miniroulletebet-history`,
+  miniroullete_results: `${configModalUsaWin}miniroullete_results`,
+  miniroulletewin_amount: `${configModalUsaWin}miniroulletewin-amount`,
+
+  //  teenpatti
+  teenPatti_bet: `${configModalUsaWin}teenPatti_bet`,
+  teenPatti_Bet_history: `${configModalUsaWin}teenPattibethistory`,
+  teenPatti_Results: `${configModalUsaWin}teenPatti-bet-result`,
+  teenPatti_win_amount: `${configModalUsaWin}teen-patti-win-amt`,
+
   // jhand munda
   jhandiMunda_bet: `${configModalUsaWin}dragon_bet`,
   jhandiMunda_Bet_history: `${configModalUsaWin}bet_history`,
@@ -77,8 +95,55 @@ const apis = {
 
   // high low 
   high_low_bet: `${configModalUsaWin}high_low_bet`,
+  high_low_results: `${configModalUsaWin}high_low_results`,
+  high_low_win_amount: `${configModalUsaWin}high_low_win_amount`,
+  high_low_bet_history: `${configModalUsaWin}high_low_bet_history`,
+  // jackpot low 
+  jackpot_bet: `${configModalUsaWin}jackpot-bet`,
+  jackpot_results: `${configModalUsaWin}jackpot_results`,
+  jackpot_five_result: `${configModalUsaWin}jack_five_result`,
+  jackpot_win_amount: `${configModalUsaWin}jackpot_win_amount`,
+  jackpot_history: `${configModalUsaWin}jackpot_history`,
 
+  // hot air balloon
+  hotAirBalloon_bet: `${configModalUsaWin}balloon_bet`,
+  hotAirBalloon_bet_history: `${configModalUsaWin}balloon_history`,
+  hotAirBalloon_last_five_result: `${configModalUsaWin}hot_last_five_result`,
+  hotAirBalloon_bet_cancel: `${configModalUsaWin}balloon_bet_cancle`,
+  hotAirBalloon_cashout: `${configModalUsaWin}balloon-cashout`,
 
+  // gameon lottery (blockchain lottery)
+  gameon_lottery_bet: `${configModalUsaWin}blockchain-bets`,
+  gameon_lottery_result_history: `${configModalUsaWin}lottery-result-history`,
+  gameon_lottery_win_amount: `${configModalUsaWin}lottery-win-amount`,
+  gameon_lottery_result: `${configModalUsaWin}lottery_result`,
+  
+  // triple chance
+  tripleChance_bet: `${configModalUsaWin}triple_chance/bet`,
+  tripleChance_result_history: `${configModalUsaWin}triple_chance/bet_history/?user_id=`,
+  tripleChance_win_amount: `${configModalUsaWin}triplechance_win_amount/?user_id=`,
+  tripleChance_result: `${configModalUsaWin}triple_chance/result/?user_id=`,
+  //  lucky12_bet
+  lucky12_bet: `${configModalUsaWin}lucky12/bet`,
+  lucky12_bet_history: `${configModalUsaWin}lucky12/bet_history?user_id=`,
+  lucky12_result: `${configModalUsaWin}lucky12/result?user_id=`,
+  //  lucky16_bet
+  lucky16_bet: `${configModalUsaWin}lucky16/bet`,
+  lucky16_bet_history: `${configModalUsaWin}lucky16/bet_history?user_id=`,
+  lucky16_result: `${configModalUsaWin}lucky16/result?user_id=`,
+  //  fun target
+  funTarget_bet: `${configModalUsaWin}fun_target_bet`,
+  funTarget_bet_history: `${configModalUsaWin}fun_bet_history?user_id=`,
+  funTarget_result: `${configModalUsaWin}fun_last_result`,
+  funTarget_winAmount: `${configModalUsaWin}fun_win_amount?user_id=`,
+  //titli kabooter 
+  titli_bet: `${configModalUsaWin}titli-bet`,
+  titli_bet_history: `${configModalUsaWin}titli-bet-history`,
+  titli_getAmount: `${configModalUsaWin}getamount`,
+  titli_winAmount: `${configModalUsaWin}titli-win-amount`,
+  titli_result: `${configModalUsaWin}titli_result`,
+
+  // general apis
   payin_deposit: `${configModalUsaWin}payin`,
   payin_deposit_usdt: `${configModalUsaWin}usdt_payin`,
   payin_deposit_camlenio: `${configModalUsaWin}camlenio?user_id=`,
@@ -104,7 +169,7 @@ const apis = {
   attendanceList: `${configModalUsaWin}attendance_List?userid=`,
   attendanceHistory: `${configModalUsaWin}attendance_history?userid=`,
   attendanceClaim: `${configModalUsaWin}attendance_claim`,
-  slider: `${configModalUsaWin}slider`,
+  slider: `${configModalUsaWin}slider_image_view`,
   invitation_bonus_list: `${configModalUsaWin}invitation_bonus_list?userid=`,
   invitation_bonus_claim: `${configModalUsaWin}invitation_bonus_claim`,
   transaction_history_list: `${configModalUsaWin}transaction_history_list`,
@@ -137,27 +202,3 @@ const apis = {
 };
 
 export default apis
-
-
-// [13:54, 10/5/2025] Akhilesh K Yadav FC: https://admin.gameon.deals/api/spin/bet
-// {
-//   "user_id": 1,
-//   "bets": [
-//     {
-//       "game_id": 1,
-//       "amount": 5
-//     },
-//     {
-//       "game_id": 2,
-//       "amount": 30
-//     }
-//   ]
-// }
-
-
-// https://admin.gameon.deals/api/spin/bet_history?user_id=1&limit=4
-
-// https://admin.gameon.deals/api/spin/result?user_id=1
-
-// @Er. Kuldeep Verma🤔  spin2win gameon.deals api
-// [13:55, 10/5/2025] Akhilesh K Yadav FC: spinto win event name- gameon_spin

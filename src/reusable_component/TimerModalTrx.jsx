@@ -32,7 +32,7 @@ const TimerModalTrx = ({ timeLeft,duration, isOpen, onClose, parentRef }) => {
   const formatTime = (value) => value.toString().padStart(2, "0");
   return (
    
-    <div className={` rounded-2xl h-[20rem] xs:h-[26rem] xsm:h-[28rem] mt-14 xs:mt-[8rem] xsm:mt-24 w-full absolute modal ${isOpen ? "block" : "hidden"}`}>
+    <div className={` rounded-2xl h-[20rem] xs:h-[22rem] xsm:h-[19rem] mt-14 xs:mt-[5.5rem] -xsm:mt-3 w-full absolute modal ${isOpen ? "block" : "hidden"}`}>
       <div
         className="bg-black opacity-80 h-full w-full absolute inset-0 rounded-2xl"
         style={{ backgroundColor:'rgba(0, 0, 0, 0.8)' }}

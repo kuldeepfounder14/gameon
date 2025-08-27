@@ -6,13 +6,14 @@ import { useState, useEffect } from "react";
 export default function ResultModal({ onClose, announcementData }) {
     const [winLoss, setWinLoss] = useState(1); 
     useEffect(() => {
-        if (announcementData?.data?.win === 0) {
+        if (announcementData?.win === 0) {
             setWinLoss(2); // loss
         }
         console.log("Announcement data:", announcementData);
     }, [announcementData]);
 
     if (!announcementData) return null;
+    console.log("announcementData",announcementData)
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             {winLoss === 1 ? (
@@ -27,13 +28,18 @@ export default function ResultModal({ onClose, announcementData }) {
                 >
                     <div className="flex items-center justify-between text-xsm w-full px-5">
                         <h2 className="text-lg font-semibold mt-12 flex justify-center w-full">
-                            {announcementData?.data?.games_no}
+                            {announcementData?.games_no}
                         </h2>
                         <ImCancelCircle onClick={onClose} className="hover:text-white cursor-pointer" size={25} />
                     </div>
                     <div className="relative flex items-center justify-between text-xsm w-full px-5">
                         <p className="absolute top-24 text-3xl font-semibold flex justify-center w-full">
-                            {announcementData?.data?.number}
+                            {announcementData?.win}
+                        </p>
+                    </div>
+                    <div className="relative flex items-center justify-between text-xsm w-full px-5">
+                        <p className="absolute top-40 text-3xl font-semibold flex justify-center w-full">
+                            {announcementData?.number===2?"Low":"High"}
                         </p>
                     </div>
                 </div>
@@ -46,13 +52,13 @@ export default function ResultModal({ onClose, announcementData }) {
                 >
                     <div className="flex items-center justify-between text-xsm w-full px-5">
                         <h2 className="text-lg font-semibold mt-12 flex justify-center w-full">
-                            {announcementData?.data?.games_no}
+                            {announcementData?.games_no}
                         </h2>
                         <ImCancelCircle onClick={onClose} className="hover:text-white cursor-pointer" size={25} />
                     </div>
                     <div className="relative flex items-center justify-between text-xsm w-full">
                         <p className="absolute text-customred top-10 text-3xl font-semibold flex justify-center w-full">
-                            You Loose {announcementData?.data?.win}
+                            You Loose {announcementData?.win}
                         </p>
                       
                     </div>
@@ -61,3 +67,45 @@ export default function ResultModal({ onClose, announcementData }) {
         </div>
     );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   

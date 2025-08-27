@@ -257,7 +257,7 @@ function WithdrawalHistory() {
                                     <div className="bg-border1 mt-3 w-full h-[1px]"></div>
                                     <div className="flex mt-3 text-white justify-between items-center">
                                         <p className="text-xsm font-bold">Balance</p>
-                                        <p className="text-xsm font-semibold text-white">{item?.amount}.00</p>
+                                        <p className="text-xsm font-semibold text-white">{item?.amount}</p>
                                     </div>
                                     <div className="flex mt-3 text-white justify-between items-center">
                                         <p className="text-xsm font-bold">Request Status</p>

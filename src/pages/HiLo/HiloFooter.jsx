@@ -5,11 +5,19 @@ import { IoMdAdd } from "react-icons/io";
 import { IoIosRefresh } from "react-icons/io";
 
 
-function HiloFooter({ betAmount, setBetAmount, onPlaceBet, timeLeft }) {
+function HiloFooter({ betConcept, setBetConcept, betAmount, setBetAmount, timeLeft }) {
   const [showPopup, setShowPopup] = useState(false);
 
-  const decreaseBet = () => setBetAmount(prev => Math.max(1, prev - 1));
-  const increaseBet = () => setBetAmount(prev => prev + 1);
+   const decreaseBet = () =>
+    setBetAmount((prev) => {
+      const value = Number(prev) || 0;
+      return Math.max(0, value - 1);
+    });
+  const increaseBet = () =>
+    setBetAmount((prev) => {
+      const value = Number(prev) || 0;
+      return Math.max(0, value + 1);
+    });
   const togglePopup = () => setShowPopup(prev => !prev);
   const selectBetAmount = (amount) => {
     setBetAmount(amount);
@@ -24,9 +32,30 @@ function HiloFooter({ betAmount, setBetAmount, onPlaceBet, timeLeft }) {
             <div className='flex justify-between items-center'>
               <div className='pl-4'>
                 <div className='text-white pl-12 font-serif text-[12px]'>BET</div>
-                <div className='h-6 w-32 bg-[#0C392C] border-black border-[0.5px] text-center rounded-3xl text-white'>
-                  {betAmount}
-                </div>
+                   <input
+                inputMode="decimal"
+                placeholder="Enter amount"
+                type="number"
+                value={betAmount}
+                onChange={(e) => {
+                  const val = e.target.value;
+
+                  if (/^\d*\.?\d{0,2}$/.test(val) || val === "") {
+                    setBetAmount(val);
+                  }
+                }}
+                onBlur={() => {
+                  if (betAmount !== "") {
+                    const num = Number(betAmount);
+                    if (!isNaN(num)) {
+                      setBetAmount(
+                        num % 1 === 0 ? num.toString() : num.toFixed(2)
+                      );
+                    }
+                  }
+                }}
+                className="h-6 w-32 bg-[#0C392C] no-spinner placeholder:text-[10px] border-black border-[0.5px] text-center rounded-3xl text-white outline-none px-2"
+              />
               </div>
               <div className='flex pr-6 space-x-3'>
                 <div className='h-7 w-7 bg-[#0C392C] rounded-full flex items-center justify-center border-black border-[0.5px]'>
@@ -49,12 +78,24 @@ function HiloFooter({ betAmount, setBetAmount, onPlaceBet, timeLeft }) {
           </div>
 
           <div className='flex items-center justify-between'>
-            <button
-              disabled={timeLeft > 0 && timeLeft < 11}
-              onClick={onPlaceBet}
+            {betConcept === 1 && <button
+              disabled={(timeLeft > 0 && timeLeft < 11)}
+              onClick={() => setBetConcept(2)}
               className={`relative ${((timeLeft > 0 && timeLeft < 11)) ? "bg-gray" : "bg-gradient-to-tr from-[#448B02] to-[#5FAF09]"} text-white shadow-lg drop-shadow-[0_4px_3px_rgba(0,0,0,0.3)] h-8 xs1:h-12 w-full font-serif font-bold text-[14px] m-1 xs1:m-3 rounded-2xl flex items-center justify-center`}>
-              {/* {shuffling ? "Dice shuffling" : "BET"} */}BET
-            </button>
+           BET
+            </button>}
+            {betConcept === 2 && <button
+              disabled={timeLeft > 0 && timeLeft < 11}
+              onClick={() => setBetConcept(1)}
+              className={`relative ${((timeLeft > 0 && timeLeft < 11)) ? "bg-gray" : "bg-customred"} text-white shadow-lg drop-shadow-[0_4px_3px_rgba(0,0,0,0.3)] h-8 xs1:h-12 w-full font-serif font-bold text-[14px] m-1 xs1:m-3 rounded-2xl flex items-center justify-center`}>
+              CANCEL
+            </button>}
+            {betConcept === 3 && <button
+              disabled={timeLeft > 0 && timeLeft < 11}
+              onClick={() => setBetConcept(1)}
+              className={`relative bg-gray text-white shadow-lg drop-shadow-[0_4px_3px_rgba(0,0,0,0.3)] h-8 xs1:h-12 w-full font-serif font-bold text-[14px] m-1 xs1:m-3 rounded-2xl flex items-center justify-center`}>
+              Bet Placed 
+            </button>}
           </div>
 
           {showPopup && (

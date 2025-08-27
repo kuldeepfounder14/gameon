@@ -12,7 +12,6 @@ import bg_three from '../../assets/usaAsset/aviator/bg_three.png';
 import bg_four from '../../assets/usaAsset/aviator/bg_four.png';
 import bg_five from '../../assets/usaAsset/aviator/bg_five.png';
 
-const bgImages = [chakra, bg_one, bg_two, bg_three, bg_four, bg_five]
 
 function AviatorFlight({ changeBg, setChangeBg, isSoundOn, setIsSoundOn, isPathRemoved, setIsPathRemoved }) {
     // const audioRef = useRef(null);
@@ -32,8 +31,8 @@ function AviatorFlight({ changeBg, setChangeBg, isSoundOn, setIsSoundOn, isPathR
             setHotAirData(q);
         };
 
-        socket.on("admingameon_aviator", handleSocket);
-        return () => socket.off("admingameon_aviator", handleSocket);
+        socket.on("gameon_aviator", handleSocket);
+        return () => socket.off("gameon_aviator", handleSocket);
     }, []);
     // console.log("hotAirData",hotAirData)
 

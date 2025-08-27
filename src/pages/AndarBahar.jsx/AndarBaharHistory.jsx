@@ -29,10 +29,10 @@ const AndarBaharHistory = () => {
           );
         };
     
-        socket.on("admingameon_AB", handleOneMin);
+        socket.on("gameon_AB", handleOneMin);
     
         return () => {
-          socket.off("admingameon_AB", handleOneMin);
+          socket.off("gameon_AB", handleOneMin);
         };
       }, []);
 
@@ -108,7 +108,7 @@ const AndarBaharHistory = () => {
                                         className={`font-bold text-center ${item?.win_amount === 0 && item?.status === 0 ? "text-gray" : (item?.win_amount === 0 ? "text-rose-500" : "text-green")}`}
                                     >
                                         {item?.win_amount === 0 && item?.status === 0 ? "--" : (item?.win_amount === 0
-                                            ? `- ${item?.amount}.00`
+                                            ? `- ${item?.amount}`
                                             : `+ ${item?.win_amount}`)}
                                     </div>
                                 </div>
@@ -145,21 +145,21 @@ const AndarBaharHistory = () => {
                                                 <span className="text-bg3 font-bold">
                                                     {item?.win_number}
                                                 </span>{" "}
-                                                <span className="text-bg3">, Andar</span>
+                                                <span className="text-bg3">, In</span>
                                             </>
                                         ) : item?.win_number === 2 ? (
                                             <>
                                                 <span className="text-red font-bold">
                                                     {item?.win_number}
                                                 </span>{" "}
-                                                <span className="text-red">, Bahar</span>
+                                                <span className="text-red">, Out</span>
                                             </>
                                         ): null}
                                     </p> : "--"}
                                 </div>
                                 <div className="bg-redLight w-full mt-1 py-2 flex items-center justify-between px-2 text-white rounded-md">
                                     <p>Select</p>
-                                    <p>{item?.number == 1 ? <p className="text-bg3">Andar</p> : item?.number == 2 ? <p className="text-red">Bahar</p> : item?.number}</p>
+                                    <p>{item?.number == 1 ? <p className="text-bg3">In</p> : item?.number == 2 ? <p className="text-red">Out</p> : item?.number}</p>
                                 </div>
                                 <div className="bg-redLight w-full mt-1 py-2 flex items-center justify-between px-2 text-white rounded-md">
                                     <p>Status</p>

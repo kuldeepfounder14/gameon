@@ -7,7 +7,6 @@ const SocketContext = createContext();
 export const SocketProvider = ({ children }) => {
   const domain = "https://aviatorudaan.com/";
   const socket = useMemo(() => io(domain), []);
-
   const [timers, setTimers] = useState({
     type1: 0,
     type2: 0,
@@ -16,7 +15,7 @@ export const SocketProvider = ({ children }) => {
     type5: 0,
   });
 
-  const [eventName, setEventName] = useState("gbclubtrx");  // Default event name
+  const [eventName, setEventName] = useState("gameon_wingo_trx");  // Default event name
 
   useEffect(() => {
     const handleTimer = (data) => {

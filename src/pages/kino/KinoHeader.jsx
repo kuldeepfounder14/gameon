@@ -20,8 +20,8 @@ function KinoHeader({profileRefresher, gameResultHistory }) {
             // console.log("timeleft",q?.timerBetTime)
         };
 
-        kenoSocket.on("admin_keno", handleSocket);
-        return () => kenoSocket.off("admin_keno", handleSocket);
+        kenoSocket.on("gameon_keno", handleSocket);
+        return () => kenoSocket.off("gameon_keno", handleSocket);
     }, []);
 
     const toggleMenuModal = (value) => {

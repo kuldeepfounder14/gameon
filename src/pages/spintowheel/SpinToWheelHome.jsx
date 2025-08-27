@@ -10,7 +10,7 @@ import apis from "../../utils/apis";
 import ResultModal from "./ResultModal";
 
 function SpinToWheelHome() {
-  const [betAmount, setBetAmount] = useState(10);
+  const [betAmount, setBetAmount] = useState(0.1);
   const [numberAmounts, setNumberAmounts] = useState(Array(10).fill(0));
   const [oddAmount, setOddAmount] = useState(0);
   const [evenAmount, setEvenAmount] = useState(0);
@@ -104,7 +104,7 @@ function SpinToWheelHome() {
         toast.success(response?.data?.message)
         // if (wheelRef.current?.spinWheel) wheelRef.current.spinWheel();
       } else {
-        toast.error("Bet failed!");
+        toast.error(response?.data?.message);
       }
     } catch (error) {
       console.error("Error placing bet:", error);
@@ -220,12 +220,12 @@ function SpinToWheelHome() {
                   </p>
                 ))
             ) : (
-              <p>no data</p>
+              <p  className="w-full text-center">no data</p>
             )}
 
           </div>
         </div>
-        <div className="flex items-center justify-center -mt-5 xs1:mt-0 w-full">
+        <div className="flex items-center justify-center mt-5 xs1:mt-0 w-full">
           <SpinWheel ref={wheelRef} gameResultData={gameResultData} />
         </div>
 
@@ -239,7 +239,7 @@ function SpinToWheelHome() {
               style={{ textShadow: "1px 1px 2px black" }}
             >
               {i}
-              <div className="text-sm font-normal border-t-[1px] border-t-gradient-to-tr from-[#00308F] to-[#4169E1] ">{numberAmounts[i]}</div>
+              <div className="text-sm font-normal border-t-[1px] border-t-gradient-to-tr from-[#00308F] to-[#4169E1] ">{Number(numberAmounts[i]).toFixed(2)}</div>
             </div>
           ))}
         </div>
@@ -252,7 +252,7 @@ function SpinToWheelHome() {
             style={{ textShadow: "1px 1px 2px black" }}
           >    <div className="flex justify-between mr-2 ml-2 w-full">
               <div>   Odd</div>
-              <div className="text-sm font-normal">{oddAmount}</div>
+              <div className="text-sm font-normal">{Number(oddAmount).toFixed(2)}</div>
             </div>
           </div>
           <div
@@ -261,7 +261,7 @@ function SpinToWheelHome() {
             style={{ textShadow: "1px 1px 2px black" }}>
             <div className="flex justify-between w-full mr-2 ml-2 ">
               <div>  Even</div>
-              <div className="text-sm font-normal">{evenAmount}</div>
+              <div className="text-sm font-normal">{Number(evenAmount).toFixed(2)}</div>
             </div>
           </div>
         </div>

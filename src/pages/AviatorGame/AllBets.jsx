@@ -58,8 +58,8 @@ function AllBets({ setTotalBetValue }) {
             setHotAirData(q);
         };
 
-        socket.on("admingameon_aviator", handleSocket);
-        return () => socket.off("admingameon_aviator", handleSocket);
+        socket.on("gameon_aviator", handleSocket);
+        return () => socket.off("gameon_aviator", handleSocket);
     }, []);
     // console.log("hotAirData", hotAirData)
 

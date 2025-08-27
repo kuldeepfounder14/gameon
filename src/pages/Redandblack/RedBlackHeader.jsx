@@ -19,8 +19,8 @@ function RedBlackHeader({ profileRefresher, gameResultHistory, setProfileRefresh
             const q = JSON.parse(hotair);
             setTimeLeft(q?.timerBetTime);
         };
-        RednBlackSocket.on("adminredblack", handleSocket);
-        return () => RednBlackSocket.off("adminredblack", handleSocket);
+        RednBlackSocket.on("gameon_redblack", handleSocket);
+        return () => RednBlackSocket.off("gameon_redblack", handleSocket);
     }, []);
 
     const toggleMenuModal = (value) => {

@@ -78,6 +78,26 @@ import RedAndBlackhome from "./pages/Redandblack/RedAndBlackhome";
 import SevenUpDownHome from "./pages/SevenUpDown/SevenUpDownHome";
 import JhandiMundaHome from "./pages/JhandiMunda/JhandiMundaHome";
 import HiLoHome from "./pages/HiLo/HiLoHome";
+import JackpotHome from "./pages/Jackpot/JackpotHome";
+import HotAirBallon from "./pages/hotAirBalloon/HotAirBallon";
+import TeenPattiHome from "./pages/TeenPatti/TeenPattiHome";
+import MiniRouletteHome from "./pages/Miniroulette/MiniRouletteHome";
+import BCLHome from "./pages/BlockChainLottery/BCLHome";
+import TitliKabootarHome from "./pages/TitliKabootar/TitliKabootarHome";
+import Testing from "./pages/BlockChainLottery/testing";
+import Lucky12home from "./pages/Lucky12/Lucky12home";
+import Lucky16home from "./pages/Lucky16/Lucky16home";
+import FunTarget from "./pages/FunTarget/FunTarget";
+import TripleChancehome from "./pages/TripleChance/TripleChancehome";
+import PointsRummyHome from "./pages/PointsRummy/PointsRummyHome";
+import DealsRummyHome from "./pages/DealsRummy/DealsRummyHome";
+import PTGameMenu from "./pages/PointsRummy/PTGameMenu";
+import PLGameMenu from "./pages/PoolRummy/PLGameMenu";
+import PoolRummyHome from "./pages/PoolRummy/PoolRummyHome";
+import DLGameMenu from "./pages/DealsRummy/DLGameMenu";
+import CBMenu from "./pages/CallBreak/CBMenu";
+import CallBreakHome from "./pages/CallBreak/CallBreakHome";
+import Trc20Transfer from "./pages/CallBreak/Trc20Transfer";
 
 export const Router = createBrowserRouter([
   {
@@ -94,6 +114,10 @@ export const Router = createBrowserRouter([
       },
       {
         path: "/login",
+        element: <Login />,
+      },
+      {
+        path: "/loginwithref/:referralCode",
         element: <Login />,
       },
       {
@@ -120,7 +144,11 @@ export const Router = createBrowserRouter([
   },
   {
     path: "/",
-    element: <ProtectedRoute><Layout /></ProtectedRoute>,
+    element: (
+      <ProtectedRoute>
+        <Layout />
+      </ProtectedRoute>
+    ),
     children: [
       {
         path: "/aviator",
@@ -401,6 +429,82 @@ export const Router = createBrowserRouter([
       {
         path: "/hilo",
         element: <HiLoHome />,
+      },
+      {
+        path: "/jackpot",
+        element: <JackpotHome />,
+      },
+      {
+        path: "/hotairballon",
+        element: <HotAirBallon />,
+      },
+      {
+        path: "/miniroulette",
+        element: <MiniRouletteHome />,
+      },
+      {
+        path: "/teenpatti",
+        element: <TeenPattiHome />,
+      },
+      {
+        path: "/gameonlottery",
+        element: <BCLHome />,
+      },
+      {
+        path: "/titli",
+        element: <TitliKabootarHome />,
+      },
+      {
+        path: "/lucky12",
+        element: <Lucky12home />,
+      },
+      {
+        path: "/lucky16",
+        element: <Lucky16home />,
+      },
+      {
+        path: "/funtarget",
+        element: <FunTarget />,
+      },
+      {
+        path: "/triplechance",
+        element: <TripleChancehome />,
+      },
+      {
+        path: "/ptmenu",
+        element: <PTGameMenu />,
+      },
+      {
+        path: "/pointsrummy/:gameType",
+        element: <PointsRummyHome />,
+      },
+      {
+        path: "/plmenu",
+        element: <PLGameMenu />,
+      },
+      {
+        path: "/poolrummy/:gameType",
+        element: <PoolRummyHome />,
+      },
+      {
+        path: "/dlmenu",
+        element: <DLGameMenu />,
+      },
+      {
+        path: "/dealsrummy/:gameType",
+        element: <DealsRummyHome />,
+      },
+      {
+        path: "/cbmenu",
+        element: <CBMenu />,
+      },
+      {
+        path: "/callbreak/:gameType",
+        element: <CallBreakHome />,
+      },
+      {
+        path: "/test",
+        element: <Trc20Transfer />,
       },
     ],
   },

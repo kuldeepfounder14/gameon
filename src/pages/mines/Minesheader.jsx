@@ -20,7 +20,7 @@ function Minesheader({ profileRefresher, setProfileRefresher }) {
     const MInesResuilt = async () => {
         try {
             const res = await axios.get(`${apis?.mines_result}${userId}`)
-            // console.log("res", res)
+            console.log("res", res)
             if (res?.data?.status === 200 || res?.data?.status === "200") {
                 setMinesandResult(res?.data?.data)
             }
@@ -36,6 +36,7 @@ function Minesheader({ profileRefresher, setProfileRefresher }) {
     useEffect(() => {
         if (profileRefresher?.first) {
             fetchProfileDetails()
+            MInesResuilt()
             setProfileRefresher({ first: false, second: false })
         }
     }, [profileRefresher?.first])
@@ -89,8 +90,8 @@ function Minesheader({ profileRefresher, setProfileRefresher }) {
 
             {modal && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center pt-10">
-                    <div ref={modalRef} className="bg-white rounded-xl w-[360px] pb-3 h-72 shadow-lg">
-                        <h2 className="text-lg font-semibold mb-2 p-2 flex items-center">Bet History<MdHistory /></h2>
+                    <div ref={modalRef} className="bg-white rounded-xl w-[360px] h-72 shadow-lg">
+                        <h2 className="text-lg font-semibold mb-2 p-2 flex items-center text-black">Bet History<MdHistory /></h2>
                         <div className="overflow-y-auto max-h-[400px] hide-scrollbar">
                             <table className="min-w-full text-sm text-left">
                                 <thead className="bg-[#007C80] text-white sticky top-0 z-10">
@@ -104,7 +105,7 @@ function Minesheader({ profileRefresher, setProfileRefresher }) {
                                 <tbody>
                                     {minesandResult && minesandResult.length > 0 ? (
                                         minesandResult.map((item, i) => (
-                                            <tr key={i} className="bg-gray mt-1 text-xsm">
+                                            <tr key={i} className="bg-gray mt-1 text-xsm ">
                                                 <td className="px-2 py-2 border-b text-nowrap">{item?.created_at?.slice(0, 10)}&nbsp;{item?.created_at?.slice(11, 19)}</td>
                                                 <td className="px-1 py-2 border-b">{item?.amount}</td>
                                                 <td className="px-1 py-2 border-b">{item?.win_amount}</td>

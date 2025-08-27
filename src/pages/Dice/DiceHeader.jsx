@@ -18,8 +18,8 @@ function DiceHeader({ profileRefresher, gameResultHistory, setProfileRefresher }
             const q = JSON.parse(hotair);
             setTimeLeft(q?.timerBetTime);
         };
-        DiceSocket.on("gameon_spin", handleSocket);
-        return () => DiceSocket.off("gameon_spin", handleSocket);
+        DiceSocket.on("admin_dice", handleSocket);
+        return () => DiceSocket.off("admin_dice", handleSocket);
     }, []);
 
     const toggleMenuModal = (value) => {

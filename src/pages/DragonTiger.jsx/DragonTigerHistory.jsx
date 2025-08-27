@@ -29,10 +29,10 @@ const DragonTigerHistory = () => {
           );
         };
     
-        socket.on("admingameon_DT", handleOneMin);
+        socket.on("gameon_DT", handleOneMin);
     
         return () => {
-          socket.off("admingameon_DT", handleOneMin);
+          socket.off("gameon_DT", handleOneMin);
         };
       }, []);
     useEffect(() => {
@@ -108,7 +108,7 @@ const DragonTigerHistory = () => {
                                         className={`font-bold text-center ${item?.win_amount === 0 && item?.status === 0 ? "text-gray" : (item?.win_amount === 0 ? "text-customred" : "text-green")}`}
                                     >
                                         {item?.win_amount === 0 && item?.status === 0 ? "--" : (item?.win_amount === 0
-                                            ? `- ${item?.amount}.00`
+                                            ? `- ${item?.amount}`
                                             : `+ ${item?.win_amount}`)}
                                     </div>
                                 </div>

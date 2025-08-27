@@ -16,7 +16,6 @@ function AllTransactionsHistory() {
   const modalRef = useRef(null);
   const modalSecondRef = useRef(null);
 
-
   const userId = localStorage.getItem("userId");
 
   const AllTransactionsHistoryListHandler = async () => {
@@ -117,10 +116,10 @@ function AllTransactionsHistory() {
           <input onChange={(e) => setConfirmedDate(e.target.value)} className='outline-none bg-redLightinput-white-icon  bg-redLight ' type="date" />
         </button>
       </div>
-      <div className=' rounded-b-md bg-customdarkBlue'>
+      <div className=' rounded-b-md'>
         {filteredTransactions && filteredTransactions.length > 0 ? (
           filteredTransactions.map((item, i) => (
-            <div key={i}>
+            <div key={i} className=' bg-customdarkBlue'>
               <div className='capitalize bg-redLight text-white p-2 rounded-t-md mt-5'>
                 {item?.type}
               </div>

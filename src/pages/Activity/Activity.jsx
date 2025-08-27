@@ -25,7 +25,7 @@ function Activity() {
         setBannerData(res?.data?.data)
       } else {
         setLoading(false)
-        toast.error(res?.data?.message)
+        // toast.error(res?.data?.message)
       }
     } catch (err) {
       setLoading(false)

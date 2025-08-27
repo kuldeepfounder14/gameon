@@ -20,7 +20,7 @@ function AnimatedCardDisplay({ betResultDataAnnouncement }) {
 
             setCards(parsedCards); // Cache cards in state
 
-            console.log("betResultDataAnnouncement", parsedCards);
+            // console.log("betResultDataAnnouncement", parsedCards);
             setAndarCards([]);
             setBaharCards([]);
             setAnimatedIndex(null);
@@ -63,9 +63,9 @@ function AnimatedCardDisplay({ betResultDataAnnouncement }) {
     const lastCard = cards[cards?.length - 1];
 
     // console.log("betResultDataAnnouncement", betResultDataAnnouncement);
-    console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaa", andarCards);
-    console.log("bbbbbbbbbbbbbbbbbbbbbbbbbbb", baharCards);
-    console.log("lastCardlastCardlastCard", lastCard);
+    // console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaa", andarCards);
+    // console.log("bbbbbbbbbbbbbbbbbbbbbbbbbbb", baharCards);
+    // console.log("lastCardlastCardlastCard", lastCard);
 
     return (
         <div className="w-full flex flex-col absolute top-[10vh] px-2">

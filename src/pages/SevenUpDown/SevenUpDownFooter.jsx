@@ -7,8 +7,16 @@ import { IoMdAdd } from "react-icons/io";
 function SevenUpDownFooter({ betAmount, setBetAmount, onPlaceBet, timeLeft}) {
   const [showPopup, setShowPopup] = useState(false);
 
-  const decreaseBet = () => setBetAmount(prev => Math.max(1, prev - 1));
-  const increaseBet = () => setBetAmount(prev => prev + 1);
+  const decreaseBet = () =>
+    setBetAmount((prev) => {
+      const value = Number(prev) || 0;
+      return Math.max(0, value - 1);
+    });
+  const increaseBet = () =>
+    setBetAmount((prev) => {
+      const value = Number(prev) || 0;
+      return Math.max(0, value + 1);
+    });
   const togglePopup = () => setShowPopup(prev => !prev);
   const selectBetAmount = (amount) => {
     setBetAmount(amount);
@@ -23,9 +31,30 @@ function SevenUpDownFooter({ betAmount, setBetAmount, onPlaceBet, timeLeft}) {
             <div className='flex justify-between items-center'>
               <div className='pl-4'>
                 <div className='text-white pl-12 font-serif text-[12px]'>BET</div>
-                <div className='h-6 w-32 bg-[#555555] border-black border-[0.5px] text-center rounded-3xl text-white'>
-                  {betAmount}
-                </div>
+                  <input
+                inputMode="decimal"
+                placeholder="Enter amount"
+                type="number"
+                value={betAmount}
+                onChange={(e) => {
+                  const val = e.target.value;
+
+                  if (/^\d*\.?\d{0,2}$/.test(val) || val === "") {
+                    setBetAmount(val);
+                  }
+                }}
+                onBlur={() => {
+                  if (betAmount !== "") {
+                    const num = Number(betAmount);
+                    if (!isNaN(num)) {
+                      setBetAmount(
+                        num % 1 === 0 ? num.toString() : num.toFixed(2)
+                      );
+                    }
+                  }
+                }}
+                className="h-6 w-32 bg-[#666666] no-spinner placeholder:text-[10px] border-black border-[0.5px] text-center rounded-3xl text-white outline-none px-2"
+              />
               </div>
               <div className='flex pr-6 space-x-3'>
                 <div className='h-7 w-7 bg-[#555555] rounded-full flex items-center justify-center border-black border-[0.5px]'>

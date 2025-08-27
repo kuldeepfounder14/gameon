@@ -25,8 +25,8 @@ function KinoHome() {
       const q = JSON.parse(hotair);
       setTimeLeft(q?.timerBetTime);
     };
-    kenoSocket.on("admin_keno", handleSocket);
-    return () => kenoSocket.off("admin_keno", handleSocket);
+    kenoSocket.on("gameon_keno", handleSocket);
+    return () => kenoSocket.off("gameon_keno", handleSocket);
   }, []);
   // const { myDetails: data, loading, error, fetchProfileDetails } = useProfile(userId);
 
@@ -41,23 +41,9 @@ function KinoHome() {
     });
   };
 
-  // const getMultiplier = async () => {
-  //   const payload = {
-  //     risk_level: 1,
-  //     selections: [1, 2, 3]
-  //   }
-  //   try {
-  //     const res = await axios.post(`${apis?.keno_multiplier}`, payload)
-  //     console.log("mulitplier", res)
-  //   } catch (err) {
-  //     console.log("erere", err)
-  //   }
-  // }
-
   const handleRandomSelect = () => {
     const shuffled = [...numbers].sort(() => 0.5 - Math.random());
     const randomTen = shuffled.slice(0, 10);
-    // console.log("random ten", randomTen)
     setSelectedNumbers(randomTen);
   };
   const handleClear = () => {
@@ -170,7 +156,7 @@ function KinoHome() {
       }
     }
   }
-  const winAmountHandler = async (sr) => {
+  const winAmountHandler = async () => {
     if (!userId) {
       toast.error("User not logged in");
       navigate("/login");
@@ -185,6 +171,8 @@ function KinoHome() {
       // console.log("gameresult responsere", response)
       if (response?.data?.status === 200) {
         const data = JSON.parse(response?.data?.data[0]?.number)
+                const sr = JSON.parse(response?.data?.data[0]?.games_no)
+
         setGameResultNumber(data)
         try {
           const payload = {
@@ -227,7 +215,7 @@ function KinoHome() {
 
   useEffect(() => {
     const betStatus = localStorage.getItem("keno_bet")
-    if (timeLeft === 30) {
+    if (timeLeft === 5) {
       gameResult()
       gameBetHistory()
     }

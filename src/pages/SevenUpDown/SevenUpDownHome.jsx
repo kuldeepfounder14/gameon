@@ -24,7 +24,7 @@ function SevenUpDownHome() {
     const [gameResultHistory, setGameResultHistory] = useState([]);
     const [gameResultDataAnnouncemnt, setGameResultDataAnnouncemnt] = useState([]);
     const [gameResultData, setGameResultData] = useState([]);
-    const [betAmount, setBetAmount] = useState(10);
+    const [betAmount, setBetAmount] = useState(0.1);
     const [numberAmounts, setNumberAmounts] = useState(Array(14).fill(0));
     const [showGif, setShowGif] = useState(false);
     const [diceValues, setDiceValues] = useState([null, null]);
@@ -34,8 +34,8 @@ function SevenUpDownHome() {
             const q = JSON.parse(hotair);
             setTimeLeft(q?.timerBetTime);
         };
-        SevenUpDownSocket.on("admingameon7up", handleSocket);
-        return () => SevenUpDownSocket.off("admingameon7up", handleSocket);
+        SevenUpDownSocket.on("gameon_7up", handleSocket);
+        return () => SevenUpDownSocket.off("gameon_7up", handleSocket);
     }, []);
     useEffect(() => {
         gameResult()
@@ -44,11 +44,12 @@ function SevenUpDownHome() {
     useEffect(() => {
         const betStatus = localStorage.getItem("sevenUpDown_bet")
         if (timeLeft === 5) {
+            gameResultShuffle()
             gameResult()
-            if (gameResultData?.length > 0) {
-                const result = gameResultData[0]?.number
-                handleDiceShow(result)
-            }
+            // if (gameResultData?.length > 0) {
+            //     const result = gameResultData[0]?.number
+            //     handleDiceShow(result)
+            // }
         }
         if (timeLeft === 3) {
             if (betStatus === "true") {
@@ -223,6 +224,24 @@ function SevenUpDownHome() {
             }
         }
     };
+    const gameResultShuffle = async () => {
+        try {
+            const res = await axios.get(
+                `${apis?.sevenUpDown_Results}?game_id=15&limit=20`
+            );
+            console.log("game res", res)
+            if (res?.data?.status === 200) {
+                const aa=res?.data?.data[0]
+                handleDiceShow(aa?.number)
+            }
+        } catch (err) {
+            if (err?.response?.data?.status === 500) {
+                console.log("error hisotry", err);
+            } else {
+                toast.error(err?.response?.data?.message)
+            }
+        }
+    };
 
     const gameResultAnnouncement = async () => {
         if (!userId) {
@@ -339,16 +358,7 @@ function SevenUpDownHome() {
                             )
                         )}
                     </div>
-
-                    {/* Result */}
-                    {/* {!showGif && diceValues[0] && diceValues[1] && (
-                        <div className="h-8 text-white font-bold text-lg">
-                            Result: {diceValues[0] + diceValues[1]}
-                        </div>
-                    )} */}
-
                 </div>
-
                 {/* Top 3 Bet Buttons */}
                 <div className="flex gap-1 m-3 justify-center items-center">
                     {betNo.slice(0, 3).map((betNo, index) => {
@@ -373,7 +383,7 @@ function SevenUpDownHome() {
                                 {betNo.tir}
                                 <div className="absolute bottom-0 w-full flex items-center justify-center">
                                     <div className="bg-[#777777] text-xs rounded-b-sm shadow-md cursor-pointer h-6  wflex items-center justify-center text-white w-full">
-                                        {numberAmounts[realIndex]}
+                                        {Number(numberAmounts[realIndex]).toFixed(2)}
                                     </div>
                                 </div>
                             </div>
@@ -397,7 +407,7 @@ function SevenUpDownHome() {
                                 {betNo.tir}
                                 <div className="absolute bottom-0 w-full items-center justify-center">
                                     <div className="bg-[#777777] text-xs rounded-b-sm shadow-md cursor-pointer h-6 items-center justify-center pt-1 text-white">
-                                        {numberAmounts[realIndex]}
+                                        {Number(numberAmounts[realIndex]).toFixed(2)}
                                     </div>
                                 </div>
                             </div>

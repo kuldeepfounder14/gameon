@@ -6,22 +6,6 @@ const LotteryTimerTrx = ({timeLeft, duration }) => {
   const [isWarning, setIsWarning] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // const calculateTimeLeft = () => {
-  //   const now = new Date();
-  //   const secondsInCycle = (now.getMinutes() * 60 + now.getSeconds()) % duration;
-  //   const remainingTime = duration - secondsInCycle; 
-  //   setTimeLeft(remainingTime);
-  // };
-
-  // useEffect(() => {
-  //   calculateTimeLeft();
-  //   const interval = setInterval(() => {
-  //     calculateTimeLeft();
-  //   }, 1000);
-
-  //   return () => clearInterval(interval); 
-  // }, [duration]);
-
   useEffect(() => {
     if (timeLeft <= 10 && timeLeft > 0) {
       setIsWarning(true);
@@ -56,11 +40,11 @@ const LotteryTimerTrx = ({timeLeft, duration }) => {
         </div>
       </div>
       <div
-        className="absolute mt-[7rem] xsm:mt-[8.9rem] flex items-center h-[16.5rem] xsm:h-[17.7rem] left-0"
+        className="absolute mt-[6rem] xsm:mt-[6rem] flex items-center h-[18rem] xsm:h-[19rem] left-0"
         style={{ width: "214%", transform: "translateX(-50%)" }}
       >
         <TimerModalTrx
-        timeLeft={timeLeft}
+          timeLeft={timeLeft}
           duration={duration}
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}

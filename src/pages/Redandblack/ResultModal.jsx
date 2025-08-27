@@ -9,7 +9,7 @@ export default function ResultModal({ onClose, announcementData }) {
         if (announcementData?.data?.win === 0) {
             setWinLoss(2); // loss
         }
-        console.log("Announcement data:", announcementData);
+        // console.log("Announcement data:", announcementData);
     }, [announcementData]);
 
     if (!announcementData) return null;

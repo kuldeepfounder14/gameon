@@ -19,8 +19,8 @@ function SevenUpHeader({ profileRefresher, gameResultHistory, setProfileRefreshe
             const q = JSON.parse(hotair);
             setTimeLeft(q?.timerBetTime);
         };
-        SevenUpDownSocket.on("gameon_spin", handleSocket);
-        return () => SevenUpDownSocket.off("gameon_spin", handleSocket);
+        SevenUpDownSocket.on("gameon_7up", handleSocket);
+        return () => SevenUpDownSocket.off("gameon_7up", handleSocket);
     }, []);
 
     const toggleMenuModal = (value) => {

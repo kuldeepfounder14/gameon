@@ -147,7 +147,7 @@ const Layout = () => {
                         <Footer />
                     </div>
                     <div
-                        className={`fixed z-50 ${location?.pathname === "/login" ||
+                        className={`fixed z-50 ${location?.pathname === "/login" ||location?.pathname === "/poolrummy/1" ||location?.pathname === "/ptmenu" ||location?.pathname === "/dlmenu" ||
                             location?.pathname === "/register" ? "hidden" : "block"} `}
                         style={{
                             top: `${position.y}px`,
